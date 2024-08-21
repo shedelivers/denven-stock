@@ -1,0 +1,180 @@
+import 'package:denvin_stock/exports.dart';
+import 'package:denvin_stock/pages/dashboard_module/policy_pages.dart';
+
+import '../../components/conformation_popup.dart';
+
+class SettingsScreen extends GetView<LoginController> {
+  SettingsScreen({super.key});
+
+  final formGlobalKey = GlobalKey<FormState>();
+
+  @override
+  Widget build(BuildContext context) {
+    return MyAnnotatedRegion(
+      child: Scaffold(
+          appBar: AppBar(
+            automaticallyImplyLeading: false,
+            scrolledUnderElevation: 0,
+            centerTitle: true,
+            leading: const SizedBox(),
+            // title: TextView(
+            //   "Settings",
+            //   style: black_17_700()?.copyWith(),
+            // ),
+          ),
+          body: mainBuild()),
+    );
+  }
+
+  
+  mainBuild() {
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          profileHeaderView(),
+          vGap(height_5),
+          const Divider(
+            thickness: 1,
+            color: Color(0xffDDDDDD),
+            height: 1,
+          ),
+          SettingItemView(
+            title: "User Profile",
+            image: imageAsset(userIcon,height: 20.0),
+            onTap: (){
+              // Utils.showSnackBar("Coming Soon");
+              Get.toNamed(AppRoutes.userProfileScreen);
+            },
+          ),
+          _divider(),
+          SettingItemView(
+            title: "Switch Clinic",
+            image: imageAsset(switchIcon,height: 20.0),
+            onTap: (){
+              Get.toNamed(AppRoutes.clinicSelectionScreen);
+            },
+          ),
+          _divider(),
+          SettingItemView(
+            title: "Dentists",
+            image: imageAsset(doctorIcon,height: 20.0),
+            onTap: (){
+              Get.toNamed(AppRoutes.consumerScreen);
+            },
+          ),
+          // _divider(),
+          // SettingItemView(
+          //   title: "Implant Report",
+          //   image: const Icon(Icons.insert_page_break_sharp,size: 20,),
+          //   onTap: (){
+          //     Get.toNamed(AppRoutes.implantReportView);
+          //   },
+          // ),
+          // _divider(),
+          // SettingItemView(
+          //   title: "My Subscription",
+          //   image: const Icon(Icons.credit_card,size: 20,),
+          //   onTap: (){
+          //     Get.toNamed(AppRoutes.manageSubscriptionScreen);
+          //   },
+          // ),
+
+          _divider(),
+          SettingItemView(
+            title: "Change Password",
+            image: const Icon(Icons.password,size: 20,),
+            onTap: (){
+              Get.toNamed(AppRoutes.changePassword);
+            },
+          ),
+
+          _divider(),
+          SettingItemView(
+            title: "Policy Pages",
+            image: imageAsset(termsIcon,height: 20.0),
+            onTap: (){
+              Get.to(const PolicyPages());
+
+            },
+          ),
+          _divider(),
+          SettingItemView(
+            title:"SignOut",
+            image: imageAsset(signoutIcon,height: 20.0) ,
+            onTap: () {
+              confirmPopUp(
+                  title: 'SignOut?',
+                  subtitle: 'Are you sure, You want to SignOut.',
+                  onConfirm: (){
+                    StorageHelper().clearAll();
+                    Get.offAllNamed(AppRoutes.logIn);
+                  }
+              );
+            },
+          ),
+          _divider()
+        ],
+      ),
+    );
+  }
+
+  profileHeaderView() {
+    StorageHelper helper = StorageHelper();
+    return Column(
+      children: [
+        Center(child: imageAsset(appLogo, height: height_70)),
+        vGap(height_10),
+        TextView(
+          "${helper.getUserModel()?.firstname ?? ""} ${helper.getUserModel()?.lastname}",
+          style: black_17_700()?.copyWith(color: primaryColor),
+        ),
+        vGap(height_10),
+      ],
+    );
+  }
+
+  _divider(){
+    return const Divider(
+      thickness: 1,
+      color: Color(0xffDDDDDD),
+      height: 1,
+      endIndent: 20.0,
+      indent: 20.0,
+    );
+  }
+}
+
+class SettingItemView extends StatelessWidget {
+  final String title;
+  final Widget image;
+  final VoidCallback? onTap;
+  const SettingItemView({super.key,required this.title,required this.image,this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap ?? (){},
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  image,
+                  hGap(14.0 ),
+                  TextView(
+                    title,
+                    style: black_16_400()?.copyWith(fontWeight: FontWeight.w500),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ).marginSymmetric(horizontal: 20.0, vertical: 16.0),
+    );
+  }
+}

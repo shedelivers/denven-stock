@@ -1052,8 +1052,15 @@ class ManualAddProductScreen extends GetView<AddProductController> {
                 hGap(10.0),
                 IconButton(
                     onPressed: () {
-                      controller.addBarcodes.removeAt(index);
-                      controller.update();
+                      confirmPopUp(
+                          title: 'Are you sure?',
+                          subtitle: 'You want to delete this barcode.',
+                          onConfirm: (){
+                            controller.addBarcodes.removeAt(index);
+                            controller.update();
+                          }
+                      );
+
                     },
                     icon: const Icon(Icons.close)),
               ],

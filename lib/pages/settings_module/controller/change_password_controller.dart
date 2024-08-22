@@ -66,6 +66,7 @@ class ChangePasswordController extends GetxController {
         if (response.response != null) {
          // print('changePasswordModel: ${changePasswordModel.successful}');
 
+          Get.back();
           Utils.showSnackBar("Password change successfully",isSuccess: true);
 
         } else {

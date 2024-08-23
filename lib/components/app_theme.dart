@@ -3,7 +3,7 @@ import 'colors.dart';
 import 'dimens.dart';
 import 'font_family.dart';
 
-s
+
 ThemeData themeData =  ThemeData(
   buttonTheme: const ButtonThemeData(textTheme: ButtonTextTheme.accent),
   // textButtonTheme: TextButtonThemeData(style: TextButton.styleFrom(primary: Colors.black),),

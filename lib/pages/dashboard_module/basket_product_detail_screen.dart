@@ -333,7 +333,7 @@ class BasketProductDetailScreen extends GetView<BasketProductDetailController> {
     double qty;
     if (controller.products.value?.price != null &&
         controller.products.value?.quantity != null) {
-      price = controller.products.value?.price ?? 0.0;
+      price = double.parse(controller.products.value?.price.toString()??"0.0");
       qty = controller.products.value?.quantity?.toDouble() ?? 0.0;
       return "£ ${(price * qty).toStringAsFixed(2)}";
     } else {

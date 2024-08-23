@@ -44,7 +44,7 @@ class Product {
   String? oldLink;
   int? quantity;
   int? minLevel;
-  double? price;
+  String? price;
   List<ExpiriesBasket>? expiries;
   String? orderedAt;
   String? supplierCode;
@@ -100,7 +100,7 @@ class Product {
     oldLink = json['oldLink'];
     quantity = json['quantity'];
     minLevel = json['minLevel'];
-    price = json['price'];
+    price = json['price'].toString();
     if (json['expiries'] != null) {
       expiries = <ExpiriesBasket>[];
       json['expiries'].forEach((v) {

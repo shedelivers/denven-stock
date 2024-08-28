@@ -55,6 +55,7 @@ class AddProductController extends GetxController implements CameraOnCompleteLis
   RxList<FocusNode> expiryDateFocusNode = <FocusNode>[].obs;
   RxList<FocusNode> dynamicQuantityDateFocusNode = <FocusNode>[].obs;
   RxList<FocusNode> dynamicPriceFocusNode = <FocusNode>[].obs;
+  RxList<bool> isOldExpiryData = <bool>[].obs;
 
   late FocusNode productNameFocusNode;
   late FocusNode quantityFocusNode;
@@ -132,6 +133,7 @@ class AddProductController extends GetxController implements CameraOnCompleteLis
         expiryDateFocusNode.add(FocusNode());
         dynamicQuantityDateFocusNode.add(FocusNode());
         dynamicPriceFocusNode.add(FocusNode());
+        isOldExpiryData.add(true);
       }
     }
     if (products.value?.barcode?.isNotEmpty ?? false) {
@@ -169,6 +171,7 @@ class AddProductController extends GetxController implements CameraOnCompleteLis
     manufactureController = TextEditingController();
     notesController = TextEditingController();
     if(!isEdit.value) expiryDateController.add(TextEditingController());
+    if(!isEdit.value) isOldExpiryData.add(false);
     if(!isEdit.value) dynamicQuantityDateController.add(TextEditingController());
     if(!isEdit.value) dynamicPriceController.add(TextEditingController());
     expiryDateFocusNode.add(FocusNode());
@@ -188,6 +191,7 @@ class AddProductController extends GetxController implements CameraOnCompleteLis
   }
 
   addNewExpAndQuantity() {
+    isOldExpiryData.add(false);
     expiryDateController.add(TextEditingController());
     dynamicQuantityDateController.add(TextEditingController());
     dynamicPriceController.add(TextEditingController());

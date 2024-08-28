@@ -115,6 +115,26 @@ class ConsumptionController extends GetxController {
       }
     }
   }
+
+
+  Color getExpiryColor({required List<ExpiriesWithPrice> list, String? date, required int index}) {
+    int level = 0;
+    if(list.isEmpty) {
+      return Colors.grey;
+    } else {
+      level = list[index].level ?? 0;
+      if(level == 1){
+        return Colors.redAccent;
+      } else if(level == 2){
+        return const Color(0xfff17a00);
+      } else if(level == 3) {
+        return const Color(0xfffda600);
+      } else if(level == 4){
+        return const Color(0xff1ec1b0);
+      }
+    }
+    return Colors.grey;
+  }
 }
 
 

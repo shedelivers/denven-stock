@@ -49,6 +49,20 @@ class UpdateQuantityController extends GetxController {
 
   }
 
+  String convertExpiryDateFormat(String originalDateString) {
+    DateFormat originalFormat = DateFormat("dd/MM/yyyy");
+    // DateFormat originalFormat = DateFormat("yyyy/MM/dd");
+    // DateFormat targetFormat = DateFormat("dd MMMM yyyy");
+    DateFormat targetFormat = DateFormat("dd MMMM yyyy");
+    try {
+      DateTime originalDate = originalFormat.parse(originalDateString);
+      String formattedDate = targetFormat.format(originalDate);
+      return formattedDate;
+    } catch (e) {
+      return originalDateString;
+    }
+  }
+
   getExpiryDate(int index) async {
     final DateTime? picked = await showDatePicker(
       initialEntryMode: DatePickerEntryMode.calendarOnly,
@@ -109,5 +123,24 @@ class UpdateQuantityController extends GetxController {
         }
       }
     }
+  }
+
+  Color getExpiryColor({required List<ExpiriesWithPrice> list, String? date, required int index}) {
+    int level = 0;
+    if(list.isEmpty) {
+      return Colors.grey;
+    } else {
+      level = list[index].level ?? 0;
+      if(level == 1){
+        return Colors.redAccent;
+      } else if(level == 2){
+        return const Color(0xfff17a00);
+      } else if(level == 3) {
+        return const Color(0xfffda600);
+      } else if(level == 4){
+        return const Color(0xff1ec1b0);
+      }
+    }
+    return Colors.grey;
   }
 }

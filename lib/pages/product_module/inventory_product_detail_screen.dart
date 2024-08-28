@@ -74,7 +74,7 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
                             children: [
                               imageAsset(blankImageIcon, color: Colors.grey, height: 40),
                               Utils.noDataFound(
-                                  message: "No banner added to this product"),
+                                  message: "Image not uploaded"),
                             ],
                           ),
                         ),
@@ -192,7 +192,7 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
   _enterProductName() {
     return Container(
       width: Get.width,
-      padding: const EdgeInsets.symmetric(horizontal: 30.0,vertical: 14.0),
+      padding: const EdgeInsets.symmetric(horizontal: 30.0,vertical: 10.0),
       color: const Color(0xfff2f2f2),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -203,7 +203,7 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
             style: black_14_600()?.copyWith(color: const Color(0xff707070)),
           ),
           vGap(4.0),
-          SelectableText(controller.products.value?.name ?? Strings.nA, maxLines: 3,style: black_14_600()?.copyWith(color: black, fontSize: 15)),
+          SelectableText(controller.products.value?.name ?? Strings.nA,style: black_14_600()?.copyWith(color: black, fontSize: 15)),
         ],
       ),
     );
@@ -240,10 +240,12 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
                     borderRadius: BorderRadius.circular(20.0),
                     border: Border.all(color: primaryColor, width: 2),
                   ),
+                 // child: SelectableText(myTag ?? "",style: const TextStyle(fontSize: 14),maxLines: 1,),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      SelectableText(myTag ?? "",style: const TextStyle(fontSize: 14),maxLines: 2,),
+                      SelectableText(myTag ?? "",style: const TextStyle(fontSize: 14),maxLines: 1,),
                     ],
                   ),
                 );
@@ -423,7 +425,7 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    TextView(
+                    TextView(controller.products.value?.type == 1?Strings.unitPrice:
                       Strings.totalPrice,
                       style: black_14_600()
                           ?.copyWith(color: const Color(0xff707070)),
@@ -431,7 +433,10 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
                     vGap(4.0),
                     SelectableText(
                         controller.products.value?.price != null
-                            ? "£ ${controller.products.value?.price.toString()}"
+                            ? "£ ${
+                            controller.products.value?.type == 1?
+                            controller.products.value?.expiries?.first.price??"00.00"
+                                :controller.products.value?.price.toString()}"
                             : "£00.00",
                         style: black_14_600()
                             ?.copyWith(color: black, fontSize: 15)),
@@ -612,14 +617,25 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
                         (index) => Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        if(controller.products.value?.expiries?[index].at  != null && controller.products.value!.expiries![index].at!.isNotEmpty ?? false) Container(
+                        controller.products.value?.expiries?[index].at  != null && controller.products.value!.expiries![index].at!.isNotEmpty ?? false?
+                          Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 2.0),
                             margin: const EdgeInsets.only(bottom: 6.0),
                             decoration: BoxDecoration(
                                 color: controller.products.value?.expiryLevel != null ? controller.getExpiryColor(index: index, list: controller.products.value!.expiryLevel ?? []) : Colors.grey,
                                 borderRadius: BorderRadius.circular(6.0)
                             ),
-                            child: SelectableText("${controller.convertExpiryDateFormat(controller.products.value?.expiryLevel?[index].at ?? Strings.nA)} ", style: black_14_600()?.copyWith(color: Colors.white, fontSize: 15))),
+                            child: SelectableText("${controller.convertExpiryDateFormat(controller.products.value?.expiries?[index].at ?? Strings.nA)} ", style: black_14_600()?.copyWith(color: Colors.white, fontSize: 15))):
+                        Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 2.0),
+                            margin: const EdgeInsets.only(bottom: 6.0),
+                            decoration: BoxDecoration(
+                                color: Colors.grey,
+                                borderRadius: BorderRadius.circular(6.0)
+                            ),
+                            child: SelectableText(Strings.nA, style: black_14_600()?.copyWith(color: Colors.white, fontSize: 15)))
+                           // Text(Strings.nA, style: black_14_600()?.copyWith(color: Colors.black, fontSize: 15))
+
                       ],
                     ),
                   ),
@@ -663,7 +679,7 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
                         (index) => Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 2.0),
                             margin: const EdgeInsets.only(bottom: 6.0),
-                            child: SelectableText("${controller.products.value?.expiries?[index].price}", style: black_14_600()?.copyWith(color: black, fontSize: 15))),
+                            child: SelectableText("${controller.products.value?.expiries?[index].price?? Strings.nA}", style: black_14_600()?.copyWith(color: black, fontSize: 15))),
                   ),
                 ],
               ),

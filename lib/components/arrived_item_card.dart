@@ -105,8 +105,4 @@ class ArrivedItemCard extends StatelessWidget {
       return originalDateTimeString;
     }
   }
-
-
-
-
 }

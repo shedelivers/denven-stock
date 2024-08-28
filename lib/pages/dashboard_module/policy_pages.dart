@@ -11,15 +11,15 @@ class PolicyPages extends StatelessWidget {
       body: Column(
         children: [
           vGap(20.0),
-          SettingItemView(
-            title: "Frequently Asked Questions",
-            image:  imageAsset(faqIcon,height: 20.0),
-            onTap: (){
-              Utils.showSnackBar("Adding Soon");
-              // Get.toNamed(AppRoutes.faqScreen);
-            },
-          ),
-          _divider(),
+          // SettingItemView(
+          //   title: "Frequently Asked Questions",
+          //   image:  imageAsset(faqIcon,height: 20.0),
+          //   onTap: (){
+          //     Utils.showSnackBar("Adding Soon");
+          //     // Get.toNamed(AppRoutes.faqScreen);
+          //   },
+          // ),
+          // _divider(),
           SettingItemView(
             title:"About Us",
             image: imageAsset(aboutIcon,height: 20.0),

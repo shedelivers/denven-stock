@@ -516,7 +516,7 @@ class InventoryController extends GetxController {
                                     }
                                   });
                                 } else {
-                                  Utils.showSnackBar("This product don't have quantity and expiry");
+                                  Utils.showSnackBar("Product is out of stock");
                                 }
                               }
                             )

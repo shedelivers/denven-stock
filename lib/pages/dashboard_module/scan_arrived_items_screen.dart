@@ -133,7 +133,7 @@ class ScanArrivedItemsScreen extends GetView<ScanArrivedItemsController> {
                           name: product.supplierName,
                           isThreeDotsActive: false,
                           supplierCode: product.orderCode,
-                          orderAt: controller.timeAgo(product.issuedAt ?? ""),
+                          orderAt: product.issuedAt ?? "",
                           price: product.totalCost,
                           cardOnTap: () {
                             Get.toNamed(AppRoutes.arrivedItemDetailScreen,

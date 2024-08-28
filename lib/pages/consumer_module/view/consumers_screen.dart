@@ -35,7 +35,38 @@ class ConsumerScreen extends GetView<ConsumerController> {
         mainAxisAlignment: controller.consumerList.isEmpty || controller.isLoading.value ? MainAxisAlignment.center : MainAxisAlignment.start,
         children: [
           vGap(20.0),
-              controller.isLoading.value ? Utils.screenLoading() : controller.consumerList.isEmpty ? Utils.noDataFound(message: "No dentist found") : Expanded(
+              controller.isLoading.value ? Utils.screenLoading() : controller.consumerList.isEmpty ?
+              Column(
+                children: [
+                  Utils.noDataFound(message: "No dentist found"),
+                  vGap(10.0),
+                  Container(
+                    height: 40.0,
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                    decoration: BoxDecoration(
+                        color: primaryColor,
+                        borderRadius: BorderRadius.circular(10.0)
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text("Add Dentist",style: TextStyle(color: Colors.white,fontSize: 16,fontWeight: FontWeight.w600),),
+                        hGap(4.0),
+                        const Icon(Icons.add,color: Colors.white,)
+                      ],
+                    ),
+                  ).onTap(() {
+                    Get.toNamed(AppRoutes.addConsumerScreen)?.then((value) {
+                      controller.isEdit.value = false;
+                      if (value == "ADDED") {
+                        controller.getCustomer();
+                      }
+                    });
+                  }),
+                ],
+              )
+                  : Expanded(
                       child: ListView.separated(
                           separatorBuilder: (_, index) => vGap(10.0),
                           itemCount: controller.consumerList.length,

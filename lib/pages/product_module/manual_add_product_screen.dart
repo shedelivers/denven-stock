@@ -53,7 +53,8 @@ class ManualAddProductScreen extends GetView<AddProductController> {
               _tags(),
               _addQrAndBarCode(),
               vGap(20.0),
-              SafeArea(child: Obx(() => AppButton(
+              SafeArea(
+                  child: Obx(() => AppButton(
                     isLoading: controller.dummyLoading.value,
                     onTap: () {
                       if (formGlobalKey.currentState!.validate()) {
@@ -311,7 +312,8 @@ class ManualAddProductScreen extends GetView<AddProductController> {
                         //validator: (value) => value?.isEmptyField(messageTitle: Strings.price),
                         onFieldSubmitted: (String? value) =>
                             FocusScope.of(Get.context!)
-                                .requestFocus(controller.totalPriceFocusNode)),
+                                .requestFocus(controller.totalPriceFocusNode)
+                    ),
                   ],
                 ).paddingSymmetric(horizontal: 30),
               ),
@@ -337,8 +339,8 @@ class ManualAddProductScreen extends GetView<AddProductController> {
                       children: [
                         Expanded(
                           child: CustomTextFieldV2(
-                              readOnly: true,
-                              suffix: Icon(Icons.lock, color: Colors.grey.withOpacity(0.7)),
+                             // readOnly: true,
+                            //  suffix: Icon(Icons.lock, color: Colors.grey.withOpacity(0.7)),
                               hintText: Strings.enterMinimumLevel,
                               hintStyle: black_14_400()?.copyWith(color: hintTextColor),
                               onChanged: (value) {
@@ -474,7 +476,14 @@ class ManualAddProductScreen extends GetView<AddProductController> {
                       controller: controller.dynamicQuantityDateController[i],
                       textInputType: TextInputType.number,
                       inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
-                      validator: (value) => value?.quantityValidation(messageTitle: Strings.quantity,value: value),
+                      validator: (value) {
+                        if(controller.isOldExpiryData[i] == false){
+                          value?.quantityValidation(messageTitle: Strings.quantity,value: value);
+                        }else{
+                          return null;
+                        }
+
+                      },
                       focusNode: controller.dynamicQuantityDateFocusNode[i],
                       onFieldSubmitted: (String? value) =>
                           FocusScope.of(Get.context!).unfocus()),
@@ -491,19 +500,22 @@ class ManualAddProductScreen extends GetView<AddProductController> {
                   child: CustomTextField(
                       hintText: Strings.expiryDate,
                       validator: (value) {
-                        if (value!.isEmpty) {
-                          if(i == 0){
-                            return null;
-                          } else {
-                            return 'Please enter a date';
+                        if(controller.isOldExpiryData[i] == false){
+                          if (value!.isEmpty) {
+                            if(i == 0){
+                              return null;
+                            } else {
+                              return 'Please enter a date';
+                            }
+                          } else if (!controller.isValidDate(value)) {
+                            return 'Please enter valid date';
+                          } else if (controller.isDateBeforeToday(value)) {
+                            return 'Please enter future date';
+                          } else if (controller.isDuplicateDate(i)){
+                            return 'Please enter different dates';
                           }
-                        } else if (!controller.isValidDate(value)) {
-                          return 'Please enter valid date';
-                        } else if (controller.isDateBeforeToday(value)) {
-                          return 'Please enter future date';
-                        } else if (controller.isDuplicateDate(i)){
-                          return 'Please enter different dates';
                         }
+
                         return null;
                       },
                       inputFormatters: [DateFormatter()],
@@ -529,6 +541,7 @@ class ManualAddProductScreen extends GetView<AddProductController> {
                             title: 'Are you sure?',
                             subtitle: 'You want to delete this expiry date.',
                             onConfirm: (){
+                              controller.isOldExpiryData.removeAt(i);
                               controller.expiryDateController.removeAt(i);
                               controller.dynamicQuantityDateController.removeAt(i);
                               controller.expiryDateFocusNode.removeAt(i);

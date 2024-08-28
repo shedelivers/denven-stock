@@ -135,21 +135,26 @@ class InventoryStockScreen extends GetView<InventoryController> {
                 physics: const AlwaysScrollableScrollPhysics(),
                 controller: controller.scrollController,
                 children: [
-                  controller.isLoading.value ? Utils.circularLoader(marginTop: 30) : controller.products.isEmpty ? Utils.noDataFound(message: "No Product Found").marginOnly(top: 20.0) : ListView.builder(
+                  controller.isLoading.value ? Utils.circularLoader(marginTop: 30) : controller.products.isEmpty ? Utils.noDataFound(message: "No Product Found").marginOnly(top: 20.0) :
+                  ListView.builder(
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
                               itemCount: controller.products.length,
                               itemBuilder: (_,index) {
                                 ProductModal? product = controller.products[index];
+
+
                                 return ProductCard(
                                   imagePath: product.productImage != null && product.productImage!.isNotEmpty ? "${ApiConstants.baseUrlForImage}/${controller.extractImagePath(product.productImage ?? "")}" : null,
                                   name: product.name,
                                   supplierCode: product.supplierCode,
                                   storageName: product.storage?.name,
                                   orderAt: product.orderedAt,
-                                  price: product.price,
+                                  price: product.expiries!.isNotEmpty?product.expiries?.last.price??0:0,
+                                 // price: product.price,
                                   cardOnTap: () {
-                                    Get.toNamed(AppRoutes.productDetailScreen, arguments: {RoutesArgument.productDetails: product, RoutesArgument.addRestock: false})?.then((value) {
+                                    Get.toNamed(AppRoutes.productDetailScreen,
+                                        arguments: {RoutesArgument.productDetails: product, RoutesArgument.addRestock: false})?.then((value) {
                                       if (value != null) {
                                         controller.searchController.clear();
                                         controller.getInventoryData();

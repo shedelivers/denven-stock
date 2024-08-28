@@ -41,7 +41,7 @@ class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController> {
                     controller.update();
                   }),
                 ],
-              ).marginSymmetric(horizontal: 20.0) : SizedBox()),
+              ).marginSymmetric(horizontal: 20.0) : const SizedBox()),
           ),
           body: Obx(() => controller.isLoading.value ? Utils.circularLoader() : _mainBody())
       ),
@@ -131,19 +131,23 @@ class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController> {
                                 controller.submit();
                               }
                             },
-                              buttonText: "Done",).marginSymmetric(horizontal: 20.0),
+                            buttonText: "Done",).marginSymmetric(horizontal: 20.0),
                             Obx(()=> Row(
                               children: [
                                 Expanded(
                                   child: controller.currentPageIndex.value != 0 ? AppButton(onTap: (){
                                     controller.sliderController.previousPage();
                                   }, textColor: primaryColor,backgroundColor: Colors.white,rippleColor: Colors.grey.withOpacity(0.2), borderColor: primaryColor,borderWidth: 1,
-                                    buttonText: "Previous Product",): const SizedBox(),
+                                    buttonText: "Previous Product"): const SizedBox(),
                                 ),
                                 hGap(10),
                                 Expanded(
-                                  child: (controller.currentPageIndex.value + 1) != controller.itemsPayload.length ? AppButton(
+                                  child: (controller.currentPageIndex.value + 1) != controller.itemsPayload.length ?
+                                  AppButton(
                                       onTap: () {
+
+                                        print('valll => ${controller.itemsPayload[controller.currentPageIndex.value].quantity}');
+
                                         if(controller.formKeys[controller.currentPageIndex.value].currentState!.validate()){
                                           controller.sliderController.nextPage();
                                         }
@@ -371,7 +375,16 @@ class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController> {
                         child: CustomTextField(
                             readOnly: true,
                             hintText: Strings.selectStorage,
-                            validator: (value) => controller.itemsPayload[controller.currentPageIndex.value].status == "return" ? null : value?.isEmptyField(messageTitle: Strings.storage),
+                         // validator: (value) => controller.itemsPayload[controller.currentPageIndex.value].status == "return" ? null : value?.isEmptyField(messageTitle: Strings.storage),
+                            validator: (value) {
+                              controller.itemsPayload[controller.currentPageIndex.value].status == "return" ? null : value?.isEmptyField(messageTitle: Strings.storage);
+                              if(controller.itemsPayload[controller.currentPageIndex.value].quantity != 0){
+                                if(controller.itemsPayload[controller.currentPageIndex.value].status != "return"){
+                                  return value?.isEmptyField(messageTitle: Strings.storage);
+                                }
+                              }
+                              return null;
+                            },
                             onTap: (){
                               Supplier supplier = Supplier(
                                 id: controller.itemsPayload[controller.currentPageIndex.value].storages![index].sId,
@@ -421,7 +434,16 @@ class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController> {
                               print(controller.itemsPayload);
                             },
                             inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
-                            validator: (value) => controller.itemsPayload[controller.currentPageIndex.value].status == "return" ? null : _validateForm(value, controller.itemsPayload[controller.currentPageIndex.value].quantity ?? 0, controller.dynamicQuantityDateController[controller.currentPageIndex.value].value!),
+                            // validator: (value)=> controller.itemsPayload[controller.currentPageIndex.value].status == "return" ? null : _validateForm(value, controller.itemsPayload[controller.currentPageIndex.value].quantity ?? 0, controller.dynamicQuantityDateController[controller.currentPageIndex.value].value!),
+                            validator: (value) {
+                              controller.itemsPayload[controller.currentPageIndex.value].status == "return" ? null : value?.isEmptyField(messageTitle: Strings.storage);
+                              if(controller.itemsPayload[controller.currentPageIndex.value].quantity != 0){
+                                if(controller.itemsPayload[controller.currentPageIndex.value].status != "return"){
+                                  return _validateForm(value, controller.itemsPayload[controller.currentPageIndex.value].quantity ?? 0, controller.dynamicQuantityDateController[controller.currentPageIndex.value].value!);
+                                }
+                              }
+                              return null;
+                            },
                             focusNode: controller.dynamicQuantityDateFocusNode[controller.currentPageIndex.value].value![index],
                             onFieldSubmitted: (String? value) => FocusScope.of(Get.context!).unfocus()),
                       ),
@@ -464,12 +486,14 @@ class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController> {
                           return 'Please enter different dates';
                         }
                         return null;*/
-
-                        if (controller.isDateBeforeToday(value!)) {
-                          return 'Please enter future date';
-                        } else if (controller.isDuplicateDate(index)){
-                          return 'Please enter different dates';
+                        if(value!.isNotEmpty){
+                          if (controller.isDateBeforeToday(value)) {
+                            return 'Please enter future date';
+                          } else if (controller.isDuplicateDate(index)){
+                            return 'Please enter different dates';
+                          }
                         }
+
                         return null;
                       },
                       suffix: Icon(

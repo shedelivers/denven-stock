@@ -29,11 +29,13 @@ class ProductModal extends Serializable{
   int? status;
   List<BarcodeAPIModal>? barcode;
   List<ExpiryLevel>? expiryLevel;
+  List<ExpiriesWithPrice>? expiriesWithPrice;
 
   ProductModal(
       {this.id,
         this.name,
         this.expiryLevel,
+        this.expiriesWithPrice,
         this.manufacturer,
         this.updatedAt,
         this.createdAt,
@@ -111,6 +113,12 @@ class ProductModal extends Serializable{
         expiryLevel!.add(ExpiryLevel.fromJson(v));
       });
     }
+    if (json['expiriesWithPrice'] != null) {
+      expiriesWithPrice = <ExpiriesWithPrice>[];
+      json['expiriesWithPrice'].forEach((v) {
+        expiriesWithPrice!.add(ExpiriesWithPrice.fromJson(v));
+      });
+    }
     status = json['status'];
   }
 
@@ -181,6 +189,33 @@ class Expiries {
     return data;
   }
 }
+
+class ExpiriesWithPrice {
+  int? qty;
+  String? date;
+  int? level;
+  dynamic? price;
+
+  ExpiriesWithPrice({this.level, this.date, this.qty, this.price});
+
+  ExpiriesWithPrice.fromJson(Map<String, dynamic> json) {
+    level = json['level'];
+    date = json['date'];
+    qty = json['qty'];
+    price = json['price'];
+
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['qty'] = qty;
+    data['date'] = date;
+    data['level'] = level;
+    data['price'] = price;
+    return data;
+  }
+}
+
 
 class ExpiryLevel {
   int? qty;

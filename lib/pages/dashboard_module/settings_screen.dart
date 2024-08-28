@@ -113,7 +113,9 @@ class SettingsScreen extends GetView<LoginController> {
               );
             },
           ),
-          _divider()
+          _divider(),
+          vGap (20.0),
+          Obx(()=> Text("V ${controller.appVersion}",style: const TextStyle(color: Colors.grey),)),
         ],
       ),
     );

@@ -1,5 +1,6 @@
 import 'dart:collection';
 import 'package:denvin_stock/exports.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class LoginController extends GetxController {
   late TextEditingController loginEmailController;
@@ -12,11 +13,20 @@ class LoginController extends GetxController {
 
   late AuthApiProvider _authApiProvider;
 
+  RxString appVersion = ''.obs;
+
   @override
   void onInit() {
     initializeVariables();
+    getAppVersion ();
     super.onInit();
   }
+  void getAppVersion ()async{
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    appVersion.value = "${packageInfo.version} (${packageInfo.buildNumber})";
+    refresh();
+  }
+
 
   initializeVariables() {
     loginEmailController = TextEditingController();

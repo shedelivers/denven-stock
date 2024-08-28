@@ -49,18 +49,45 @@ class ConsumptionScreen extends GetView<ConsumptionController> {
                       title: Column(
                         children: [
                           Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Expanded(
                                 child: CustomProductBoxView(
                                   title: 'Quantity',
-                                  subtitle: controller.products.value?.expiries?[index].qty.toString() ??  Strings.nA,
+                                  subtitle: controller.products.value?.expiriesWithPrice?[index].qty.toString() ??  Strings.nA,
                                 ),
                               ),
-                              hGap(8),
+                              hGap(4),
+                              // Expanded(
+                              //   child: CustomProductBoxView(
+                              //     title: 'Expiry Date',
+                              //     subtitle: controller.products.value?.expiries?[index].at?.isEmpty ?? true ? "N/A" : controller.products.value?.expiries?[index].at ?? Strings.nA,
+                              //   ),
+                              // ),
+
                               Expanded(
-                                child: CustomProductBoxView(
-                                  title: 'Expiry Date',
-                                  subtitle: controller.products.value?.expiries?[index].at?.isEmpty ?? true ? "N/A" : controller.products.value?.expiries?[index].at ?? Strings.nA,
+                                child:Column(
+                                  children: [
+                                    TextView('Expiry Date', style: black_14_500(),),
+
+                                    controller.products.value?.expiriesWithPrice?[index].date  != null && controller.products.value!.expiriesWithPrice![index].date!.isNotEmpty ?? false?
+                                    Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 2.0,vertical: 2.0),
+                                        margin: const EdgeInsets.only(bottom: 6.0),
+                                        decoration: BoxDecoration(
+                                            color: controller.products.value?.expiriesWithPrice != null ? controller.getExpiryColor(index: index, list: controller.products.value!.expiriesWithPrice ?? []) : Colors.grey,
+                                            borderRadius: BorderRadius.circular(6.0)
+                                        ),
+                                        child: SelectableText(controller.products.value?.expiriesWithPrice?[index].date ?? Strings.nA, style: greyColor_16_600()?.copyWith(color: Colors.white, fontSize: 14))):
+                                    Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 2.0),
+                                        margin: const EdgeInsets.only(bottom: 6.0),
+                                        decoration: BoxDecoration(
+                                            color: Colors.grey,
+                                            borderRadius: BorderRadius.circular(6.0)
+                                        ),
+                                        child: SelectableText(Strings.nA, style: greyColor_16_600()?.copyWith(color: Colors.white, fontSize: 14)))
+                                  ],
                                 ),
                               ),
                             ],
@@ -142,7 +169,12 @@ class ConsumptionScreen extends GetView<ConsumptionController> {
                             CustomTextField(
                                 readOnly: true,
                                 hintText: "Select Dentist",
-                                validator: (value) => value?.isEmptyField(messageTitle: Strings.storage),
+                                validator: (value) {
+                                  if (value!.isEmpty){
+                                  return "Please select a dentist";
+                                }
+                                  return null;
+                                  },
                                 onTap: (){
                                   List<int> disableList = [];
                                   for(ConsumptionDto move in controller.movesMainLists[index].value ?? []){
@@ -191,7 +223,14 @@ class ConsumptionScreen extends GetView<ConsumptionController> {
                               controller.movesMainLists[index].value?.insert(subIndex, move);
                             },
                             inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
-                            validator: (value) => _validateForm(value, controller.products.value?.expiries?[index].qty ?? 0, controller.quantityController[index].value!),
+                           // validator: (value) => _validateForm(value, controller.products.value?.expiries?[index].qty ?? 0, controller.quantityController[index].value!),
+
+                            // validator: (value) {
+                            //   if (value!.isEmpty){
+                            //     return "Please Enter a dentist";
+                            //   }
+                            //   return null;
+                            // },
                             focusNode: controller.quantityFocusNode[index].value![subIndex],
                             onFieldSubmitted: (String? value) => FocusScope.of(Get.context!).unfocus()),
                       ),

@@ -3,10 +3,11 @@ import 'package:denvin_stock/pages/dashboard_module/policy_pages.dart';
 
 import '../../components/conformation_popup.dart';
 
-class SettingsScreen extends GetView<LoginController> {
+class SettingsScreen extends StatelessWidget {
   SettingsScreen({super.key});
 
   final formGlobalKey = GlobalKey<FormState>();
+  final loginController = Get.put(LoginController());
 
   @override
   Widget build(BuildContext context) {
@@ -115,7 +116,7 @@ class SettingsScreen extends GetView<LoginController> {
           ),
           _divider(),
           vGap (20.0),
-          Obx(()=> Text("V ${controller.appVersion}",style: const TextStyle(color: Colors.grey),)),
+          Obx(()=> Text("V ${loginController.appVersion}",style: const TextStyle(color: Colors.grey),)),
         ],
       ),
     );

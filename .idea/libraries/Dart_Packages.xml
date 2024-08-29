@@ -265,6 +265,7 @@
         <entry key="flutter">
           <value>
             <list>
+              <option value="$USER_HOME$/fvm/versions/3.19.5/packages/flutter/lib" />
               <option value="$USER_HOME$/flutter/packages/flutter/lib" />
             </list>
           </value>
@@ -357,6 +358,7 @@
         <entry key="flutter_test">
           <value>
             <list>
+              <option value="$USER_HOME$/fvm/versions/3.19.5/packages/flutter_test/lib" />
               <option value="$USER_HOME$/flutter/packages/flutter_test/lib" />
             </list>
           </value>
@@ -364,6 +366,7 @@
         <entry key="flutter_web_plugins">
           <value>
             <list>
+              <option value="$USER_HOME$/fvm/versions/3.19.5/packages/flutter_web_plugins/lib" />
               <option value="$USER_HOME$/flutter/packages/flutter_web_plugins/lib" />
             </list>
           </value>
@@ -745,6 +748,7 @@
         <entry key="sky_engine">
           <value>
             <list>
+              <option value="$USER_HOME$/fvm/versions/3.19.5/bin/cache/pkg/sky_engine/lib" />
               <option value="$USER_HOME$/flutter/bin/cache/pkg/sky_engine/lib" />
             </list>
           </value>
@@ -857,7 +861,7 @@
         <entry key="url_launcher_ios">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/url_launcher_ios-6.3.0/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/url_launcher_ios-6.3.1/lib" />
             </list>
           </value>
         </entry>
@@ -1070,7 +1074,7 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/universal_platform-1.1.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/url_launcher-6.2.6/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/url_launcher_android-6.3.2/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/url_launcher_ios-6.3.0/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/url_launcher_ios-6.3.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/url_launcher_linux-3.1.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/url_launcher_macos-3.2.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/url_launcher_platform_interface-2.3.2/lib" />
@@ -1087,6 +1091,10 @@
       <root url="file://$USER_HOME$/flutter/packages/flutter/lib" />
       <root url="file://$USER_HOME$/flutter/packages/flutter_test/lib" />
       <root url="file://$USER_HOME$/flutter/packages/flutter_web_plugins/lib" />
+      <root url="file://$USER_HOME$/fvm/versions/3.19.5/bin/cache/pkg/sky_engine/lib" />
+      <root url="file://$USER_HOME$/fvm/versions/3.19.5/packages/flutter/lib" />
+      <root url="file://$USER_HOME$/fvm/versions/3.19.5/packages/flutter_test/lib" />
+      <root url="file://$USER_HOME$/fvm/versions/3.19.5/packages/flutter_web_plugins/lib" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

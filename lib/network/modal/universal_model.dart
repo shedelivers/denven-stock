@@ -6,7 +6,7 @@ class UniversalModel extends Serializable {
   String? refreshToken;
   int? totalProducts;
   int? totalQuantity;
-  double? totalPrice;
+  dynamic? totalPrice;
   // List<ProductModal>? response;
 
   UniversalModel({

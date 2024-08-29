@@ -118,6 +118,7 @@ class AddProductController extends GetxController implements CameraOnCompleteLis
     minimumLevelCount.value = products.value?.minLevel ?? 0;
     manufactureController.text = products.value?.manufacturer ?? "";
     supplierCodeController.text = products.value?.supplierCode ?? "";
+    supplierController.text = products.value?.supplier?.name ?? "";
     // dateController.text = products.value?.orderedAt != null ? setOrderDate(products.value?.orderedAt ?? "") ;
     dontHaveCode.value = true;
     if (storageList.any((element) => element.id == products.value?.storageId)) {
@@ -495,10 +496,12 @@ class AddProductController extends GetxController implements CameraOnCompleteLis
       String tagsStringList = myList.join(',');
       apiBarCode.addAll((addBarcodes).map((e) => BarCodeDataDto(barcode: e.barcode, removeAll: (e.removeAll ?? false).toString(), symbol: e.symbology
       )).toList());
+      print('Min Level is ==> ${minimumLevelController.text}');
       dio.FormData formData = await CreateUpdateProductDto(
           id: products.value?.id,
           productImage: File(imagePath.value),
           expiryData: expiryList,
+          minLevel: minimumLevelController.text,
           isImageRemoved: imageUrlToEdit.value == null ? true : false,
           barCode: apiBarCode,
           TagCollection: tagsStringList

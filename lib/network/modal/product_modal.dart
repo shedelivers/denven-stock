@@ -135,6 +135,9 @@ class ProductModal extends Serializable{
       data['expiries'] = expiries!.map((v) => v.toJson()).toList();
     }
     if (expiries != null) {
+      data['expiriesWithPrice'] = expiriesWithPrice!.map((v) => v.toJson()).toList();
+    }
+    if (expiries != null) {
       data['barcode'] = barcode!.map((v) => v.toJson()).toList();
     }
     data['orderedAt'] = orderedAt;

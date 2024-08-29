@@ -346,16 +346,18 @@ class BasketProductDetailScreen extends GetView<BasketProductDetailController> {
       data: Theme.of(Get.context!).copyWith(dividerColor: Colors.transparent),
       child: ExpansionTile(
         initiallyExpanded: true,
-        collapsedIconColor: Colors.transparent,
-        iconColor: Colors.transparent,
+        controller: controller.expansionTileController,
+        iconColor: primaryColor,
+        // collapsedIconColor: Colors.transparent,
+        // iconColor: Colors.transparent,
         childrenPadding: const EdgeInsets.only(left: 20.0, right: 20.0, bottom: 20.0),
         title: Row(
           children: [
-            Icon(
-              Icons.keyboard_arrow_down,
-              color: primaryColor,
-            ),
-            hGap(8.0),
+            // Icon(
+            //   Icons.keyboard_arrow_down,
+            //   color: primaryColor,
+            // ),
+            // hGap(8.0),
             Text(
               Strings.showMoreDetails,
               style: black_15_700()?.copyWith(color: primaryColor),

@@ -151,7 +151,7 @@ class ProductApiProvider {
 
   Future<DataResponse<PaginationResponseModal<Supplier>>> getStorage({String? search}) async {
     try {
-      Response response = await _dio.get("${ApiConstants.storage}/$clinicId", options: Injector.getHeaderToken(), queryParameters: {
+      Response response = await _dio.get("${ApiConstants.storage}/$clinicId/false/true", options: Injector.getHeaderToken(), queryParameters: {
           "pageSize" : 100,
           "page": 1,
             if((search??"").isNotEmpty)
@@ -226,7 +226,7 @@ class ProductApiProvider {
 
   Future<DataResponse<PaginationResponseModal<Supplier>>> postStorage(Map<String, dynamic> payload) async {
     try {
-      Response response = await _dio.post("${ApiConstants.storage}/$clinicId",data: payload, options: Injector.getHeaderToken(),);
+      Response response = await _dio.post("${ApiConstants.storage}/$clinicId/false/false",data: payload, options: Injector.getHeaderToken(),);
       var dataResponse = DataResponse<PaginationResponseModal<Supplier>>.fromJson(response.data, (data) => PaginationResponseModal<Supplier>.fromJson(data as Map<String, dynamic>,(data) => Supplier.fromJson(data)));
       return dataResponse;
     } on DioException catch (error) {

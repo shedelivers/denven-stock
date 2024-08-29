@@ -57,7 +57,7 @@ class UserProfileScreen extends GetView<UserProfileController>{
           // validator: (value) => value?.isEmptyFieldAndGraterZero(messageTitle: Strings.quantity,value: value),
           onFieldSubmitted: (String? value) =>  FocusScope.of(Get.context!).unfocus(),
         ),
-        Spacer(),
+        const Spacer(),
         SafeArea(
           child: Obx(
                 ()=> Container(
@@ -81,5 +81,4 @@ class UserProfileScreen extends GetView<UserProfileController>{
       ],
     ).marginSymmetric(horizontal: 20.0);
   }
-
 }

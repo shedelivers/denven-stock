@@ -1,4 +1,5 @@
 import 'package:denvin_stock/exports.dart';
+import 'package:flutter/cupertino.dart';
 
 class InventoryProductDetailScreen extends GetView<InventoryProductController> {
   final formGlobalKey = GlobalKey<FormState>();
@@ -10,14 +11,35 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
   @override
   Widget build(BuildContext context) {
     return MyAnnotatedRegion(
-      child:  Scaffold(
-            backgroundColor: Colors.white,
-            appBar: myAppBar(
-                showBack: true,
-                showLogo: false,
-                title: "Product Detail",
-                centerLogo: true),
-            body: Obx(() => controller.isLoading.value ? Utils.circularLoader() : _mainBody())),
+      child:  Obx(() => Scaffold(
+              backgroundColor: Colors.white,
+              appBar: myAppBar(
+                  showBack: true,
+                  showLogo: false,
+                  title: "Product Detail",
+                  centerLogo: true,
+                  showOcrButton: Container(
+                    margin: const EdgeInsets.only(right: 8),
+                    height: 36,
+                    width: 36,
+                    child: IconButton(
+                        onPressed: (){
+                          if(!controller.isLoading.value){
+                            Get.toNamed(AppRoutes.addManualProduct, arguments: {
+                              RoutesArgument.productDetails: controller.products.value,
+                              RoutesArgument.isEdit: true,
+                              RoutesArgument.productType: ProductType.edit
+                            })?.then((value) {
+                              if (value != null) {
+                                controller.getProductById();
+                              }
+                            });
+                          }
+                        },
+                        icon: Image.asset(editIcon)),
+                  )),
+              body: controller.isLoading.value ? Utils.circularLoader() : _mainBody()),
+      ),
     );
   }
 
@@ -425,7 +447,22 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    TextView(controller.products.value?.type == 1?Strings.unitPrice:
+
+                    TextView(
+                      Strings.unitPrice,
+                      style: black_14_600()
+                          ?.copyWith(color: const Color(0xff707070)),
+                    ),
+                    vGap(4.0),
+                    SelectableText(
+                        controller.products.value?.expiries != null && controller.products.value!.expiries!.isNotEmpty && controller.products.value?.expiries?.last.price != "null"
+                            ? "£ ${controller.products.value?.expiries?.last.price??"00.0"}"
+                            : "£ 00.00",
+                        style: black_14_600()
+                            ?.copyWith(color: black, fontSize: 15)),
+
+
+                    /*TextView(controller.products.value?.type == 1?Strings.unitPrice:
                       Strings.totalPrice,
                       style: black_14_600()
                           ?.copyWith(color: const Color(0xff707070)),
@@ -439,7 +476,7 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
                                 :controller.products.value?.price.toString()}"
                             : "£00.00",
                         style: black_14_600()
-                            ?.copyWith(color: black, fontSize: 15)),
+                            ?.copyWith(color: black, fontSize: 15)),*/
                   ],
                 ).paddingSymmetric(horizontal: 30),
               ),
@@ -457,6 +494,19 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     TextView(
+                      Strings.totalPrice,
+                      style: black_14_600()
+                          ?.copyWith(color: const Color(0xff707070)),
+                    ),
+                    vGap(4.0),
+                    SelectableText(
+                        controller.products.value?.price != null
+                            ? "£ ${controller.products.value?.price.toString()}"
+                            : "£00.00",
+                        style: black_14_600()
+                            ?.copyWith(color: black, fontSize: 15)),
+
+                    /*TextView(
                       Strings.supplierCode,
                       style: black_14_600()
                           ?.copyWith(color: const Color(0xff707070)),
@@ -464,7 +514,11 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
                     vGap(4.0),
                     SelectableText(controller.products.value?.supplierCode ?? Strings.nA,
                         style: black_14_600()
-                            ?.copyWith(color: black, fontSize: 15)),
+                            ?.copyWith(color: black, fontSize: 15)),*/
+
+                    // SelectableText(controller.products.value?.supplierCode ?? Strings.nA,
+                    //     style: black_14_600()
+                    //         ?.copyWith(color: black, fontSize: 15)),
 
 
                     /*TextView(getTotalPrice(),
@@ -508,17 +562,26 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
     return Theme(
       data: Theme.of(Get.context!).copyWith(dividerColor: Colors.transparent),
       child: ExpansionTile(
-        collapsedIconColor: Colors.transparent,
-        iconColor: Colors.transparent,
-        childrenPadding:
-            const EdgeInsets.only(left: 20.0, right: 20.0, bottom: 20.0),
+        controller: controller.expansionTileController,
+        iconColor: primaryColor,
+        //iconColor: Colors.transparent,
+       // collapsedIconColor: Colors.transparent,
+        initiallyExpanded: true,
+        childrenPadding: const EdgeInsets.only(left: 20.0, right: 20.0, bottom: 20.0),
         title: Row(
           children: [
-            Icon(
-              Icons.keyboard_arrow_down,
-              color: primaryColor,
-            ),
-            hGap(8.0),
+            // Visibility(
+            //   visible: controller.expansionTileController.isExpanded,
+            //   replacement: Icon(
+            //     Icons.keyboard_arrow_up,
+            //     color: primaryColor,
+            //   ),
+            //   child: Icon(
+            //     Icons.keyboard_arrow_down,
+            //     color: primaryColor,
+            //   ),
+            // ),
+            //hGap(8.0),
             Text(
               Strings.showMoreDetails,
               style: black_15_700()?.copyWith(color: primaryColor),
@@ -529,33 +592,32 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
         children: <Widget>[
           Row(
             children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TextView(
-                      Strings.storage,
-                      style: black_14_600()
-                          ?.copyWith(color: const Color(0xff707070)),
-                    ),
-                    vGap(4.0),
-                    SelectableText(
-                        controller.products.value?.storage?.name ?? Strings.nA,
-                        style: black_14_600()?.copyWith(color: black, fontSize: 15)),
-                  ],
-                ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextView(
+                    Strings.storage,
+                    style: black_14_600()
+                        ?.copyWith(color: const Color(0xff707070)),
+                  ),
+                  vGap(4.0),
+                  SelectableText(
+                      controller.products.value?.storage?.name ?? Strings.nA,
+                      style: black_14_600()?.copyWith(color: black, fontSize: 15)),
+                ],
               ),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     TextView(
-                      Strings.manufacturer,
+                      Strings.supplierCode,
                       style: black_14_600()
                           ?.copyWith(color: const Color(0xff707070)),
                     ),
                     vGap(4.0),
-                    SelectableText(controller.products.value?.manufacturer ?? Strings.nA, style: black_14_600()?.copyWith(color: black, fontSize: 15)),
+                    SelectableText(controller.products.value?.supplierCode ?? Strings.nA, style: black_14_600()?.copyWith(color: black, fontSize: 15)),
+                  //  SelectableText(controller.products.value?.manufacturer ?? Strings.nA, style: black_14_600()?.copyWith(color: black, fontSize: 15)),
                   ],
                 ),
               ),
@@ -579,21 +641,19 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
                 ),
               ),
               const Spacer(),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    TextView(
-                      Strings.orderDate,
-                      style: black_14_600()
-                          ?.copyWith(color: const Color(0xff707070)),
-                    ),
-                    vGap(4.0),
-                    SelectableText(
-                        controller.products.value?.orderedAt != null ? controller.convertDateFormat(controller.products.value?.orderedAt ?? "") : Strings.nA,
-                        style: black_14_600()?.copyWith(color: black, fontSize: 15)),
-                  ],
-                ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  TextView(
+                    Strings.orderDate,
+                    style: black_14_600()
+                        ?.copyWith(color: const Color(0xff707070)),
+                  ),
+                  vGap(4.0),
+                  SelectableText(
+                      controller.products.value?.orderedAt != null ? controller.convertDateFormat(controller.products.value?.orderedAt ?? "") : Strings.nA,
+                      style: black_14_600()?.copyWith(color: black, fontSize: 15)),
+                ],
               ),
             ],
           ),
@@ -601,6 +661,7 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
 
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
 
               Column(
@@ -611,21 +672,30 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
                   ),
                   vGap(4.0),
                   if (controller.products.value?.expiries?.isEmpty ?? true)
-                    TextView(Strings.nA, style: black_14_600()?.copyWith(color: black, fontSize: 15)),
+                    Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 2.0),
+                        margin: const EdgeInsets.only(bottom: 6.0),
+                        decoration: BoxDecoration(
+                            color: Colors.grey,
+                            borderRadius: BorderRadius.circular(6.0)
+                        ),
+                        child: SelectableText(Strings.nA, style: black_14_600()?.copyWith(color: Colors.white, fontSize: 15))),
+
                   ...List.generate(
-                    controller.products.value?.expiries?.length ?? 0,
+                    controller.products.value?.expiriesWithPrice?.length ?? 0,
                         (index) => Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        controller.products.value?.expiries?[index].at  != null && controller.products.value!.expiries![index].at!.isNotEmpty ?? false?
+                        controller.products.value?.expiriesWithPrice?[index].date  != null && controller.products.value!.expiriesWithPrice![index].date!.isNotEmpty ?? false?
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 2.0),
                             margin: const EdgeInsets.only(bottom: 6.0),
                             decoration: BoxDecoration(
-                                color: controller.products.value?.expiryLevel != null ? controller.getExpiryColor(index: index, list: controller.products.value!.expiryLevel ?? []) : Colors.grey,
+                                color: controller.products.value?.expiriesWithPrice != null ? controller.getExpiryColor(index: index, list: controller.products.value!.expiriesWithPrice ?? []) : Colors.grey,
                                 borderRadius: BorderRadius.circular(6.0)
                             ),
-                            child: SelectableText("${controller.convertExpiryDateFormat(controller.products.value?.expiries?[index].at ?? Strings.nA)} ", style: black_14_600()?.copyWith(color: Colors.white, fontSize: 15))):
+                              child: SelectableText(controller.products.value?.expiriesWithPrice?[index].date ?? Strings.nA, style: black_14_600()?.copyWith(color: Colors.white, fontSize: 15))):
+                        //    child: SelectableText("${controller.convertExpiryDateFormat(controller.products.value?.expiriesWithPrice?[index].date ?? Strings.nA)} ", style: black_14_600()?.copyWith(color: Colors.white, fontSize: 15))):
                         Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 2.0),
                             margin: const EdgeInsets.only(bottom: 6.0),
@@ -635,14 +705,13 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
                             ),
                             child: SelectableText(Strings.nA, style: black_14_600()?.copyWith(color: Colors.white, fontSize: 15)))
                            // Text(Strings.nA, style: black_14_600()?.copyWith(color: Colors.black, fontSize: 15))
-
                       ],
                     ),
                   ),
                 ],
               ),
 
-              const SizedBox(width: 30),
+              const SizedBox(width: 10),
 
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -663,7 +732,7 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
                 ],
               ),
 
-              const SizedBox(width: 30),
+              const SizedBox(width: 10),
 
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -683,6 +752,24 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
                   ),
                 ],
               ),
+
+              const SizedBox(width: 10),
+
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    TextView(
+                      Strings.manufacturer,
+                      style: black_14_600()
+                          ?.copyWith(color: const Color(0xff707070)),
+                    ),
+                    vGap(4.0),
+                    SelectableText(controller.products.value?.manufacturer ?? Strings.nA, style: black_14_600()?.copyWith(color: black, fontSize: 15)),
+                  ],
+                ),
+              ),
+
             ],
           ),
 

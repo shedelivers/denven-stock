@@ -679,16 +679,25 @@ class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController> {
         itemBuilder: (context, index){
           return ListTile(
             onTap: (){
-
-              ItemDTO temp = controller.itemsPayload[0];
-              controller.itemsPayload[0] = controller.itemsPayload[index];
+              ItemDTO temp = controller.itemsPayload[index];
+              controller.itemsPayload[index] = controller.itemsPayload[index];
               controller.itemsPayload[index] = temp;
-              controller.currentPageIndex.value = 0;
+              controller.currentPageIndex.value = index;
 
 
               controller.searchValue.value = "";
               controller.isFocus.value = false;
               controller.searchFocusNode.unfocus();
+
+              // ItemDTO temp = controller.itemsPayload[0];
+              // controller.itemsPayload[0] = controller.itemsPayload[index];
+              // controller.itemsPayload[index] = temp;
+              // controller.currentPageIndex.value = 0;
+              //
+              //
+              // controller.searchValue.value = "";
+              // controller.isFocus.value = false;
+              // controller.searchFocusNode.unfocus();
             },
             title: Text(controller.searchItems[index].productName??""),
             subtitle: Text("${Strings.supplierCode}: ${controller.searchItems[index].supplierCode??""}"),

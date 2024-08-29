@@ -18,6 +18,7 @@ class InventoryProductController extends GetxController {
   late FocusNode textEditingFocusNodeQuantity;
   late FocusNode expiryDateFocusNode;
   late FocusNode priceFocusNode;
+  late ExpansionTileController expansionTileController;
 
 
   @override
@@ -29,6 +30,7 @@ class InventoryProductController extends GetxController {
     textEditingFocusNodeQuantity = FocusNode();
     expiryDateFocusNode = FocusNode();
     priceFocusNode = FocusNode();
+    expansionTileController = ExpansionTileController();
     getArguments();
     super.onInit();
   }
@@ -81,7 +83,8 @@ class InventoryProductController extends GetxController {
     return imagePath;
   }
 
-  Color getExpiryColor({required List<ExpiryLevel> list, String? date, required int index}) {
+  Color getExpiryColor({required List<ExpiriesWithPrice> list, String? date, required int index}) {
+    print('expiriesWithPrice level is; ${list[index].level}');
     int level = 0;
     if(list.isEmpty) {
       return Colors.grey;

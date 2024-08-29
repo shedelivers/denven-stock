@@ -125,7 +125,7 @@ class UpdateQuantityController extends GetxController {
     }
   }
 
-  Color getExpiryColor({required List<ExpiriesWithPrice> list, String? date, required int index}) {
+   Color getExpiryColor({required List<ExpiriesWithPrice> list, String? date, required int index}) {
     int level = 0;
     if(list.isEmpty) {
       return Colors.grey;

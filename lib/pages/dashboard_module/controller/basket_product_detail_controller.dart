@@ -4,10 +4,13 @@ import 'package:intl/intl.dart';
 
 
 class BasketProductDetailController extends GetxController {
+  ExpansionTileController expansionTileController = ExpansionTileController();
 
   Rxn<Product> products = Rxn();
   RxBool isLoading = false.obs;
   RxBool showBannerCode = true.obs;
+
+
 
   getArguments(){
     if(Get.arguments != null) {

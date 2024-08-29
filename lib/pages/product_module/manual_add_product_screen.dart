@@ -661,17 +661,19 @@ class ManualAddProductScreen extends GetView<AddProductController> {
       data: Theme.of(Get.context!).copyWith(dividerColor: Colors.transparent),
       child: Obx(
         () => ExpansionTile(
-          collapsedIconColor: Colors.transparent,
-          iconColor: Colors.transparent,
-          initiallyExpanded: controller.isExpandedMoreFields.value,
+          // collapsedIconColor: Colors.transparent,
+          // iconColor: Colors.transparent,
+          iconColor: primaryColor,
+         initiallyExpanded: true,
+         // initiallyExpanded: controller.isExpandedMoreFields.value,
           childrenPadding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
           title: Row(
             children: [
-              Icon(
-                Icons.keyboard_arrow_down,
-                color: primaryColor,
-              ),
-              hGap(8.0),
+              // Icon(
+              //   Icons.keyboard_arrow_down,
+              //   color: primaryColor,
+              // ),
+              // hGap(8.0),
               Text(
                 Strings.showMoreFields,
                 style: black_15_700()?.copyWith(color: primaryColor),

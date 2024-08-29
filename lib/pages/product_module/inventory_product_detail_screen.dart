@@ -425,7 +425,22 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    TextView(controller.products.value?.type == 1?Strings.unitPrice:
+
+                    TextView(
+                      Strings.unitPrice,
+                      style: black_14_600()
+                          ?.copyWith(color: const Color(0xff707070)),
+                    ),
+                    vGap(4.0),
+                    SelectableText(
+                        controller.products.value?.expiries != null && controller.products.value!.expiries!.isNotEmpty && controller.products.value?.expiries?.last.price != "null"
+                            ? "£ ${controller.products.value?.expiries?.last.price.toString()}"
+                            : "£00.00",
+                        style: black_14_600()
+                            ?.copyWith(color: black, fontSize: 15)),
+
+
+                    /*TextView(controller.products.value?.type == 1?Strings.unitPrice:
                       Strings.totalPrice,
                       style: black_14_600()
                           ?.copyWith(color: const Color(0xff707070)),
@@ -439,7 +454,7 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
                                 :controller.products.value?.price.toString()}"
                             : "£00.00",
                         style: black_14_600()
-                            ?.copyWith(color: black, fontSize: 15)),
+                            ?.copyWith(color: black, fontSize: 15)),*/
                   ],
                 ).paddingSymmetric(horizontal: 30),
               ),
@@ -457,6 +472,19 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     TextView(
+                      Strings.totalPrice,
+                      style: black_14_600()
+                          ?.copyWith(color: const Color(0xff707070)),
+                    ),
+                    vGap(4.0),
+                    SelectableText(
+                        controller.products.value?.price != null
+                            ? "£ ${controller.products.value?.price.toString()}"
+                            : "£00.00",
+                        style: black_14_600()
+                            ?.copyWith(color: black, fontSize: 15)),
+
+                    /*TextView(
                       Strings.supplierCode,
                       style: black_14_600()
                           ?.copyWith(color: const Color(0xff707070)),
@@ -464,7 +492,11 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
                     vGap(4.0),
                     SelectableText(controller.products.value?.supplierCode ?? Strings.nA,
                         style: black_14_600()
-                            ?.copyWith(color: black, fontSize: 15)),
+                            ?.copyWith(color: black, fontSize: 15)),*/
+
+                    // SelectableText(controller.products.value?.supplierCode ?? Strings.nA,
+                    //     style: black_14_600()
+                    //         ?.copyWith(color: black, fontSize: 15)),
 
 
                     /*TextView(getTotalPrice(),
@@ -529,33 +561,32 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
         children: <Widget>[
           Row(
             children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TextView(
-                      Strings.storage,
-                      style: black_14_600()
-                          ?.copyWith(color: const Color(0xff707070)),
-                    ),
-                    vGap(4.0),
-                    SelectableText(
-                        controller.products.value?.storage?.name ?? Strings.nA,
-                        style: black_14_600()?.copyWith(color: black, fontSize: 15)),
-                  ],
-                ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextView(
+                    Strings.storage,
+                    style: black_14_600()
+                        ?.copyWith(color: const Color(0xff707070)),
+                  ),
+                  vGap(4.0),
+                  SelectableText(
+                      controller.products.value?.storage?.name ?? Strings.nA,
+                      style: black_14_600()?.copyWith(color: black, fontSize: 15)),
+                ],
               ),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     TextView(
-                      Strings.manufacturer,
+                      Strings.supplierCode,
                       style: black_14_600()
                           ?.copyWith(color: const Color(0xff707070)),
                     ),
                     vGap(4.0),
-                    SelectableText(controller.products.value?.manufacturer ?? Strings.nA, style: black_14_600()?.copyWith(color: black, fontSize: 15)),
+                    SelectableText(controller.products.value?.supplierCode ?? Strings.nA, style: black_14_600()?.copyWith(color: black, fontSize: 15)),
+                  //  SelectableText(controller.products.value?.manufacturer ?? Strings.nA, style: black_14_600()?.copyWith(color: black, fontSize: 15)),
                   ],
                 ),
               ),
@@ -601,6 +632,7 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
 
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
 
               Column(
@@ -642,7 +674,7 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
                 ],
               ),
 
-              const SizedBox(width: 30),
+              const SizedBox(width: 10),
 
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -663,7 +695,7 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
                 ],
               ),
 
-              const SizedBox(width: 30),
+              const SizedBox(width: 10),
 
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -683,6 +715,24 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
                   ),
                 ],
               ),
+
+              const SizedBox(width: 10),
+
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    TextView(
+                      Strings.manufacturer,
+                      style: black_14_600()
+                          ?.copyWith(color: const Color(0xff707070)),
+                    ),
+                    vGap(4.0),
+                    SelectableText(controller.products.value?.manufacturer ?? Strings.nA, style: black_14_600()?.copyWith(color: black, fontSize: 15)),
+                  ],
+                ),
+              ),
+
             ],
           ),
 

@@ -52,6 +52,7 @@ const String barIcon = "assets/icons/bar.png";
 const String blankImageIcon = "assets/icons/blankImageIcon.png";
 const String addBasketIcon = "assets/icons/add_basket.png";
 const String BasketIcon = "assets/icons/basket.png";
+const String imageIcon = "assets/icons/image_icon.png";
 
 
 

@@ -37,6 +37,7 @@ class ApiConstants {
   static String returnReport = "$_stagingBaseURI/ReturnItemReport";
   static String report = "$_stagingBaseURI/reports";
   static String inAppPurchase = "$_stagingBaseURI/InAppPurchase";
+  static String extraItem = "$_stagingBaseURI/Implants";
 
   //Other Constants
   static String id = "id";

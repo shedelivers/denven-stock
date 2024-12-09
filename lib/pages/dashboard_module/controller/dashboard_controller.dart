@@ -1,5 +1,7 @@
 import 'package:denvin_stock/exports.dart';
 
+import '../../../components/app_update.dart';
+
 class DashboardController extends GetxController {
 
   RxInt currentIndex = 0.obs;
@@ -14,12 +16,21 @@ class DashboardController extends GetxController {
 
   Rxn<ShimmerLoaderState> showSummeryShimmer = Rxn<ShimmerLoaderState>(ShimmerLoaderState.initial);
   Rxn<ShimmerLoaderState> showBasketShimmer = Rxn<ShimmerLoaderState>(ShimmerLoaderState.initial);
+
+  Future<void> checkAppUpdate () async{
+    String appVersion = await getAppVersion();
+    String storeVersion = await getStoreVersion()??"1.0.0";
+    debugPrint('App update info: appVersion: $appVersion || storeVersion: $storeVersion');
+    appCheck(appVersion: appVersion, storeVersion: storeVersion);
+  }
+
   @override
   void onInit() {
     _productApiProvider  = ProductApiProvider();
     getSummary();
     getBasketCount();
     getArrivedCount();
+    checkAppUpdate ();
     super.onInit();
   }
   void updateIndex(int index) {

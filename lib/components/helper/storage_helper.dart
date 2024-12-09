@@ -15,6 +15,7 @@ class StorageHelper {
   static const String _isLoggedIn = "isLoggedIn";
   static const String _clinicId = "clinicId";
   static const String _clinicCode = "clinicCode";
+  static const String _appUpdateTime = "app_update_time";
   static const JsonDecoder _decoder = JsonDecoder();
   static const JsonEncoder _encoder = JsonEncoder.withIndent('  ');
   static final StorageHelper _singleton = StorageHelper._internal();
@@ -108,6 +109,10 @@ class StorageHelper {
   void saveClinicCode(int? value){
     _savePref(_clinicCode, value);
   }
+
+  void setAppUpdateTime(int dateTime){_savePref(_appUpdateTime, dateTime);}
+  int getAppUpdateTime(){return _getPref(_appUpdateTime)??0;}
+
 
   UserModal? getUserModel() {
     String? user = _getPref(_userModel);

@@ -1,6 +1,6 @@
 import 'package:denvin_stock/exports.dart';
 import 'package:denvin_stock/pages/dashboard_module/policy_pages.dart';
-
+import '../../components/app_update.dart';
 import '../../components/conformation_popup.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -116,7 +116,9 @@ class SettingsScreen extends StatelessWidget {
           ),
           _divider(),
           vGap (20.0),
-          Obx(()=> Text("V ${loginController.appVersion}",style: const TextStyle(color: Colors.grey),)),
+          Obx(()=> GestureDetector(
+              onTap: (){},
+              child: Text("V ${loginController.appVersion}",style: const TextStyle(color: Colors.grey),))),
         ],
       ),
     );

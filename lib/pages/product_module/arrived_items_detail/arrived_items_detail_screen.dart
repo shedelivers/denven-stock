@@ -1,14 +1,17 @@
+
+
 import 'package:denvin_stock/exports.dart';
+import 'package:denvin_stock/network/modal/extra_item_model.dart';
 import 'package:denvin_stock/pages/product_module/choose_storage_view.dart';
 import 'package:denvin_stock/pages/product_module/controller/arrived_items_detail_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
-class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController> {
-
+class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController>{
   ArrivedItemsDetailScreen({super.key}){
-   controller.getArguments();
+    controller.getArguments();
   }
 
   @override
@@ -43,6 +46,14 @@ class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController> {
                 ],
               ).marginSymmetric(horizontal: 20.0) : const SizedBox()),
           ),
+
+          // body: GetBuilder<ArrivedItemsDetailController>(
+          //   builder: (_) {
+          //     return controller.isLoading == false
+          //         ? Utils.circularLoader()
+          //         : _mainBody();
+          //   },
+          // ),
           body: Obx(() => controller.isLoading.value ? Utils.circularLoader() : _mainBody())
       ),
     );
@@ -80,6 +91,7 @@ class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+
                 Expanded(
                   child: CarouselSlider(
                     carouselController: controller.sliderController,
@@ -92,7 +104,8 @@ class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController> {
                       enableInfiniteScroll: false,
                       viewportFraction: 1.0,
                       onPageChanged: (index, reason) {
-                        controller.currentPageIndex.value = index ;
+                        print('index ==> ${index}');
+                        controller.currentPageIndex.value = index;
                       },
                     ),
                     items: [
@@ -105,6 +118,16 @@ class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController> {
                     ],
                   ),
                 ),
+
+                // Expanded(
+                //   child: PageView.builder(
+                //     itemCount: controller.items.length,
+                //       physics: const NeverScrollableScrollPhysics(),
+                //       itemBuilder: (context, index){
+                //         return Form(key: controller.formKeys[index], child: _pageBody());
+                //       }),
+                // ),
+
                 vGap(10),
                 Obx(
                       ()=> LinearPercentIndicator(
@@ -136,12 +159,61 @@ class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController> {
                               children: [
                                 Expanded(
                                   child: controller.currentPageIndex.value != 0 ? AppButton(onTap: (){
+                                    controller.currentPageIndex.value--;
                                     controller.sliderController.previousPage();
+                                   // controller.sliderController.animateToPage(controller.currentPageIndex.value--);
                                   }, textColor: primaryColor,backgroundColor: Colors.white,rippleColor: Colors.grey.withOpacity(0.2), borderColor: primaryColor,borderWidth: 1,
                                     buttonText: "Previous Product"): const SizedBox(),
                                 ),
                                 hGap(10),
                                 Expanded(
+                                  child: (controller.currentPageIndex.value + 1) != controller.itemsPayload.length ?
+                                  AppButton(
+                                      onTap: () {
+
+                                      //  print('valll => ${controller.itemsPayload[controller.currentPageIndex.value].quantity}');
+
+
+                                        print('totalPage => ${controller.itemsPayload.length}');
+                                        print('currentPagePage => ${controller.currentPageIndex.value}');
+                                        print('items length => ${controller.items.length}');
+                                        print('formKeys length => ${controller.formKeys.length}');
+
+                                        // if (controller.formKeys[controller.currentPageIndex.value].currentState?.validate() ?? false) {
+                                        //   controller.sliderController.nextPage();
+                                        // }
+                                        //
+
+
+
+
+                                        controller.sliderController.nextPage();
+
+                                        // if(controller.formKeys[controller.currentPageIndex.value].currentState!.validate()){
+                                        //  // controller.currentPageIndex.value++;
+                                        //   controller.sliderController.nextPage();
+                                        //
+                                        //
+                                        //     print('plus one => ${controller.currentPageIndex.value}');
+                                        // }
+
+
+                                       // controller.sliderController.nextPage();
+                                       // controller.sliderController.animateToPage(controller.currentPageIndex.value++);
+
+                                      }, textColor: primaryColor,backgroundColor: Colors.white,rippleColor: Colors.grey.withOpacity(0.2), borderColor: primaryColor,borderWidth: 1,
+                                      buttonText: "Next Product") :
+                                  AppButton(
+                                      onTap: () async{
+                                        if(controller.formKeys[controller.currentPageIndex.value].currentState!.validate()){
+                                          var value = await addExtraDialog();
+                                          print('Data ==> ${controller.selectedItem.toString()}');
+                                        }
+                                      },
+                                      textColor: primaryColor,backgroundColor: Colors.white,rippleColor: Colors.grey.withOpacity(0.2), borderColor: primaryColor,borderWidth: 1,
+                                      buttonText: "Add Extra Item"),
+                                ),
+                                /*Expanded(
                                   child: (controller.currentPageIndex.value + 1) != controller.itemsPayload.length ?
                                   AppButton(
                                       onTap: () {
@@ -153,7 +225,7 @@ class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController> {
                                         }
                                       }, textColor: primaryColor,backgroundColor: Colors.white,rippleColor: Colors.grey.withOpacity(0.2), borderColor: primaryColor,borderWidth: 1,
                                       buttonText: "Next Product") : const SizedBox(),
-                                ),
+                                ),*/
                               ],
                             ).marginSymmetric(horizontal: 20.0),),
                             vGap(10.0)
@@ -680,9 +752,20 @@ class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController> {
           return ListTile(
             onTap: (){
               ItemDTO temp = controller.itemsPayload[index];
-              controller.itemsPayload[index] = controller.itemsPayload[index];
-              controller.itemsPayload[index] = temp;
-              controller.currentPageIndex.value = index;
+
+              //
+              // controller.itemsPayload[index] = temp;
+              // controller.currentPageIndex.value = index;
+
+              for (int i = 0; i < controller.itemsPayload.length; i++) {
+                if (controller.itemsPayload[i].id == controller.searchItems[index].id) {
+                  temp = controller.itemsPayload[i];
+                  controller.currentPageIndex.value = i;
+                  controller.itemsPayload[index] = controller.itemsPayload[i];
+                }
+              }
+
+
 
 
               controller.searchValue.value = "";
@@ -706,8 +789,244 @@ class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController> {
       ),
     );
   }
-}
 
+
+
+
+  Future<dynamic> addExtraDialog() {
+    return Get.dialog(
+      Container(
+        alignment: Alignment.center,
+        child: GetBuilder<ArrivedItemsDetailController>(
+            builder: (controllerArrivedItemsDetailController) {
+            return StatefulBuilder(
+                builder: (context, setState) {
+                return Container(
+                    height: Get.height * 0.8,
+                    width: Get.width * 0.8,
+                    padding: const EdgeInsets.symmetric(vertical: margin_10),
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(radius_20)),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Row(
+                          children: [
+                            TextView(
+                              "Add Extra Item",
+                              style: black_17_700()?.copyWith(color: primaryColor),
+                            ).marginSymmetric(vertical: margin_15, horizontal: margin_15),
+                            const Spacer(),
+                            IconButton(onPressed: ()=> Get.back(), icon: const Icon(Icons.close))
+                          ],
+                        ).marginSymmetric(horizontal: 10.0),
+                        Expanded(
+                            child: Column(
+                              children: [
+                                TextView("Have you received any extra items that you had not ordered? Add such products.",style: const TextStyle(color: Colors.grey),maxLine: 3,).paddingSymmetric(horizontal: 20.0),
+
+                                CustomTextFieldV3(
+                                  hintText: "Name/Product Code/Manufacture",
+                                  hintStyle: const TextStyle(color: Colors.grey),
+                                  onFieldSubmitted: (String? value) =>
+                                      FocusScope.of(Get.context!).unfocus(),
+                                  onChanged: (value) {
+                                    if(value.isNotEmpty){
+                                      controllerArrivedItemsDetailController.getExtraItems(value);
+                                    }
+                                  },
+                                  suffix: IconButton(
+                                    onPressed: () {},
+                                    icon: imageAsset(search, height: 16.0),
+                                  ),
+                                ).marginSymmetric(horizontal: margin_20, vertical: margin_10),
+
+                                Expanded(
+                                  child: ListView.builder(
+                                      shrinkWrap: true,
+                                      padding: const EdgeInsets.symmetric(vertical: margin_0),
+                                      itemCount: controllerArrivedItemsDetailController.extraItems.value?.data?.length??0,
+                                      itemBuilder: (context, index) {
+                                        final data = controllerArrivedItemsDetailController.extraItems.value?.data?[index];
+                                        return ListTile(
+                                          onTap: ()async{
+
+                                            Get.back();
+                                          var value = await  extraProduct(
+                                              id: data?.externalProductId??0,
+                                              supplierCode: data?.supplierCode??"",
+                                              supplierName: data?.name??"",);
+
+                                         // Get.back(result: value);
+                                          print('Data 2 ==> ${value.toString()}');
+
+
+                                          },
+                                          title: Text(data?.name??""),
+                                          trailing: Container(
+                                              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                                              decoration: BoxDecoration(
+                                                  color: primaryColor,
+                                                  borderRadius: BorderRadius.circular(6)
+                                              ),
+                                              child: Text("Add", style: TextStyle(color: whiteColor, fontWeight: FontWeight.w500),)),
+                                        );
+                                      }),
+                                ),
+                              ],
+                            )),
+                      ],
+                    ));
+              }
+            );
+          }
+        ),
+      ),
+    );
+  }
+
+
+  Future<dynamic> extraProduct({required String supplierCode, required String supplierName, required int id}) {
+    TextEditingController supplierCodeController = TextEditingController(text: supplierCode);
+    TextEditingController supplierNameController = TextEditingController(text: supplierName);
+    TextEditingController unitPriceController = TextEditingController();
+    TextEditingController orderedQuantityController = TextEditingController();
+    return Get.dialog(
+      Container(
+        alignment: Alignment.center,
+        child: GetBuilder<ArrivedItemsDetailController>(
+            builder: (controllerArrivedItemsDetailController) {
+              return StatefulBuilder(
+                  builder: (context, setState) {
+                    return Container(
+                        height: Get.height * 0.6,
+                        width: Get.width * 0.8,
+                        padding: const EdgeInsets.symmetric(vertical: margin_10),
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(radius_20)),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Row(
+                              children: [
+                                TextView(
+                                  "Extra Products",
+                                  style: black_17_700()?.copyWith(color: primaryColor),
+                                ).marginSymmetric(vertical: margin_15, horizontal: margin_15),
+                                const Spacer(),
+                                IconButton(onPressed: ()=> Get.back(), icon: const Icon(Icons.close))
+                              ],
+                            ).marginSymmetric(horizontal: 10.0),
+                            Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                TextView("Supplier Code",style: const TextStyle(color: Colors.grey),maxLine: 3,).paddingSymmetric(horizontal: 20.0),
+                                CustomTextFieldV3(
+                                  controller: supplierCodeController,
+                                  hintText: "EnterSupplier Code",
+                                  hintStyle: const TextStyle(color: Colors.grey),
+                                  onFieldSubmitted: (String? value) =>
+                                      FocusScope.of(Get.context!).unfocus(),
+                                ).marginSymmetric(horizontal: margin_20, vertical: margin_10),
+
+                                TextView("Supplier Name",style: const TextStyle(color: Colors.grey),maxLine: 3,).paddingSymmetric(horizontal: 20.0),
+                                CustomTextFieldV3(
+                                  controller: supplierNameController,
+                                  hintText: "Enter Supplier Name",
+                                  hintStyle: const TextStyle(color: Colors.grey),
+                                  onFieldSubmitted: (String? value) =>
+                                      FocusScope.of(Get.context!).unfocus(),
+                                ).marginSymmetric(horizontal: margin_20, vertical: margin_10),
+
+                                TextView("Unit Price",style: const TextStyle(color: Colors.grey),maxLine: 3,).paddingSymmetric(horizontal: 20.0),
+
+                                CustomTextFieldV3(
+                                  controller: unitPriceController,
+                                  hintText: "Enter Unit Price",
+                                  textInputType: TextInputType.number,
+                                  hintStyle: const TextStyle(color: Colors.grey),
+                                  onFieldSubmitted: (String? value) =>
+                                      FocusScope.of(Get.context!).unfocus(),
+                                ).marginSymmetric(horizontal: margin_20, vertical: margin_10),
+
+
+                                TextView("Ordered Quantity",style: const TextStyle(color: Colors.grey),maxLine: 3,).paddingSymmetric(horizontal: 20.0),
+
+                                CustomTextFieldV3(
+                                  controller: orderedQuantityController,
+                                  hintText: "Enter Ordered Quantity",
+                                  textInputType: TextInputType.number,
+                                  hintStyle: const TextStyle(color: Colors.grey),
+                                  onFieldSubmitted: (String? value) =>
+                                      FocusScope.of(Get.context!).unfocus(),
+                                ).marginSymmetric(horizontal: margin_20, vertical: margin_10),
+
+
+                                const SizedBox(height: margin_20,),
+
+                                AppButton(
+                                    buttonText: "Add",
+                                    isLoading: controller.isLoading.value,
+                                    buttonColor: primaryColor,
+                                    onTap: () {
+                                      Map<String, dynamic> data = {
+                                        "id": id,
+                                        "name": supplierNameController.text,
+                                        "supplierCode": supplierCodeController.text,
+                                        "unitPrice":double.parse(unitPriceController.text),
+                                        "orderedQuantity": int.parse(orderedQuantityController.text),
+                                        "quantity": int.parse(orderedQuantityController.text),
+                                      };
+                                      controller.selectedItem = data;
+                                      controller.update();
+                                      print('controller.selectedItem.value=> ${controller.selectedItem}');
+
+                                      controller.isLoading.value = true;
+                                      Future.delayed(const Duration(seconds: 1), () async {
+                                       // controller.extraItems.value!.data = [];
+                                        controller.addItem(
+                                          isNew: true,
+                                          id: controller.selectedItem['id'],
+                                          name:  controller.selectedItem['name'],
+                                          supplierCode:  controller.selectedItem['supplierCode'],
+                                          unitPrice:  controller.selectedItem['unitPrice'],
+                                          orderedQuantity:  controller.selectedItem['orderedQuantity'],
+                                          quantity:  controller.selectedItem['quantity'],);
+                                      });
+
+
+                                      // controller.isLoading.value = true;
+                                      // Future.delayed(const Duration(seconds: 1), () async {
+                                      //   controller.extraItems.value!.data = [];
+                                      //   controller.addItem(
+                                      //       isNew: true,
+                                      //       id: id,
+                                      //       name: supplierNameController.text,
+                                      //       supplierCode: supplierCodeController.text,
+                                      //       unitPrice: double.parse(unitPriceController.text),
+                                      //       orderedQuantity: int.parse(orderedQuantityController.text),
+                                      //       quantity: int.parse(orderedQuantityController.text),);
+                                      // });
+
+                                    }).marginSymmetric(horizontal: margin_20)
+                              ],
+                            ),
+                          ],
+                        ));
+                  }
+              );
+            }
+        ),
+      ),
+    );
+  }
+
+}
 
 class QuantityValidator {
   final int totalQuantity;
@@ -739,3 +1058,6 @@ class QuantityValidator {
     return null; // No errors
   }
 }
+
+
+

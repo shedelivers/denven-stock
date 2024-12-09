@@ -6,6 +6,8 @@ import 'package:dio/src/form_data.dart' as dio;
 import 'package:flutter/foundation.dart';
 import 'package:denvin_stock/exports.dart';
 
+import '../modal/extra_item_model.dart';
+
 class ProductApiProvider {
 
   late Dio _dio;
@@ -151,7 +153,10 @@ class ProductApiProvider {
 
   Future<DataResponse<PaginationResponseModal<Supplier>>> getStorage({String? search}) async {
     try {
-      Response response = await _dio.get("${ApiConstants.storage}/$clinicId/false/true", options: Injector.getHeaderToken(), queryParameters: {
+      // move to storage
+     // Response response = await _dio.get("${ApiConstants.storage}/$clinicId/false/true", options: Injector.getHeaderToken(), queryParameters: {
+
+      Response response = await _dio.get("${ApiConstants.storage}/$clinicId/false/false", options: Injector.getHeaderToken(), queryParameters: {
           "pageSize" : 100,
           "page": 1,
             if((search??"").isNotEmpty)
@@ -692,7 +697,7 @@ class ProductApiProvider {
   Future<DataResponse<ArrivedItemModal>> getOrderById({int? productId}) async {
     try {
       Response response = await _dio.get("${ApiConstants.inventoryStock}/$clinicId/ArrivedOrderById/$productId", options: Injector.getHeaderToken(),queryParameters: {
-        "AllItems" : 1,
+        "items" : 1,
       });
       var dataResponse = DataResponse<ArrivedItemModal>.fromJson(response.data, (data) => ArrivedItemModal.fromJson(data as Map<String, dynamic>));
       return dataResponse;
@@ -712,8 +717,38 @@ class ProductApiProvider {
     } catch (e) {
       return DataResponse(error: e.toString(), successful: false);
     }
-
   }
+
+
+  Future<DataResponse<ExtraItemModel>> getExtraItems({required String searchText, required String externalSupplierId,required String internalSupplierId,}) async {
+    Map<String, dynamic>? data = {
+      "ExternalSupplierId" : externalSupplierId,
+      "InternalSupplierId" : internalSupplierId,
+      "Search" : searchText,
+    };
+
+    try {
+      Response response = await _dio.post("${ApiConstants.extraItem}/$clinicId/search/", options: Injector.getHeaderToken(),data: data);
+      var dataResponse = DataResponse<ExtraItemModel>.fromJson(response.data, (data) => ExtraItemModel.fromJson(data as Map<String, dynamic>));
+      return dataResponse;
+    } on DioException catch (error) {
+      if (error.type == DioExceptionType.connectionTimeout) {
+        return DataResponse(error: "Connection Timeout Exception", successful: false);
+      } else if (error.type == DioExceptionType.receiveTimeout) {
+        return DataResponse(error: "Receive Timeout Exception", successful: false);
+      } else {
+        final response = error.response?.data;
+        if (response != null && response is Map<String, dynamic>) {
+          return DataResponse.fromJson(response, (data) => ExtraItemModel.fromJson(data as Map<String, dynamic>));
+        } else {
+          return DataResponse(error: error.toString(), successful: false);
+        }
+      }
+    } catch (e) {
+      return DataResponse(error: e.toString(), successful: false);
+    }
+  }
+
 
   Future<DataResponse<ProductModal>> getInventoryProductById({int? productId}) async {
     try {

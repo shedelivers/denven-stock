@@ -1,5 +1,8 @@
+import 'package:denvin_stock/components/common_webview_screen.dart';
 import 'package:denvin_stock/exports.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class InventoryProductDetailScreen extends GetView<InventoryProductController> {
   final formGlobalKey = GlobalKey<FormState>();
@@ -220,9 +223,28 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          TextView(
-            Strings.product,
-            style: black_14_600()?.copyWith(color: const Color(0xff707070)),
+          Row(
+            children: [
+              TextView(
+                Strings.product,
+                style: black_14_600()?.copyWith(color: const Color(0xff707070)),
+              ),
+
+              Visibility(
+                visible: controller.products.value?.link != null && controller.products.value?.link != "",
+                child: GestureDetector(
+                  onTap: (){
+                    Get.to(() => CommonWebViewScreen(
+                        url: controller.products.value?.link??"",
+                        title: Strings.product)
+                    );
+                  },
+                  child: const SizedBox(
+                      width: 40,
+                      child: Center(child: Icon(CupertinoIcons.link, color: Color(0xff707070),size: 20,))),
+                ),
+              )
+            ],
           ),
           vGap(4.0),
           SelectableText(controller.products.value?.name ?? Strings.nA,style: black_14_600()?.copyWith(color: black, fontSize: 15)),

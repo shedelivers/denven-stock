@@ -1,7 +1,10 @@
 import 'package:denvin_stock/exports.dart';
+import 'package:upgrader/upgrader.dart';
 
 CustomLoader customLoader = CustomLoader();
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+ // await Upgrader.clearSavedSettings();
   await StorageHelper.init();
   runApp(const MyApp());
 }

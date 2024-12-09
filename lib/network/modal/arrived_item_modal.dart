@@ -3,6 +3,7 @@ import 'package:denvin_stock/exports.dart';
 class ArrivedItemModal   extends Serializable {
   int? id;
   int? supplierId;
+  int? extSupplierId;
   int? clinicId;
   int? enqueryId;
   String? orderCode;
@@ -38,6 +39,7 @@ class ArrivedItemModal   extends Serializable {
   ArrivedItemModal(
       {this.id,
         this.supplierId,
+        this.extSupplierId,
         this.clinicId,
         this.supplierName,
         this.notAddedItemToStock,
@@ -74,6 +76,7 @@ class ArrivedItemModal   extends Serializable {
   ArrivedItemModal.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     supplierId = json['supplierId'];
+    extSupplierId = json['extSupplierId'];
     clinicId = json['clinicId'];
     supplierName = json['supplierName'];
     enqueryId = json['enqueryId'];
@@ -131,6 +134,7 @@ class ArrivedItemModal   extends Serializable {
     final Map<String, dynamic> data =<String, dynamic>{};
     data['id'] = id;
     data['supplierId'] = supplierId;
+    data['extSupplierId'] = extSupplierId;
     data['clinicId'] = clinicId;
     data['enqueryId'] = enqueryId;
     data['orderCode'] = orderCode;

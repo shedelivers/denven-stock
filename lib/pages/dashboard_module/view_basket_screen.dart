@@ -64,7 +64,7 @@ class ViewBasketScreen extends GetView<ViewBasketController>{
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
-                              child: basketItem.product?.productImage != null ? ClipRRect(borderRadius: BorderRadius.circular(10.0),child: ShimmerImage(url: "${ApiConstants.baseUrlForImage}/${extractImagePath(basketItem.product?.productImage ?? "")}",fit: BoxFit.cover)) : imageAsset(fileIcon),
+                              child: basketItem.product?.productImage != null ? ClipRRect(borderRadius: BorderRadius.circular(10.0),child: ShimmerImage(url: "${ApiConstants.baseUrlForImage}/${extractImagePath(basketItem.product?.productImage ?? "")}",fit: BoxFit.cover)) : imageAsset(imageIcon),
                             ),
                             hGap(20.0),
                             Expanded(

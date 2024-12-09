@@ -461,7 +461,7 @@ class ScanArrivedItemsScreen extends GetView<ScanArrivedItemsController> {
                               border: Border.all(
                                   width: 1, color: textFieldBorderColor),
                             ),
-                            child: imageAsset(fileIcon),
+                            child: imageAsset(imageIcon),
                             // product.productImage != null
                             //     ? ClipRRect(
                             //     borderRadius: BorderRadius.circular(10.0),

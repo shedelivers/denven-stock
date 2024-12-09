@@ -34,7 +34,7 @@ class ProductCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10.0),
                 ),
-                child: imagePath != null ? ClipRRect(borderRadius: BorderRadius.circular(10.0),child: ShimmerImage(url: imagePath ?? "",fit: BoxFit.cover)) : imageAsset(fileIcon),
+                child: imagePath != null ? ClipRRect(borderRadius: BorderRadius.circular(10.0),child: ShimmerImage(url: imagePath ?? "",fit: BoxFit.cover)) : imageAsset(imageIcon),
               ),
               hGap(10.0),
               Expanded(

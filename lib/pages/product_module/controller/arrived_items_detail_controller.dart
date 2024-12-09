@@ -2,8 +2,11 @@ import 'dart:collection';
 import 'dart:convert';
 
 import 'package:denvin_stock/components/custom_image.dart';
+import 'package:denvin_stock/components/utils/print_value.dart';
 import 'package:denvin_stock/exports.dart';
 import 'package:intl/intl.dart';
+
+import '../../../network/modal/extra_item_model.dart';
 
 class ArrivedItemsDetailController extends GetxController {
 
@@ -32,6 +35,11 @@ class ArrivedItemsDetailController extends GetxController {
   RxBool isFocus = false.obs;
 
   final formKey = GlobalKey<FormState>();
+
+  Rxn<ExtraItemModel> extraItems = Rxn();
+  RxBool extraItemsLoading = false.obs;
+  Map<String, dynamic> selectedItem = <String, dynamic>{};
+
 
   @override
   void onInit() {
@@ -106,7 +114,7 @@ class ArrivedItemsDetailController extends GetxController {
       progress = 100 / totalLength;
     }
     progressValue.value = "${progress.toStringAsFixed(2)}%";
-    update();
+   // update();
   }
 
   getExpiryDate(int index) async {
@@ -145,7 +153,8 @@ class ArrivedItemsDetailController extends GetxController {
           products.value = model;
           items.value = model?.items ?? [];
           for(int i = 0; i < items.length ; i++){
-            itemsPayload.add(ItemDTO(
+            itemsPayload.add(
+                ItemDTO(
               isNew: false,
               id: items[i].id,
               name: items[i].productName,
@@ -171,6 +180,8 @@ class ArrivedItemsDetailController extends GetxController {
               ));
             }
           }
+          print(jsonEncode(items));
+          print(jsonEncode(itemsPayload));
           calculateProgress(itemsPayload.length, currentPageIndex.value);
           update();
         } else {
@@ -260,7 +271,11 @@ class ArrivedItemsDetailController extends GetxController {
           ));
         }
       }
+
       Map<String, dynamic> data = {"arrivedOrderRequest" : payload};
+
+      printValue(tag: "arrivedOrderRequest PayLoad:", jsonEncode(payload));
+
       isLoading.value = true;
       DataResponse response = await _productApiProvider.submitArrivedItems(orderId: products.value?.id.toString(),data: data);
       isLoading.value = false;
@@ -290,5 +305,85 @@ class ArrivedItemsDetailController extends GetxController {
     }else{
       searchItems = items;
     }
+  }
+
+
+
+  getExtraItems(String searchText) async {
+    if (await Utils.hasNetwork()) {
+      extraItemsLoading.value = true;
+      DataResponse<ExtraItemModel> response = await _productApiProvider.getExtraItems(
+          searchText: searchText,
+          externalSupplierId: products.value?.extSupplierId.toString()??"",
+          internalSupplierId: products.value?.supplierId.toString()??"");
+      extraItemsLoading.value = false;
+      if (response.successful == false) {
+        Utils.showSnackBar(response.error ?? "Unable to get data");
+      } else {
+        if (response.response != null) {
+          var model = response.response;
+          extraItems.value = model;
+          refresh();
+        } else {
+          Utils.showSnackBar(response.error ?? "Unable to get data");
+        }
+      }
+    }
+  }
+
+
+  addItem ({
+    required bool isNew,
+    required int id,
+    required String name,
+    required supplierCode,
+    required double unitPrice,
+    required int orderedQuantity,
+    required int quantity,
+
+  }) {
+
+
+    itemsPayload.add(ItemDTO(
+      isNew: isNew,
+      id: id,
+      name: name,
+      supplierCode: supplierCode,
+      status: "Confirm",
+      unitPrice: unitPrice,
+      orderedQuantity: orderedQuantity,
+      quantity: quantity,
+      barcodes: [],
+      storages: [
+        Storages(
+        qty: quantity,
+        expiredAt: [],
+      )]
+    ));
+    storageController.add(Rxn(<TextEditingController>[TextEditingController()]));
+    expiryDateController.add(Rxn(<TextEditingController>[TextEditingController()]));
+    dynamicQuantityDateController.add(Rxn(<TextEditingController>[TextEditingController(text: quantity.toString())]));
+    storageDateFocusNode.add(Rxn(<FocusNode>[FocusNode()]));
+    expiryDateFocusNode.add(Rxn(<FocusNode>[FocusNode()]));
+    dynamicQuantityDateFocusNode.add(Rxn(<FocusNode>[FocusNode()]));
+    formKeys.add(GlobalKey<FormState>());
+    items.add(
+      Items(
+      id: id,
+      productName: name,
+      price: unitPrice,
+      quanitity: orderedQuantity,
+      supplierCode: supplierCode,
+    ));
+    print(jsonEncode(items.last));
+    print(jsonEncode(itemsPayload.last));
+  //  calculateProgress(itemsPayload.length, currentPageIndex.value);
+     isLoading.value = false;
+    refresh();
+    Get.back();
+   // currentPageIndex.value = itemsPayload.length-1;
+
+
+
   }
 }

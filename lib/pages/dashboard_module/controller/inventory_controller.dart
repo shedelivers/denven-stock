@@ -443,7 +443,7 @@ class InventoryController extends GetxController {
                                     url: extractImagePath(product.productImage ?? ""),
                                     withBaseUrl: true,
                                     thumbnail: fileIcon,
-                                    fit: BoxFit.cover)) : imageAsset(fileIcon),
+                                    fit: BoxFit.cover)) : imageAsset(imageIcon),
 
                             // imageAsset(fileIcon),
                           ),

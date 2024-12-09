@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:denvin_stock/exports.dart';
 import 'package:denvin_stock/pages/product_module/controller/choose_storage_controller.dart';
 
@@ -47,7 +49,8 @@ class ChooseStorageView extends GetView<ChooseStorageController> {
   @override
   Widget build(BuildContext context) {
     Get.put(ChooseStorageController(supplierList: selectedItem,filteredItem: filterItem));
-    return GetBuilder<ChooseStorageController>(builder: (controller) {
+    return GetBuilder<ChooseStorageController>(
+        builder: (controller) {
       return StatefulBuilder(builder: (context, setState) {
         return Column(
           children: [

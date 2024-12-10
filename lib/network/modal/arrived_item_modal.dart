@@ -32,6 +32,7 @@ class ArrivedItemModal   extends Serializable {
   double? vatRate;
   bool? vatIncluded;
   List<Items>? items;
+  List<DraftIItemModel>? draftNewItems;
   // List<Null>? changes;
   // List<Null>? comments;
   // List<Null>? emails;
@@ -68,6 +69,7 @@ class ArrivedItemModal   extends Serializable {
         this.vatRate,
         this.vatIncluded,
         this.items,
+        this.draftNewItems,
         // this.changes,
         // this.comments,
         // this.emails
@@ -114,6 +116,12 @@ class ArrivedItemModal   extends Serializable {
       items = <Items>[];
       json['items'].forEach((v) {
         items!.add(Items.fromJson(v));
+      });
+    }
+    if (json['draftNewItems'] != null) {
+      draftNewItems = <DraftIItemModel>[];
+      json['draftNewItems'].forEach((v) {
+        draftNewItems!.add(DraftIItemModel.fromJson(v));
       });
     }
     // if (json['comments'] != null) {
@@ -186,6 +194,7 @@ class Items {
   int? productId;
   double? tax;
   String? supplierCode;
+  String? supplierName;
   double? price;
   double? totalCost;
   String? createdAt;
@@ -194,6 +203,7 @@ class Items {
   bool? isHistorical;
   String? updatedAt;
   String? receivedAt;
+  DraftIItemModel? draftItems;
   dynamic discountType;
   dynamic discountValue;
   dynamic discountPrice;
@@ -220,6 +230,7 @@ class Items {
         this.productId,
         this.tax,
         this.supplierCode,
+        this.supplierName,
         this.price,
         this.totalCost,
         this.createdAt,
@@ -228,6 +239,7 @@ class Items {
         this.isHistorical,
         this.updatedAt,
         this.receivedAt,
+        this.draftItems,
         this.discountType,
         this.discountValue,
         this.discountPrice,
@@ -254,6 +266,7 @@ class Items {
     productId = json['productId'];
     tax = json['tax'];
     supplierCode = json['supplierCode'];
+    supplierName = json['supplierName'];
     price = json['price'];
     totalCost = json['totalCost'];
     createdAt = json['createdAt'];
@@ -262,6 +275,7 @@ class Items {
     isHistorical = json['isHistorical'];
     updatedAt = json['updatedAt'];
     receivedAt = json['receivedAt'];
+    draftItems = json['draftItems'] != null ? new DraftIItemModel.fromJson(json['draftItems']) : null;
     discountType = json['discountType'];
     discountValue = json['discountValue'];
     discountPrice = json['discountPrice'];
@@ -290,6 +304,7 @@ class Items {
     data['productId'] = productId;
     data['tax'] = tax;
     data['supplierCode'] = supplierCode;
+    data['supplierName'] = supplierName;
     data['price'] = price;
     data['totalCost'] = totalCost;
     data['createdAt'] =createdAt;
@@ -298,6 +313,9 @@ class Items {
     data['isHistorical'] = isHistorical;
     data['updatedAt'] = updatedAt;
     data['receivedAt'] = receivedAt;
+    if (this.draftItems != null) {
+      data['draftItems'] = this.draftItems!.toJson();
+    }
     data['discountType'] = discountType;
     data['discountValue'] = discountValue;
     data['discountPrice'] = discountPrice;
@@ -320,6 +338,121 @@ class Items {
 }
 
 
+class DraftIItemModel {
+  int? id;
+  int? minLevel;
+  int? quantity;
+  int? orderQuantity;
+  double? price;
+  String? name;
+  String? manufacturer;
+  String? type;
+  String? supplierCode;
+  String? supplier;
+  String? status;
+  bool? isNew;
+  List<Storages>? storages;
+  List<BarcodeDTO>? barcodes;
+
+  DraftIItemModel(
+      {this.id,
+        this.minLevel,
+        this.quantity,
+        this.orderQuantity,
+        this.price,
+        this.name,
+        this.manufacturer,
+        this.type,
+        this.supplierCode,
+        this.supplier,
+        this.status,
+        this.isNew,
+        this.storages,
+        this.barcodes});
+
+  DraftIItemModel.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    minLevel = json['minLevel'];
+    quantity = json['quantity'];
+    orderQuantity = json['orderQuantity'];
+    price = json['price'];
+    name = json['name'];
+    manufacturer = json['manufacturer'];
+    type = json['type'];
+    supplierCode = json['supplierCode'];
+    supplier = json['supplier'];
+    status = json['status'];
+    isNew = json['isNew'];
+    if (json['storages'] != null) {
+      storages = <Storages>[];
+      json['storages'].forEach((v) {
+        storages!.add(new Storages.fromJson(v));
+      });
+    }
+    if (json['barcodes'] != null) {
+      barcodes = <BarcodeDTO>[];
+      json['barcodes'].forEach((v) {
+        barcodes!.add(BarcodeDTO.fromJson(v));
+      });
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['minLevel'] = this.minLevel;
+    data['quantity'] = this.quantity;
+    data['orderQuantity'] = this.orderQuantity;
+    data['price'] = this.price;
+    data['name'] = this.name;
+    data['manufacturer'] = this.manufacturer;
+    data['type'] = this.type;
+    data['supplierCode'] = this.supplierCode;
+    data['supplier'] = this.supplier;
+    data['status'] = this.status;
+    data['isNew'] = this.isNew;
+    if (this.storages != null) {
+      data['storages'] = this.storages!.map((v) => v.toJson()).toList();
+    }
+    if (barcodes != null) {
+      data['barcodes'] = barcodes!.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+}
+
+class Storages {
+  int? sId;
+  int? qty;
+  String? name;
+  List<String>? expiredAt;
+
+  Storages({this.sId, this.qty, this.expiredAt, this.name});
+
+  Storages.fromJson(Map<String, dynamic> json) {
+    sId = json['sId'];
+    qty = json['qty'];
+    name = json['name'];
+    if (json['expiredAt'] != null) {
+      expiredAt = <String>[];
+      json['expiredAt'].forEach((v) {
+        expiredAt!.add(v);
+      });
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['sId'] = sId;
+    data['qty'] = qty;
+    data['name'] = name;
+    if (expiredAt != null) {
+      data['expiredAt'] = expiredAt!.map((v) => v).toList();
+    }
+    return data;
+  }
+}
+
 class ItemDTO {
   int? id;
   bool? isNew;
@@ -328,9 +461,13 @@ class ItemDTO {
   int? quantity;
   int? orderedQuantity;
   String? supplierCode;
+  String? supplier;
   double? unitPrice;
   List<Storages>? storages;
   List<BarcodeDTO>? barcodes;
+  int? minLevel;
+  String? type;
+  String? manufacturer;
 
   ItemDTO(
       {this.id,
@@ -340,18 +477,26 @@ class ItemDTO {
         this.quantity,
         this.orderedQuantity,
         this.supplierCode,
+        this.supplier,
         this.unitPrice,
+        this.type,
+        this.minLevel,
+        this.manufacturer,
         this.storages,
         this.barcodes});
 
   ItemDTO.fromJson(Map<String, dynamic> json) {
     id = json['Id'];
     isNew = json['IsNew'];
+    type = json['type'];
+    minLevel = json['minLevel'];
+    manufacturer = json['manufacturer'];
     name = json['Name'];
     status = json['Status'];
     quantity = json['Quantity'];
     orderedQuantity = json['OrderedQuantity'];
     supplierCode = json['SupplierCode'];
+    supplier = json['supplier'];
     unitPrice = json['UnitPrice'];
     if (json['storages'] != null) {
       storages = <Storages>[];
@@ -372,10 +517,14 @@ class ItemDTO {
     data['Id'] = id;
     data['IsNew'] = isNew;
     data['Name'] = name;
+    data['type'] = type;
+    data['minLevel'] = minLevel;
+    data['manufacturer'] = manufacturer;
     data['Status'] = status;
     data['Quantity'] = quantity;
     data['OrderedQuantity'] = orderedQuantity;
     data['SupplierCode'] = supplierCode;
+    data['supplier'] = supplier;
     data['UnitPrice'] = unitPrice;
     if (storages != null) {
       data['storages'] = storages!.map((v) => v.toJson()).toList();
@@ -387,34 +536,6 @@ class ItemDTO {
   }
 }
 
-class Storages {
-  int? sId;
-  int? qty;
-  List<String>? expiredAt;
-
-  Storages({this.sId, this.qty, this.expiredAt});
-
-  Storages.fromJson(Map<String, dynamic> json) {
-    sId = json['sId'];
-    qty = json['qty'];
-    if (json['expiredAt'] != null) {
-      expiredAt = <String>[];
-      json['expiredAt'].forEach((v) {
-        expiredAt!.add(v);
-      });
-    }
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['sId'] = sId;
-    data['qty'] = qty;
-    if (expiredAt != null) {
-      data['expiredAt'] = expiredAt!.map((v) => v).toList();
-    }
-    return data;
-  }
-}
 
 class BarcodeDTO {
   bool? removeAll;

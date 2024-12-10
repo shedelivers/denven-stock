@@ -6,6 +6,7 @@ import 'package:denvin_stock/components/utils/print_value.dart';
 import 'package:denvin_stock/exports.dart';
 import 'package:intl/intl.dart';
 
+import '../../../network/modal/add_to_draft_model.dart';
 import '../../../network/modal/extra_item_model.dart';
 
 class ArrivedItemsDetailController extends GetxController {
@@ -17,6 +18,7 @@ class ArrivedItemsDetailController extends GetxController {
   List<Items> searchItems = [];
   RxList<ItemDTO> itemsPayload = <ItemDTO>[].obs;
   final CarouselController sliderController = CarouselController();
+  final PageController pageController = PageController();
   List<Storages> selectedStorages = [];
   late ProductApiProvider _productApiProvider;
   RxString progressValue = "0%".obs;
@@ -149,41 +151,137 @@ class ArrivedItemsDetailController extends GetxController {
         Utils.showSnackBar(response.error ?? "Unable to get data");
       } else {
         if (response.response != null) {
+          int currentIndex = 0;
+
           var model = response.response;
           products.value = model;
           items.value = model?.items ?? [];
+          print('draft item => length: ${products.value?.draftNewItems?.length??""}');
           for(int i = 0; i < items.length ; i++){
-            itemsPayload.add(
-                ItemDTO(
-              isNew: false,
-              id: items[i].id,
-              name: items[i].productName,
-              supplierCode: items[i].supplierCode,
-              status: "Confirm",
-              unitPrice: items[i].price,
-              orderedQuantity: items[i].quanitity,
-              quantity: items[i].quanitity,
-              barcodes: [],
-            ));
-            storageController.add(Rxn(<TextEditingController>[TextEditingController()]));
-            expiryDateController.add(Rxn(<TextEditingController>[TextEditingController()]));
-            dynamicQuantityDateController.add(Rxn(<TextEditingController>[TextEditingController(text: (items[i].quanitity ?? 0).toString())]));
-            storageDateFocusNode.add(Rxn(<FocusNode>[FocusNode()]));
-            expiryDateFocusNode.add(Rxn(<FocusNode>[FocusNode()]));
-            dynamicQuantityDateFocusNode.add(Rxn(<FocusNode>[FocusNode()]));
-            formKeys.add(GlobalKey<FormState>());
-            if(itemsPayload[i].storages == null){
-              itemsPayload[i].storages = [];
-              itemsPayload[i].storages?.add(Storages(
-                qty: items[i].quanitity,
-                expiredAt: [],
-              ));
+            if(items[i].draftItems != null){
+              print('draft item => name: ${items[i].draftItems?.name??""}');
+            }
+            if(items[i].draftItems == null){
+              itemsPayload.add(
+                  ItemDTO(
+                    isNew: false,
+                    id: items[i].id,
+                    name: items[i].productName,
+                    supplierCode: items[i].supplierCode,
+                    supplier: products.value?.supplierName,
+                    status: "Confirm",
+                    unitPrice: items[i].price,
+                    orderedQuantity: items[i].quanitity,
+                    quantity: items[i].quanitity,
+                    minLevel: 1,
+                    manufacturer: null,
+                    type: "Pack",
+                    barcodes: [],
+                  ));
+              storageController.add(Rxn(<TextEditingController>[TextEditingController()]));
+              expiryDateController.add(Rxn(<TextEditingController>[TextEditingController()]));
+              dynamicQuantityDateController.add(Rxn(<TextEditingController>[TextEditingController(text: (items[i].quanitity ?? 0).toString())]));
+              storageDateFocusNode.add(Rxn(<FocusNode>[FocusNode()]));
+              expiryDateFocusNode.add(Rxn(<FocusNode>[FocusNode()]));
+              dynamicQuantityDateFocusNode.add(Rxn(<FocusNode>[FocusNode()]));
+              formKeys.add(GlobalKey<FormState>());
+              if(itemsPayload[i].storages == null){
+                itemsPayload[i].storages = [];
+                itemsPayload[i].storages?.add(Storages(
+                  qty: items[i].quanitity,
+                  expiredAt: [],
+                ));
+              }
+              calculateProgress(itemsPayload.length, currentPageIndex.value);
+            } else {
+
+              itemsPayload.add(
+                  ItemDTO(
+                    isNew: false,
+                    id: items[i].draftItems?.id??0,
+                    name: items[i].draftItems?.name??"",
+                    supplierCode: items[i].draftItems?.supplierCode??"",
+                    supplier: products.value?.supplierName,
+                    status: items[i].draftItems?.status??"",
+                    unitPrice: items[i].draftItems?.price??0.0,
+                    orderedQuantity: items[i].draftItems?.quantity??0,
+                    quantity: items[i].draftItems?.quantity??0,
+                    minLevel: 1,
+                    manufacturer: null,
+                    type: "Pack",
+                    barcodes: items[i].draftItems?.barcodes,
+                  ));
+
+
+              if(itemsPayload[i].storages == null){
+                itemsPayload[i].storages = [
+                  ...items[i].draftItems!.storages!.map((e) => Storages(
+                    qty: items[i].draftItems?.quantity,
+                    sId: e.sId,
+                    expiredAt: [],
+                  ))
+                ];
+              }
+
+
+              storageController.add(
+                  Rxn(<TextEditingController>[
+                    ...items[i].draftItems!.storages!.map((e) => TextEditingController(text:e.name??""))
+                  ]));
+
+              expiryDateController.add(
+                  Rxn(<TextEditingController>[
+                    ...items[i].draftItems!.storages!.map((e) => TextEditingController(text: e.expiredAt!.isNotEmpty? e.expiredAt![0]: ""))
+                  ]));
+
+              dynamicQuantityDateController.add(
+                  Rxn(<TextEditingController>[
+                    ...items[i].draftItems!.storages!.map((e) => TextEditingController(text:e.qty?.toString()??""))
+                  ]));
+
+              storageDateFocusNode.add(
+                  Rxn(<FocusNode>[
+                    ...items[i].draftItems!.storages!.map((e) => FocusNode())
+                  ]));
+
+              expiryDateFocusNode.add(
+                  Rxn(<FocusNode>[
+                    ...items[i].draftItems!.storages!.map((e) => FocusNode())
+                  ]));
+
+              dynamicQuantityDateFocusNode.add(
+                  Rxn(<FocusNode>[
+                    ...items[i].draftItems!.storages!.map((e) => FocusNode())
+                  ]));
+
+
+              formKeys.add(GlobalKey<FormState>());
+              //    pageController.nextPage(duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+
+
+              // itemsPayload[i].storages.forEach((element) {
+              //
+              // })
+
+
+              if(items[i].draftItems?.storages?[0].sId != -1){
+                currentIndex++;
+                print('currentIndex ==>1 ${currentIndex}');
+                if(items[i].draftItems?.storages?[0].sId != -1 && items[i].draftItems?.status?.toLowerCase() == 'return'){
+                  currentIndex--;
+                  print('currentIndex ==>2 ${currentIndex}');
+                }
+                print('currentIndex ==>:: ${currentIndex}');
+              }
             }
           }
-          print(jsonEncode(items));
-          print(jsonEncode(itemsPayload));
-          calculateProgress(itemsPayload.length, currentPageIndex.value);
+
           update();
+          Future.delayed(const Duration(milliseconds: 200), (){
+            pageController.jumpToPage(currentIndex++);
+           // pageController.nextPage(duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+          });
+
         } else {
           Utils.showSnackBar(response.error ?? "Unable to get data");
         }
@@ -301,12 +399,10 @@ class ArrivedItemsDetailController extends GetxController {
           element.productName!.toLowerCase().contains(value.toLowerCase()) ||
               element.supplierCode!.toLowerCase().contains(value.toLowerCase())
       )).toList();
-       print('now list length is => ${searchItems.length}');
     }else{
       searchItems = items;
     }
   }
-
 
 
   getExtraItems(String searchText) async {
@@ -346,13 +442,17 @@ class ArrivedItemsDetailController extends GetxController {
 
     itemsPayload.add(ItemDTO(
       isNew: isNew,
-      id: id,
+      id: -1,
       name: name,
       supplierCode: supplierCode,
+      supplier: products.value?.supplierName,
       status: "Confirm",
       unitPrice: unitPrice,
       orderedQuantity: orderedQuantity,
       quantity: quantity,
+      minLevel: 1,
+      manufacturer: null,
+      type: "Pack",
       barcodes: [],
       storages: [
         Storages(
@@ -375,15 +475,48 @@ class ArrivedItemsDetailController extends GetxController {
       quanitity: orderedQuantity,
       supplierCode: supplierCode,
     ));
-    print(jsonEncode(items.last));
-    print(jsonEncode(itemsPayload.last));
-  //  calculateProgress(itemsPayload.length, currentPageIndex.value);
-     isLoading.value = false;
     refresh();
     Get.back();
-   // currentPageIndex.value = itemsPayload.length-1;
+    pageController.nextPage(duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+  }
 
 
 
+
+  addToDraft () async {
+    if (await Utils.hasNetwork()) {
+      var payload = itemsPayload.map((element) {return element.toJson();}).toList();
+      for(var myPayload in payload) {
+        if(myPayload["Status"] == "return") {
+          myPayload["storages"].clear();
+          myPayload["storages"] = [];
+          myPayload["storages"].add(Storages(
+            sId: -1,
+            qty: 0,
+            expiredAt: [],
+          ));
+        }
+
+        for (var storage in myPayload["storages"]) {
+          if (storage["sId"] == null) {
+            storage["sId"] = -1;
+          }
+        }
+      }
+
+      Map<String, dynamic> data = {"orderId" : products.value?.id.toString()??"", "items": payload};
+
+      printValue(tag: "addToDraft PayLoad:", data);
+
+      isLoading.value = true;
+      AddToDraftResponseModal response = await _productApiProvider.addToDraft(productId: products.value?.id.toString()??"",data: data);
+      isLoading.value = false;
+      if (response.successful == false) {
+        Utils.showSnackBar(response.error ?? "Unable to get data");
+      } else {
+        Get.back();
+        Utils.showSnackBar('Add into draft successfully');
+      }
+    }
   }
 }

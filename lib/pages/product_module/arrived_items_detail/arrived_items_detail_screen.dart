@@ -26,7 +26,7 @@ class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController>{
               centerLogo: true,
               showOcrButton: Obx(() => controller.itemsPayload.isNotEmpty ? Row(
                 children: [
-                  Container(
+                 /* Container(
                       width: 60,
                       margin: const EdgeInsets.symmetric(vertical: 12),
                       decoration: BoxDecoration(
@@ -42,18 +42,39 @@ class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController>{
                     }
                     controller.itemsPayload.insert(controller.currentPageIndex.value, itemPayload);
                     controller.update();
-                  }),
+                  }),*/
+
+                  PopupMenuButton<int>(
+                    icon: const Icon(Icons.more_vert_rounded),
+                    itemBuilder: (context) => [
+                       PopupMenuItem(
+                        value: 1,
+                        child: const Text("Return"),
+                        onTap: (){
+                          ItemDTO itemPayload =  controller.itemsPayload.removeAt(controller.currentPageIndex.value);
+                          if(itemPayload.status == "return"){
+                            itemPayload.status = "confirm";
+                          } else {
+                            itemPayload.status = "return";
+                          }
+                          controller.itemsPayload.insert(controller.currentPageIndex.value, itemPayload);
+                          controller.update();
+                        },
+                      ),
+                      PopupMenuItem(
+                        value: 2,
+                        child: const Text("Save Draft"),
+                        onTap: (){controller.addToDraft();},
+                      ),
+                    ],
+                    offset: const Offset(0, 50),
+                    color: whiteColor,
+                    elevation: 2,
+                  ),
+
                 ],
               ).marginSymmetric(horizontal: 20.0) : const SizedBox()),
           ),
-
-          // body: GetBuilder<ArrivedItemsDetailController>(
-          //   builder: (_) {
-          //     return controller.isLoading == false
-          //         ? Utils.circularLoader()
-          //         : _mainBody();
-          //   },
-          // ),
           body: Obx(() => controller.isLoading.value ? Utils.circularLoader() : _mainBody())
       ),
     );
@@ -92,7 +113,7 @@ class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController>{
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
 
-                Expanded(
+                /*Expanded(
                   child: CarouselSlider(
                     carouselController: controller.sliderController,
                     options: CarouselOptions(
@@ -117,16 +138,24 @@ class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController>{
                       ),
                     ],
                   ),
-                ),
+                ),*/
 
-                // Expanded(
-                //   child: PageView.builder(
-                //     itemCount: controller.items.length,
-                //       physics: const NeverScrollableScrollPhysics(),
-                //       itemBuilder: (context, index){
-                //         return Form(key: controller.formKeys[index], child: _pageBody());
-                //       }),
-                // ),
+                Expanded(
+                  child: PageView(
+                    controller: controller.pageController,
+                      onPageChanged: (int index){
+                      controller.currentPageIndex.value = index;
+                      },
+                      children: [
+                        ...List.generate(
+                            controller.items.length,
+                                (index) {
+                              return Form(key: controller.formKeys[index], child: _pageBody());
+                            }
+                        ),
+                      ],
+                  ),
+                ),
 
                 vGap(10),
                 Obx(
@@ -159,8 +188,16 @@ class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController>{
                               children: [
                                 Expanded(
                                   child: controller.currentPageIndex.value != 0 ? AppButton(onTap: (){
-                                    controller.currentPageIndex.value--;
-                                    controller.sliderController.previousPage();
+                                    // controller.pageController.animateToPage(
+                                    //   controller.currentPageIndex.value--,
+                                    //   duration: const Duration(milliseconds: 500),
+                                    //   curve: Curves.easeIn,
+                                    // );
+                                    controller.pageController.previousPage(duration: const Duration(milliseconds: 500), curve: Curves.easeIn);
+
+                                    //controller.currentPageIndex.value--;
+                                    // controller.currentPageIndex.value--;
+                                    // controller.sliderController.previousPage();
                                    // controller.sliderController.animateToPage(controller.currentPageIndex.value--);
                                   }, textColor: primaryColor,backgroundColor: Colors.white,rippleColor: Colors.grey.withOpacity(0.2), borderColor: primaryColor,borderWidth: 1,
                                     buttonText: "Previous Product"): const SizedBox(),
@@ -185,17 +222,23 @@ class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController>{
                                         //
 
 
+                                        // controller.pageController.animateToPage(
+                                        //   controller.currentPageIndex.value++,
+                                        //   duration: const Duration(milliseconds: 500),
+                                        //   curve: Curves.easeInOut, // or Curves.linear
+                                        // );
+                                        //controller.currentPageIndex.value++;
 
+                                       // controller.pageController.jumpToPage(controller.currentPageIndex.value);
+                                       // controller.currentPageIndex.value++;
 
-                                        controller.sliderController.nextPage();
+                                       // controller.sliderController.nextPage();
 
-                                        // if(controller.formKeys[controller.currentPageIndex.value].currentState!.validate()){
-                                        //  // controller.currentPageIndex.value++;
-                                        //   controller.sliderController.nextPage();
-                                        //
-                                        //
-                                        //     print('plus one => ${controller.currentPageIndex.value}');
-                                        // }
+                                        if(controller.formKeys[controller.currentPageIndex.value].currentState!.validate()){
+                                          controller.pageController.nextPage(duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+                                          print('plus one => ${controller.currentPageIndex.value}');
+                                        }
+
 
 
                                        // controller.sliderController.nextPage();
@@ -207,8 +250,11 @@ class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController>{
                                       onTap: () async{
                                         if(controller.formKeys[controller.currentPageIndex.value].currentState!.validate()){
                                           var value = await addExtraDialog();
-                                          print('Data ==> ${controller.selectedItem.toString()}');
                                         }
+                                        // if(controller.formKeys[controller.currentPageIndex.value].currentState!.validate()){
+                                        //   var value = await addExtraDialog();
+                                        //   print('Data ==> ${controller.selectedItem.toString()}');
+                                        // }
                                       },
                                       textColor: primaryColor,backgroundColor: Colors.white,rippleColor: Colors.grey.withOpacity(0.2), borderColor: primaryColor,borderWidth: 1,
                                       buttonText: "Add Extra Item"),
@@ -458,15 +504,24 @@ class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController>{
                               return null;
                             },
                             onTap: (){
+
                               Supplier supplier = Supplier(
-                                id: controller.itemsPayload[controller.currentPageIndex.value].storages![index].sId,
+                                id: controller.itemsPayload[controller.currentPageIndex.value].storages?[index].sId??-1,
                               );
+
+                              var list = controller.itemsPayload[controller.currentPageIndex.value].storages?.map((e) => e.sId ?? 0).toList()??[];
+
+                              print('itemsPayload ==> ${controller.itemsPayload[controller.currentPageIndex.value].storages?[0].sId}');
+                              print('list ==> ${list}');
+                              print('index ==> ${controller.currentPageIndex.value}');
+
                               chooseStorageDialog(selectedItem: supplier,disabledList: controller.itemsPayload[controller.currentPageIndex.value].storages?.map((e) => e.sId ?? 0).toList()).then((value) {
                                 Storages tempStorage = controller.itemsPayload[controller.currentPageIndex.value].storages?.removeAt(index) ?? Storages();
                                 controller.itemsPayload[controller.currentPageIndex.value].storages?.insert(index, Storages(
                                   sId: value?.id,
                                   qty: tempStorage.qty,
                                   expiredAt: tempStorage.expiredAt,
+                                  name: value?.name ?? ""
                                 ));
                                 controller.storageController[controller.currentPageIndex.value].value![index].text = value?.name ?? "";
                               });
@@ -503,7 +558,6 @@ class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController>{
                                 qty: int.tryParse(qtyValue) ?? 0,
                                 expiredAt: tempStorage.expiredAt,
                               ));
-                              print(controller.itemsPayload);
                             },
                             inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
                             // validator: (value)=> controller.itemsPayload[controller.currentPageIndex.value].status == "return" ? null : _validateForm(value, controller.itemsPayload[controller.currentPageIndex.value].quantity ?? 0, controller.dynamicQuantityDateController[controller.currentPageIndex.value].value!),
@@ -794,11 +848,15 @@ class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController>{
 
 
   Future<dynamic> addExtraDialog() {
+    if(controller.extraItems.value != null){
+      controller.extraItems.value!.data = [];
+    }
     return Get.dialog(
       Container(
         alignment: Alignment.center,
         child: GetBuilder<ArrivedItemsDetailController>(
             builder: (controllerArrivedItemsDetailController) {
+
             return StatefulBuilder(
                 builder: (context, setState) {
                 return Container(
@@ -893,130 +951,144 @@ class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController>{
     TextEditingController supplierNameController = TextEditingController(text: supplierName);
     TextEditingController unitPriceController = TextEditingController();
     TextEditingController orderedQuantityController = TextEditingController();
+    final extraProductFormValidation = GlobalKey<FormState>();
     return Get.dialog(
       Container(
+        height: Get.height * 0.7,
+        width: Get.width * 0.8,
         alignment: Alignment.center,
         child: GetBuilder<ArrivedItemsDetailController>(
             builder: (controllerArrivedItemsDetailController) {
               return StatefulBuilder(
                   builder: (context, setState) {
                     return Container(
-                        height: Get.height * 0.6,
+                        height: Get.height * 0.7,
                         width: Get.width * 0.8,
                         padding: const EdgeInsets.symmetric(vertical: margin_10),
                         decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(radius_20)),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Row(
-                              children: [
-                                TextView(
-                                  "Extra Products",
-                                  style: black_17_700()?.copyWith(color: primaryColor),
-                                ).marginSymmetric(vertical: margin_15, horizontal: margin_15),
-                                const Spacer(),
-                                IconButton(onPressed: ()=> Get.back(), icon: const Icon(Icons.close))
-                              ],
-                            ).marginSymmetric(horizontal: 10.0),
-                            Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                TextView("Supplier Code",style: const TextStyle(color: Colors.grey),maxLine: 3,).paddingSymmetric(horizontal: 20.0),
-                                CustomTextFieldV3(
-                                  controller: supplierCodeController,
-                                  hintText: "EnterSupplier Code",
-                                  hintStyle: const TextStyle(color: Colors.grey),
-                                  onFieldSubmitted: (String? value) =>
-                                      FocusScope.of(Get.context!).unfocus(),
-                                ).marginSymmetric(horizontal: margin_20, vertical: margin_10),
+                        child: Form(
+                          key: extraProductFormValidation,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  TextView(
+                                    "Extra Products",
+                                    style: black_17_700()?.copyWith(color: primaryColor),
+                                  ).marginSymmetric(vertical: margin_15, horizontal: margin_15),
+                                  const Spacer(),
+                                  IconButton(onPressed: ()=> Get.back(), icon: const Icon(Icons.close))
+                                ],
+                              ).marginSymmetric(horizontal: 10.0),
 
-                                TextView("Supplier Name",style: const TextStyle(color: Colors.grey),maxLine: 3,).paddingSymmetric(horizontal: 20.0),
-                                CustomTextFieldV3(
-                                  controller: supplierNameController,
-                                  hintText: "Enter Supplier Name",
-                                  hintStyle: const TextStyle(color: Colors.grey),
-                                  onFieldSubmitted: (String? value) =>
-                                      FocusScope.of(Get.context!).unfocus(),
-                                ).marginSymmetric(horizontal: margin_20, vertical: margin_10),
+                              TextView("Supplier Code",style: const TextStyle(color: Colors.grey),maxLine: 3,).paddingSymmetric(horizontal: 20.0),
+                              CustomTextFieldV3(
+                                controller: supplierCodeController,
+                                hintText: "EnterSupplier Code",
+                                hintStyle: const TextStyle(color: Colors.grey),
+                                onFieldSubmitted: (String? value) =>
+                                    FocusScope.of(Get.context!).unfocus(),
+                                validator: (value){
+                                  if(value!.isEmpty){
+                                    return "Enter Supplier Code";
+                                  }
+                                  return null;
+                                },
+                              ).marginSymmetric(horizontal: margin_20, vertical: margin_10),
 
-                                TextView("Unit Price",style: const TextStyle(color: Colors.grey),maxLine: 3,).paddingSymmetric(horizontal: 20.0),
+                              TextView("Supplier Name",style: const TextStyle(color: Colors.grey),maxLine: 3,).paddingSymmetric(horizontal: 20.0),
+                              CustomTextFieldV3(
+                                controller: supplierNameController,
+                                hintText: "Enter Supplier Name",
+                                hintStyle: const TextStyle(color: Colors.grey),
+                                onFieldSubmitted: (String? value) =>
+                                    FocusScope.of(Get.context!).unfocus(),
+                                validator: (value){
+                                  if(value!.isEmpty){
+                                    return "Enter Supplier Name";
+                                  }
+                                  return null;
+                                },
+                              ).marginSymmetric(horizontal: margin_20, vertical: margin_10),
 
-                                CustomTextFieldV3(
-                                  controller: unitPriceController,
-                                  hintText: "Enter Unit Price",
-                                  textInputType: TextInputType.number,
-                                  hintStyle: const TextStyle(color: Colors.grey),
-                                  onFieldSubmitted: (String? value) =>
-                                      FocusScope.of(Get.context!).unfocus(),
-                                ).marginSymmetric(horizontal: margin_20, vertical: margin_10),
+                              TextView("Unit Price",style: const TextStyle(color: Colors.grey),maxLine: 3,).paddingSymmetric(horizontal: 20.0),
+
+                              CustomTextFieldV3(
+                                controller: unitPriceController,
+                                hintText: "Enter Unit Price",
+                                textInputType: TextInputType.number,
+                                hintStyle: const TextStyle(color: Colors.grey),
+                                onFieldSubmitted: (String? value) =>
+                                    FocusScope.of(Get.context!).unfocus(),
+                                validator: (value){
+                                  if(value!.isEmpty){
+                                    return "Enter Unit Price";
+                                  }
+                                  return null;
+                                },
+                              ).marginSymmetric(horizontal: margin_20, vertical: margin_10),
 
 
-                                TextView("Ordered Quantity",style: const TextStyle(color: Colors.grey),maxLine: 3,).paddingSymmetric(horizontal: 20.0),
+                              TextView("Ordered Quantity",style: const TextStyle(color: Colors.grey),maxLine: 3,).paddingSymmetric(horizontal: 20.0),
 
-                                CustomTextFieldV3(
-                                  controller: orderedQuantityController,
-                                  hintText: "Enter Ordered Quantity",
-                                  textInputType: TextInputType.number,
-                                  hintStyle: const TextStyle(color: Colors.grey),
-                                  onFieldSubmitted: (String? value) =>
-                                      FocusScope.of(Get.context!).unfocus(),
-                                ).marginSymmetric(horizontal: margin_20, vertical: margin_10),
+                              CustomTextFieldV3(
+                                controller: orderedQuantityController,
+                                hintText: "Enter Ordered Quantity",
+                                textInputType: TextInputType.number,
+                                hintStyle: const TextStyle(color: Colors.grey),
+                                onFieldSubmitted: (String? value) =>
+                                    FocusScope.of(Get.context!).unfocus(),
+                                validator: (value){
+                                  if(value!.isEmpty){
+                                    return "Enter Ordered Quantity";
+                                  }
+                                  return null;
+                                },
+                              ).marginSymmetric(horizontal: margin_20, vertical: margin_10),
 
 
-                                const SizedBox(height: margin_20,),
+                              const SizedBox(height: margin_20,),
 
-                                AppButton(
+                              Spacer(),
+
+                              Align(
+                                alignment: Alignment.bottomCenter,
+                                child: AppButton(
                                     buttonText: "Add",
                                     isLoading: controller.isLoading.value,
                                     buttonColor: primaryColor,
                                     onTap: () {
-                                      Map<String, dynamic> data = {
-                                        "id": id,
-                                        "name": supplierNameController.text,
-                                        "supplierCode": supplierCodeController.text,
-                                        "unitPrice":double.parse(unitPriceController.text),
-                                        "orderedQuantity": int.parse(orderedQuantityController.text),
-                                        "quantity": int.parse(orderedQuantityController.text),
-                                      };
-                                      controller.selectedItem = data;
-                                      controller.update();
-                                      print('controller.selectedItem.value=> ${controller.selectedItem}');
+                                      if(extraProductFormValidation.currentState!.validate()){
+                                        Map<String, dynamic> data = {
+                                          "id": id,
+                                          "name": supplierNameController.text,
+                                          "supplierCode": supplierCodeController.text,
+                                          "unitPrice":double.parse(unitPriceController.text),
+                                          "orderedQuantity": int.parse(orderedQuantityController.text),
+                                          "quantity": int.parse(orderedQuantityController.text),
+                                        };
+                                        controller.selectedItem = data;
+                                        controller.update();
 
-                                      controller.isLoading.value = true;
-                                      Future.delayed(const Duration(seconds: 1), () async {
-                                       // controller.extraItems.value!.data = [];
-                                        controller.addItem(
-                                          isNew: true,
-                                          id: controller.selectedItem['id'],
-                                          name:  controller.selectedItem['name'],
-                                          supplierCode:  controller.selectedItem['supplierCode'],
-                                          unitPrice:  controller.selectedItem['unitPrice'],
-                                          orderedQuantity:  controller.selectedItem['orderedQuantity'],
-                                          quantity:  controller.selectedItem['quantity'],);
-                                      });
+                                        Future.delayed(const Duration(milliseconds: 500), () async {
+                                          controller.addItem(
+                                            isNew: true,
+                                            id: controller.selectedItem['id'],
+                                            name:  controller.selectedItem['name'],
+                                            supplierCode:  controller.selectedItem['supplierCode'],
+                                            unitPrice:  controller.selectedItem['unitPrice'],
+                                            orderedQuantity:  controller.selectedItem['orderedQuantity'],
+                                            quantity:  controller.selectedItem['quantity'],);
+                                        });
+                                      }
 
-
-                                      // controller.isLoading.value = true;
-                                      // Future.delayed(const Duration(seconds: 1), () async {
-                                      //   controller.extraItems.value!.data = [];
-                                      //   controller.addItem(
-                                      //       isNew: true,
-                                      //       id: id,
-                                      //       name: supplierNameController.text,
-                                      //       supplierCode: supplierCodeController.text,
-                                      //       unitPrice: double.parse(unitPriceController.text),
-                                      //       orderedQuantity: int.parse(orderedQuantityController.text),
-                                      //       quantity: int.parse(orderedQuantityController.text),);
-                                      // });
-
-                                    }).marginSymmetric(horizontal: margin_20)
-                              ],
-                            ),
-                          ],
+                                    }).marginSymmetric(horizontal: margin_20),
+                              )
+                            ],
+                          ),
                         ));
                   }
               );

@@ -5,6 +5,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:upgrader/upgrader.dart';
 import '../exports.dart';
 import 'conformation_popup.dart';
+import 'open_url.dart';
 
 /// get app version
 Future<String> getAppVersion() async {
@@ -84,7 +85,14 @@ updatePopUp (String appVersion, String newVersion) {
     cancelText: "Later",
     subtitle: 'A new version of App is available! Version $newVersion is now available-you have $appVersion. \n\nWould you like to update it now?',
     onConfirm: (){
-      Get.back();
+      const String appPlayStoreLink = "https://play.google.com/store/apps/details?id=com.denvin.stock.denvin_stock";
+      const String appAppStoreLink = "https://apps.apple.com/app/id=com.denvin.stock";
+
+      if(Platform.isAndroid){
+        openUrlInApp(url: appPlayStoreLink);
+      }else if(Platform.isIOS){
+        openUrlInApp(url: appAppStoreLink);
+      }
       },
   );
 }

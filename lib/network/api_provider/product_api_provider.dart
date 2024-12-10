@@ -6,6 +6,7 @@ import 'package:dio/src/form_data.dart' as dio;
 import 'package:flutter/foundation.dart';
 import 'package:denvin_stock/exports.dart';
 
+import '../modal/add_to_draft_model.dart';
 import '../modal/extra_item_model.dart';
 
 class ProductApiProvider {
@@ -151,12 +152,13 @@ class ProductApiProvider {
     }
   }
 
-  Future<DataResponse<PaginationResponseModal<Supplier>>> getStorage({String? search}) async {
+  Future<DataResponse<PaginationResponseModal<Supplier>>> getStorage({String? search, bool? boolValue}) async {
     try {
       // move to storage
      // Response response = await _dio.get("${ApiConstants.storage}/$clinicId/false/true", options: Injector.getHeaderToken(), queryParameters: {
 
-      Response response = await _dio.get("${ApiConstants.storage}/$clinicId/false/false", options: Injector.getHeaderToken(), queryParameters: {
+
+      Response response = await _dio.get("${ApiConstants.storage}/$clinicId/false/${boolValue??false}", options: Injector.getHeaderToken(), queryParameters: {
           "pageSize" : 100,
           "page": 1,
             if((search??"").isNotEmpty)
@@ -231,6 +233,8 @@ class ProductApiProvider {
 
   Future<DataResponse<PaginationResponseModal<Supplier>>> postStorage(Map<String, dynamic> payload) async {
     try {
+      print('this is payload "${ApiConstants.storage}/$clinicId/false/false" => ${payload}');
+
       Response response = await _dio.post("${ApiConstants.storage}/$clinicId/false/false",data: payload, options: Injector.getHeaderToken(),);
       var dataResponse = DataResponse<PaginationResponseModal<Supplier>>.fromJson(response.data, (data) => PaginationResponseModal<Supplier>.fromJson(data as Map<String, dynamic>,(data) => Supplier.fromJson(data)));
       return dataResponse;
@@ -244,10 +248,12 @@ class ProductApiProvider {
         if (response != null && response is Map<String, dynamic>) {
           return DataResponse.fromJson(response, (json) => PaginationResponseModal<Supplier>.fromJson(json as Map<String, dynamic>,(data) => Supplier.fromJson(data)));
         } else {
+          print('error is here 2');
           return DataResponse(error: error.toString(), successful: false);
         }
       }
     } catch (e) {
+      print('error is here 1');
       return DataResponse(error: e.toString(), successful: false);
     }
   }
@@ -746,6 +752,30 @@ class ProductApiProvider {
       }
     } catch (e) {
       return DataResponse(error: e.toString(), successful: false);
+    }
+  }
+
+
+  Future<AddToDraftResponseModal> addToDraft({required String productId,required Map<String, dynamic>? data}) async {
+    try {
+      Response response = await _dio.post("${ApiConstants.inventoryStock}/$clinicId/${ApiConstants.addToDraft}/$productId", options: Injector.getHeaderToken(),data: data);
+      var dataResponse = AddToDraftResponseModal.fromJson(response.data);
+      return dataResponse;
+    } on DioException catch (error) {
+      if (error.type == DioExceptionType.connectionTimeout) {
+        return AddToDraftResponseModal(error: "Connection Timeout Exception", successful: false);
+      } else if (error.type == DioExceptionType.receiveTimeout) {
+        return AddToDraftResponseModal(error: "Receive Timeout Exception", successful: false);
+      } else {
+        final response = error.response?.data;
+        if (response != null && response is Map<String, dynamic>) {
+          return AddToDraftResponseModal.fromJson(response);
+        } else {
+          return AddToDraftResponseModal(error: error.toString(), successful: false);
+        }
+      }
+    } catch (e) {
+      return AddToDraftResponseModal(error: e.toString(), successful: false);
     }
   }
 

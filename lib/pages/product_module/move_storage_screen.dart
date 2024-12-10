@@ -191,7 +191,7 @@ class MoveStorageScreen extends GetView<MoveStorageController> {
                               Supplier selectedSupplier = Supplier(
                                 id: controller.movesMainLists[index].value![subIndex].storageId,
                               );
-                              chooseStorageDialog(filterItem: controller.selectedStorage.value,selectedItem: selectedSupplier,disabledList: disableList).then((value) {
+                              chooseStorageDialog(filterItem: controller.selectedStorage.value,selectedItem: selectedSupplier,disabledList: disableList, boolValue: true).then((value) {
                                 Moves move = controller.movesMainLists[index].value?.removeAt(subIndex) ?? Moves();
                                 move.storageId = value?.id;
                                 controller.movesMainLists[index].value?.insert(subIndex, move);

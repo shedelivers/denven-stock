@@ -328,17 +328,18 @@ class AddProductController extends GetxController implements CameraOnCompleteLis
       } else {
         if (response.response != null) {
           var model = response.response;
-          if(model?.data?.isEmpty ?? true){
-            isStorageListEmpty.value = true;
-            addDefaultStorage();
-          }
-          if(model?.data?.isNotEmpty ?? false){
-            Supplier? hasImplantStock = model?.data?.firstWhereOrNull((element) => element.name == "Implant Storage");
-            if(hasImplantStock == null){
-              isStorageListEmpty.value = true;
-              addDefaultStorage();
-            }
-          }
+          // if(model?.data?.isEmpty ?? true){
+          //   isStorageListEmpty.value = true;
+          //   addDefaultStorage();
+          // }
+          // if(model?.data?.isNotEmpty ?? false){
+          //   Supplier? hasImplantStock = model?.data?.firstWhereOrNull((element) => element.name == "Implant Storage");
+          //   if(hasImplantStock == null){
+          //     isStorageListEmpty.value = true;
+          //     print('Storage Name => ${hasImplantStock}');
+          //      addDefaultStorage();
+          //   }
+          // }
           storageList.addAll(model?.data ?? []);
           if(storageList.isNotEmpty){
             isStorageListEmpty.value = false;
@@ -370,6 +371,7 @@ class AddProductController extends GetxController implements CameraOnCompleteLis
       payload[ApiConstants.name] = "Implant Storage";
       customLoader.show();
       DataResponse<PaginationResponseModal<Supplier>> response = await _productApiProvider.postStorage(payload);
+      print('supplier => ${response.response}');
       customLoader.hide();
       if (response.successful == false) {
         Utils.showSnackBar(response.error ?? "Something went wrong");

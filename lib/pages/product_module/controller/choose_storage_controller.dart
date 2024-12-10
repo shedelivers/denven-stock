@@ -11,10 +11,13 @@ class ChooseStorageController extends GetxController {
   Storage? filteredItemStorage;
 
   late ProductApiProvider _productApiProvider;
+  bool? boolValue;
 
-  ChooseStorageController({required Supplier supplierList, Storage? filteredItem}) {
+  ChooseStorageController({required Supplier supplierList, Storage? filteredItem, bool? boolValue}) {
     selectedSkillList = supplierList;
     filteredItemStorage = filteredItem;
+    boolValue = boolValue;
+    hitapi(boolValue);
   }
 
   @override
@@ -22,16 +25,15 @@ class ChooseStorageController extends GetxController {
     _productApiProvider = ProductApiProvider();
     searchController = TextEditingController();
     searchFocusNode = FocusNode();
-    hitapi();
     super.onInit();
   }
 
-  hitapi() async {
+  hitapi(bool? boolValue) async {
     if (await Utils.hasNetwork()) {
       customLoader.show();
       supplierList = [];
       DataResponse<PaginationResponseModal<Supplier>> response =
-      await _productApiProvider.getStorage(search: searchController.text);
+      await _productApiProvider.getStorage(search: searchController.text, boolValue: boolValue);
       customLoader.hide();
       if (response.successful == false) {
         Utils.showSnackBar(response.error ?? "Something went wrong");

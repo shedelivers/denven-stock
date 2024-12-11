@@ -497,7 +497,7 @@ class ItemDTO {
     orderedQuantity = json['OrderedQuantity'];
     supplierCode = json['SupplierCode'];
     supplier = json['supplier'];
-    unitPrice = json['UnitPrice'];
+    unitPrice = json['price'];
     if (json['storages'] != null) {
       storages = <Storages>[];
       json['storages'].forEach((v) {
@@ -525,7 +525,7 @@ class ItemDTO {
     data['OrderedQuantity'] = orderedQuantity;
     data['SupplierCode'] = supplierCode;
     data['supplier'] = supplier;
-    data['UnitPrice'] = unitPrice;
+    data['price'] = unitPrice;
     if (storages != null) {
       data['storages'] = storages!.map((v) => v.toJson()).toList();
     }

@@ -25,7 +25,9 @@ Future<Supplier?> chooseStorageDialog({required Supplier selectedItem,Storage? f
                     style: black_17_700()?.copyWith(color: primaryColor),
                   ).marginSymmetric(vertical: margin_15, horizontal: margin_15),
                   const Spacer(),
-                  IconButton(onPressed: ()=> Get.back(), icon: const Icon(Icons.close))
+                  IconButton(onPressed: (){
+                    Get.back();
+                  }, icon: const Icon(Icons.close))
                 ],
               ).marginSymmetric(horizontal: 10.0),
               Expanded(child: ChooseStorageView(

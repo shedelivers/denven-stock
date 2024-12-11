@@ -49,7 +49,9 @@ class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController>{
                     itemBuilder: (context) => [
                        PopupMenuItem(
                         value: 1,
-                        child: const Text("Return"),
+                        child:  Text(controller.itemsPayload[controller.currentPageIndex.value].status == "return"
+                            ? "Undo"
+                            : "Return"),
                         onTap: (){
                           ItemDTO itemPayload =  controller.itemsPayload.removeAt(controller.currentPageIndex.value);
                           if(itemPayload.status == "return"){
@@ -145,10 +147,12 @@ class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController>{
                     controller: controller.pageController,
                       onPageChanged: (int index){
                       controller.currentPageIndex.value = index;
+                      controller.pageController.notifyListeners();
                       },
                       children: [
                         ...List.generate(
-                            controller.items.length,
+                          //controller.items.length,
+                            controller.itemsPayload.length,
                                 (index) {
                               return Form(key: controller.formKeys[index], child: _pageBody());
                             }
@@ -179,27 +183,22 @@ class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController>{
                           children: [
                             if(controller.itemsPayload.length == controller.currentPageIndex.value + 1)
                               AppButton(onTap: () {
-                              if(controller.formKeys[controller.currentPageIndex.value].currentState!.validate()) {
-                                controller.submit();
-                              }
+
+                                  if(controller.formKeys[controller.currentPageIndex.value].currentState!.validate()) {
+                                    controller.submit();
+                                  }
+
                             },
                             buttonText: "Done",).marginSymmetric(horizontal: 20.0),
                             Obx(()=> Row(
                               children: [
                                 Expanded(
                                   child: controller.currentPageIndex.value != 0 ? AppButton(onTap: (){
-                                    // controller.pageController.animateToPage(
-                                    //   controller.currentPageIndex.value--,
-                                    //   duration: const Duration(milliseconds: 500),
-                                    //   curve: Curves.easeIn,
-                                    // );
+
+
                                     controller.pageController.previousPage(duration: const Duration(milliseconds: 500), curve: Curves.easeIn);
 
-                                    //controller.currentPageIndex.value--;
-                                    // controller.currentPageIndex.value--;
-                                    // controller.sliderController.previousPage();
-                                   // controller.sliderController.animateToPage(controller.currentPageIndex.value--);
-                                  }, textColor: primaryColor,backgroundColor: Colors.white,rippleColor: Colors.grey.withOpacity(0.2), borderColor: primaryColor,borderWidth: 1,
+                                   }, textColor: primaryColor,backgroundColor: Colors.white,rippleColor: Colors.grey.withOpacity(0.2), borderColor: primaryColor,borderWidth: 1,
                                     buttonText: "Previous Product"): const SizedBox(),
                                 ),
                                 hGap(10),
@@ -208,41 +207,9 @@ class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController>{
                                   AppButton(
                                       onTap: () {
 
-                                      //  print('valll => ${controller.itemsPayload[controller.currentPageIndex.value].quantity}');
-
-
-                                        print('totalPage => ${controller.itemsPayload.length}');
-                                        print('currentPagePage => ${controller.currentPageIndex.value}');
-                                        print('items length => ${controller.items.length}');
-                                        print('formKeys length => ${controller.formKeys.length}');
-
-                                        // if (controller.formKeys[controller.currentPageIndex.value].currentState?.validate() ?? false) {
-                                        //   controller.sliderController.nextPage();
-                                        // }
-                                        //
-
-
-                                        // controller.pageController.animateToPage(
-                                        //   controller.currentPageIndex.value++,
-                                        //   duration: const Duration(milliseconds: 500),
-                                        //   curve: Curves.easeInOut, // or Curves.linear
-                                        // );
-                                        //controller.currentPageIndex.value++;
-
-                                       // controller.pageController.jumpToPage(controller.currentPageIndex.value);
-                                       // controller.currentPageIndex.value++;
-
-                                       // controller.sliderController.nextPage();
-
                                         if(controller.formKeys[controller.currentPageIndex.value].currentState!.validate()){
                                           controller.pageController.nextPage(duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
-                                          print('plus one => ${controller.currentPageIndex.value}');
                                         }
-
-
-
-                                       // controller.sliderController.nextPage();
-                                       // controller.sliderController.animateToPage(controller.currentPageIndex.value++);
 
                                       }, textColor: primaryColor,backgroundColor: Colors.white,rippleColor: Colors.grey.withOpacity(0.2), borderColor: primaryColor,borderWidth: 1,
                                       buttonText: "Next Product") :
@@ -251,10 +218,6 @@ class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController>{
                                         if(controller.formKeys[controller.currentPageIndex.value].currentState!.validate()){
                                           var value = await addExtraDialog();
                                         }
-                                        // if(controller.formKeys[controller.currentPageIndex.value].currentState!.validate()){
-                                        //   var value = await addExtraDialog();
-                                        //   print('Data ==> ${controller.selectedItem.toString()}');
-                                        // }
                                       },
                                       textColor: primaryColor,backgroundColor: Colors.white,rippleColor: Colors.grey.withOpacity(0.2), borderColor: primaryColor,borderWidth: 1,
                                       buttonText: "Add Extra Item"),
@@ -330,7 +293,7 @@ class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController>{
             style: black_14_600()?.copyWith(color: const Color(0xff707070)),
           ),
           vGap(4.0),
-          TextView(controller.items[controller.currentPageIndex.value].productName ?? Strings.nA, style: black_14_600()?.copyWith(color: black, fontSize: 15)),
+          TextView(controller.itemsPayload[controller.currentPageIndex.value].name ?? Strings.nA, style: black_14_600()?.copyWith(color: black, fontSize: 15)),
         ],
       ),
     );
@@ -354,7 +317,7 @@ class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController>{
                       style: black_14_600()?.copyWith(color: const Color(0xff707070)),
                     ),
                     vGap(4.0),
-                    TextView("£${controller.items[controller.currentPageIndex.value].price}",
+                    TextView("£${controller.itemsPayload[controller.currentPageIndex.value].unitPrice}",
                         style: black_14_600()?.copyWith(color: black, fontSize: 15)),
                   ],
                 ).paddingSymmetric(horizontal: 30),
@@ -377,7 +340,7 @@ class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController>{
                       style: black_14_600()?.copyWith(color: const Color(0xff707070)),
                     ),
                     vGap(4.0),
-                    TextView(controller.items[controller.currentPageIndex.value].supplierCode.toString(), style: black_14_600()?.copyWith(color: black, fontSize: 15)),
+                    TextView(controller.itemsPayload[controller.currentPageIndex.value].supplierCode.toString(), style: black_14_600()?.copyWith(color: black, fontSize: 15)),
                   ],
                 ).paddingSymmetric(horizontal: 30),
               ),
@@ -405,7 +368,7 @@ class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController>{
                           ?.copyWith(color: const Color(0xff707070)),
                     ),
                     vGap(4.0),
-                    TextView("${controller.items[controller.currentPageIndex.value].quanitity}",
+                    TextView("${controller.itemsPayload[controller.currentPageIndex.value].orderedQuantity}",
                         style: black_14_600()?.copyWith(color: black, fontSize: 15)),
                   ],
                 ).paddingSymmetric(horizontal: 30),
@@ -805,26 +768,69 @@ class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController>{
         itemBuilder: (context, index){
           return ListTile(
             onTap: (){
-              ItemDTO temp = controller.itemsPayload[index];
 
-              //
-              // controller.itemsPayload[index] = temp;
-              // controller.currentPageIndex.value = index;
 
-              for (int i = 0; i < controller.itemsPayload.length; i++) {
-                if (controller.itemsPayload[i].id == controller.searchItems[index].id) {
-                  temp = controller.itemsPayload[i];
-                  controller.currentPageIndex.value = i;
-                  controller.itemsPayload[index] = controller.itemsPayload[i];
+              controller.itemsPayload.sort((a, b) {
+                bool aMatches = a.storages?[0].name != null &&
+                    a.quantity == a.storages?[0].qty;
+                bool bMatches = b.storages?[0].name != null &&
+                    b.quantity == b.storages?[0].qty;
+
+                if (aMatches && !bMatches) {
+                  return -1;
+                } else if (!aMatches && bMatches) {
+                  return 1;
+                } else {
+                  return 0;
+                }
+              });
+
+              int lastMatchIndex = controller.itemsPayload.lastIndexWhere((item) {
+                return item.storages?[0].name != null &&
+                    item.quantity == item.storages?[0].qty;
+              });
+
+              for (int i = 0; i < controller.itemsPayload.length ; i++) {
+                for (int k = 0; k < controller.itemsPayload[i].storages!.length ; k++){
+
+                  print("weopde ==> ${controller.itemsPayload[i].storages?[k].name??""}");
+                  controller.storageController[i].value?[k].text = controller.itemsPayload[i].storages?[k].name??"";
                 }
               }
 
+              print('lastMatchIndex => $lastMatchIndex');
+              print(jsonEncode(controller.itemsPayload));
+              controller.currentPageIndex.value == lastMatchIndex;
+              controller.update();
+              Future.delayed(const Duration(milliseconds: 500), (){
+                controller.pageController.jumpToPage(lastMatchIndex);
+              });
+
+              // controller.itemsPayload[index] = temp;
+              // controller.currentPageIndex.value = index;
+
+              // if(controller.formKeys[controller.currentPageIndex.value].currentState!.validate()){
+              //   print('true ==>');
+              // } else {
+              //   print('false ==>');
+              // }
 
 
-
-              controller.searchValue.value = "";
-              controller.isFocus.value = false;
-              controller.searchFocusNode.unfocus();
+              // for (int i = 0; i < controller.itemsPayload.length; i++) {
+              //   if (controller.itemsPayload[i].id == controller.searchItems[index].id) {
+              //     Future.delayed(const Duration(milliseconds: 500), (){
+              //       controller.pageController.jumpToPage(i);
+              //     });
+              //   }
+              // }
+              //
+              //
+              //
+              //
+              //
+              // controller.searchValue.value = "";
+              // controller.isFocus.value = false;
+              // controller.searchFocusNode.unfocus();
 
               // ItemDTO temp = controller.itemsPayload[0];
               // controller.itemsPayload[0] = controller.itemsPayload[index];
@@ -832,11 +838,11 @@ class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController>{
               // controller.currentPageIndex.value = 0;
               //
               //
-              // controller.searchValue.value = "";
-              // controller.isFocus.value = false;
-              // controller.searchFocusNode.unfocus();
+              controller.searchValue.value = "";
+              controller.isFocus.value = false;
+              controller.searchFocusNode.unfocus();
             },
-            title: Text(controller.searchItems[index].productName??""),
+            title: Text(controller.searchItems[index].name??""),
             subtitle: Text("${Strings.supplierCode}: ${controller.searchItems[index].supplierCode??""}"),
           );
         },
@@ -887,6 +893,7 @@ class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController>{
 
                                 CustomTextFieldV3(
                                   hintText: "Name/Product Code/Manufacture",
+                                  controller: controllerArrivedItemsDetailController.extraItemsController,
                                   hintStyle: const TextStyle(color: Colors.grey),
                                   onFieldSubmitted: (String? value) =>
                                       FocusScope.of(Get.context!).unfocus(),
@@ -902,36 +909,43 @@ class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController>{
                                 ).marginSymmetric(horizontal: margin_20, vertical: margin_10),
 
                                 Expanded(
-                                  child: ListView.builder(
-                                      shrinkWrap: true,
-                                      padding: const EdgeInsets.symmetric(vertical: margin_0),
-                                      itemCount: controllerArrivedItemsDetailController.extraItems.value?.data?.length??0,
-                                      itemBuilder: (context, index) {
-                                        final data = controllerArrivedItemsDetailController.extraItems.value?.data?[index];
-                                        return ListTile(
-                                          onTap: ()async{
+                                  child: Visibility(
+                                    visible: (controllerArrivedItemsDetailController.extraItems.value?.data?.isNotEmpty??false) || controllerArrivedItemsDetailController.extraItemsController.text.isEmpty,
+                                    replacement: const Center(child: Text('No Data found')),
+                                    child: Visibility(
+                                      visible: controllerArrivedItemsDetailController.extraItemsController.text.isNotEmpty,
+                                      child: ListView.builder(
+                                          shrinkWrap: true,
+                                          padding: const EdgeInsets.symmetric(vertical: margin_0),
+                                          itemCount: controllerArrivedItemsDetailController.extraItems.value?.data?.length??0,
+                                          itemBuilder: (context, index) {
+                                            final data = controllerArrivedItemsDetailController.extraItems.value?.data?[index];
+                                            return ListTile(
+                                              onTap: ()async{
 
-                                            Get.back();
-                                          var value = await  extraProduct(
-                                              id: data?.externalProductId??0,
-                                              supplierCode: data?.supplierCode??"",
-                                              supplierName: data?.name??"",);
+                                                Get.back();
+                                              var value = await  extraProduct(
+                                                  id: data?.externalProductId??0,
+                                                  supplierCode: data?.supplierCode??"",
+                                                  supplierName: data?.name??"",);
 
-                                         // Get.back(result: value);
-                                          print('Data 2 ==> ${value.toString()}');
+                                             // Get.back(result: value);
+                                              print('Data 2 ==> ${value.toString()}');
 
 
-                                          },
-                                          title: Text(data?.name??""),
-                                          trailing: Container(
-                                              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                                              decoration: BoxDecoration(
-                                                  color: primaryColor,
-                                                  borderRadius: BorderRadius.circular(6)
-                                              ),
-                                              child: Text("Add", style: TextStyle(color: whiteColor, fontWeight: FontWeight.w500),)),
-                                        );
-                                      }),
+                                              },
+                                              title: Text(data?.name??""),
+                                              trailing: Container(
+                                                  padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                                                  decoration: BoxDecoration(
+                                                      color: primaryColor,
+                                                      borderRadius: BorderRadius.circular(6)
+                                                  ),
+                                                  child: Text("Add", style: TextStyle(color: whiteColor, fontWeight: FontWeight.w500),)),
+                                            );
+                                          }),
+                                    ),
+                                  ),
                                 ),
                               ],
                             )),
@@ -1052,7 +1066,7 @@ class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController>{
 
                               const SizedBox(height: margin_20,),
 
-                              Spacer(),
+                              const Spacer(),
 
                               Align(
                                 alignment: Alignment.bottomCenter,

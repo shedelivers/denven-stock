@@ -153,9 +153,9 @@ class InventoryController extends GetxController {
       }
       isLoadingMore.value = addMore;
       isLoading.value = showLoading ? true : false;
-      shimmerLoaderState=ShimmerLoaderState.loading;
+      shimmerLoaderState= ShimmerLoaderState.loading;
       implantProductlist = await _productApiProvider.getInventoryStock(filters: filterPayload,);
-      shimmerLoaderState=ShimmerLoaderState.fetched;
+      shimmerLoaderState= ShimmerLoaderState.fetched;
       isLoading.value = false;
       isLoadingMore.value = false;
       if (implantProductlist?.successful == false) {

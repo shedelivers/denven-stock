@@ -131,66 +131,80 @@ class InventoryStockScreen extends GetView<InventoryController> {
                 await Get.find<DashboardController>().getSummary();
                 await controller.getInventoryData(showLoading: false);
               },
-              child: ListView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                controller: controller.scrollController,
-                children: [
-                  controller.isLoading.value ? Utils.circularLoader(marginTop: 30) : controller.products.isEmpty ? Utils.noDataFound(message: "No Product Found").marginOnly(top: 20.0) :
-                  ListView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: controller.products.length,
-                              itemBuilder: (_,index) {
-                                ProductModal? product = controller.products[index];
+              child: NotificationListener<ScrollEndNotification>(
+                onNotification: (scrollInfo) {
+                  if(scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent){
+                    if((getTotalPage() - 1) >= controller.currentPage.value && controller.shimmerLoaderState == ShimmerLoaderState.fetched && controller.products.isNotEmpty){
+                      controller.currentPage.value = (controller.implantProductlist?.response?.page ?? 0) + 1;
+                      controller.getPaginationImplantStockData(addMore: true, showLoading: false);
+                    }
+                  }
+                  return true;
+                },
+                child: ListView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  controller: controller.scrollController,
+                  children: [
+                    controller.isLoading.value ? Utils.circularLoader(marginTop: 30) : controller.products.isEmpty ? Utils.noDataFound(message: "No Product Found").marginOnly(top: 20.0) :
+                    ListView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: controller.products.length,
+                                itemBuilder: (_,index) {
+                                  ProductModal? product = controller.products[index];
 
 
-                                return ProductCard(
-                                  imagePath: product.productImage != null && product.productImage!.isNotEmpty ? "${ApiConstants.baseUrlForImage}/${controller.extractImagePath(product.productImage ?? "")}" : null,
-                                  name: product.name,
-                                  supplierCode: product.supplierCode,
-                                  storageName: product.storage?.name,
-                                  orderAt: product.orderedAt,
-                                  price: product.expiries!.isNotEmpty?product.expiries?.last.price??0:0,
-                                 // price: product.price,
-                                  cardOnTap: () {
-                                    Get.toNamed(AppRoutes.productDetailScreen,
-                                        arguments: {RoutesArgument.productDetails: product, RoutesArgument.addRestock: false})?.then((value) {
-                                      if (value != null) {
-                                        controller.searchController.clear();
-                                        controller.getInventoryData();
-                                        // controller.showAndHideSearchBar();
-                                      }
-                                    });
-                                  },
-                                  menuOnTap: () {controller.editProductBottomSheet(product);},
-                                );
-                              }),
-                  if ((getTotalPage() - 1) >= controller.currentPage.value && controller.shimmerLoaderState == ShimmerLoaderState.fetched && controller.products.isNotEmpty)
-                    Row(
-                      children: [
-                        const Spacer(),
-                        LoaderMoreButton(
-                          onTap: () {
-                            controller.currentPage.value = (controller.implantProductlist?.response?.page ?? 0) + 1;
-                            controller.getPaginationImplantStockData(addMore: true, showLoading: false);
-                          },
-                        ),
-                        const Spacer(),
-                      ],
-                    ),
-                  if (controller.shimmerLoaderState == ShimmerLoaderState.loading && controller.products.isNotEmpty && controller.isLoadingMore.value)
-                    SizedBox(
-                      width: 40,
-                      height: 40,
-                      child: Center(
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          color: primaryColor,
+                                  return ProductCard(
+                                    imagePath: product.productImage != null && product.productImage!.isNotEmpty ? "${ApiConstants.baseUrlForImage}/${controller.extractImagePath(product.productImage ?? "")}" : null,
+                                    name: product.name,
+                                    supplierCode: product.supplierCode,
+                                    storageName: product.storage?.name,
+                                    orderAt: product.orderedAt,
+                                    price: product.expiries!.isNotEmpty?product.expiries?.last.price??0:0,
+                                   // price: product.price,
+                                    cardOnTap: () {
+                                      Get.toNamed(AppRoutes.productDetailScreen,
+                                          arguments: {RoutesArgument.productDetails: product, RoutesArgument.addRestock: false})?.then((value) {
+                                        if (value != null) {
+                                          controller.searchController.clear();
+                                          controller.getInventoryData();
+                                          // controller.showAndHideSearchBar();
+                                        }
+                                      });
+                                    },
+                                    menuOnTap: () {controller.editProductBottomSheet(product);},
+                                  );
+                                }),
+                    // if ((getTotalPage() - 1) >= controller.currentPage.value && controller.shimmerLoaderState == ShimmerLoaderState.fetched && controller.products.isNotEmpty)
+                    //   Row(
+                    //     children: [
+                    //       const Spacer(),
+                    //       LoaderMoreButton(
+                    //         onTap: () {
+                    //           controller.currentPage.value = (controller.implantProductlist?.response?.page ?? 0) + 1;
+                    //           controller.getPaginationImplantStockData(addMore: true, showLoading: false);
+                    //         },
+                    //       ),
+                    //       const Spacer(),
+                    //     ],
+                    //   ),
+                   // if (controller.shimmerLoaderState == ShimmerLoaderState.loading && controller.products.isNotEmpty && controller.isLoadingMore.value)
+
+                    if (controller.isLoadingMore.value)
+
+                      SizedBox(
+                        width: 40,
+                        height: 40,
+                        child: Center(
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            color: primaryColor,
+                           ),
                          ),
-                       ),
+                        )
                       )
-                    )
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -716,43 +730,43 @@ class InventoryStockScreen extends GetView<InventoryController> {
   // }
 }
 
-class LoaderMoreButton extends StatelessWidget {
-  final GestureTapCallback onTap;
-
-  const LoaderMoreButton({
-    super.key,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-        onTap: onTap,
-        child: Container(
-            margin: const EdgeInsets.symmetric(vertical: margin_20),
-            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
-            decoration: BoxDecoration(
-                color: primaryColor,
-                border: Border.all(color: primaryColor, width: 1),
-                borderRadius: BorderRadius.circular(6.0)),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                TextView(
-                  "Load more",
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w800,
-                      fontSize: 13),
-                ),
-                hGap(6.0),
-                const Icon(
-                  Icons.add,
-                  color: Colors.white,
-                  size: 18,
-                )
-              ],
-            )));
-  }
-}
+// class LoaderMoreButton extends StatelessWidget {
+//   final GestureTapCallback onTap;
+//
+//   const LoaderMoreButton({
+//     super.key,
+//     required this.onTap,
+//   });
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return InkWell(
+//         onTap: onTap,
+//         child: Container(
+//             margin: const EdgeInsets.symmetric(vertical: margin_20),
+//             padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+//             decoration: BoxDecoration(
+//                 color: primaryColor,
+//                 border: Border.all(color: primaryColor, width: 1),
+//                 borderRadius: BorderRadius.circular(6.0)),
+//             child: Row(
+//               mainAxisSize: MainAxisSize.min,
+//               mainAxisAlignment: MainAxisAlignment.center,
+//               children: [
+//                 TextView(
+//                   "Load more",
+//                   style: const TextStyle(
+//                       color: Colors.white,
+//                       fontWeight: FontWeight.w800,
+//                       fontSize: 13),
+//                 ),
+//                 hGap(6.0),
+//                 const Icon(
+//                   Icons.add,
+//                   color: Colors.white,
+//                   size: 18,
+//                 )
+//               ],
+//             )));
+//   }
+// }

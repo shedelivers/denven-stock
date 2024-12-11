@@ -117,61 +117,73 @@ class ScanArrivedItemsScreen extends GetView<ScanArrivedItemsController> {
               onRefresh: () async {
                 await Get.find<DashboardController>().getSummary();
                 await controller.getArrivedItemData(showLoading: false);
-              }, child: ListView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                controller: controller.scrollController,
-                children: [
-                  controller.isLoading.value ? Utils.circularLoader(marginTop: 30) : controller.products.isEmpty ? Utils.noDataFound(message: "No Product Found").marginOnly(top: 20.0) : ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: controller.products.length,
-                      itemBuilder: (_,index) {
-                        ArrivedItemModal? product = controller.products[index];
-                        return ArrivedItemCard(
-                          // imagePath: product.productImage != null && product.productImage!.isNotEmpty ? "${ApiConstants.baseUrlForImage}/${controller.extractImagePath(product.productImage ?? "")}" : null,
-                          imagePath: null,
-                          name: product.supplierName,
-                          isThreeDotsActive: false,
-                          supplierCode: product.orderCode,
-                          orderAt: product.issuedAt ?? "",
-                          price: product.totalCost,
-                          cardOnTap: () {
-                            Get.toNamed(AppRoutes.arrivedItemDetailScreen,
-                                arguments: {RoutesArgument.productDetails: product,RoutesArgument.addRestock: false})?.then((value) {
-                              if (value != null) {
-                                controller.searchController.clear();
-                                controller.getArrivedItemData();
-                                Get.find<DashboardController>().getArrivedCount();
-                              }
-                            });
-                          },
-                          menuOnTap: () {_editProductBottomSheet(product);},
-                        );
-                      }),
-                  if ((getTotalPage() - 1) >= controller.currentPage.value && controller.shimmerLoaderState == ShimmerLoaderState.fetched && controller.products.isNotEmpty)
-                    Row(
-                      children: [
-                        const Spacer(),
-                        LoaderMoreButton(
-                          onTap: () {
-                            controller.currentPage.value = (controller.implantProductlist?.response?.page ?? 0) + 1;
-                            controller.getPaginationArrivedItemData(addMore: true, showLoading: false);
-                          },
-                        ),
-                        const Spacer(),
-                      ],
-                    ),
-                  if (controller.shimmerLoaderState == ShimmerLoaderState.loading && controller.products.isNotEmpty && controller.isLoadingMore.value)
-                    SizedBox(
-                      width: 40,
-                      height: 40,
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          color: primaryColor,
-                        ),
+                }, child: NotificationListener<ScrollEndNotification>(
+                  onNotification: (scrollInfo) {
+                    if(scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent){
+                      if((getTotalPage() - 1) >= controller.currentPage.value && controller.shimmerLoaderState == ShimmerLoaderState.fetched && controller.products.isNotEmpty){
+                        controller.currentPage.value = (controller.implantProductlist?.response?.page ?? 0) + 1;
+                        controller.getPaginationArrivedItemData(addMore: true, showLoading: false);
+                      }
+                    }
+                    return true;
+                  },
+                child: ListView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                  controller: controller.scrollController,
+                  children: [
+                    controller.isLoading.value ? Utils.circularLoader(marginTop: 30) : controller.products.isEmpty ? Utils.noDataFound(message: "No Product Found").marginOnly(top: 20.0) : ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: controller.products.length,
+                        itemBuilder: (_,index) {
+                          ArrivedItemModal? product = controller.products[index];
+                          return ArrivedItemCard(
+                            // imagePath: product.productImage != null && product.productImage!.isNotEmpty ? "${ApiConstants.baseUrlForImage}/${controller.extractImagePath(product.productImage ?? "")}" : null,
+                            imagePath: null,
+                            name: product.supplierName,
+                            isThreeDotsActive: false,
+                            supplierCode: product.orderCode,
+                            orderAt: product.issuedAt ?? "",
+                            price: product.totalCost,
+                            cardOnTap: () {
+                              Get.toNamed(AppRoutes.arrivedItemDetailScreen,
+                                  arguments: {RoutesArgument.productDetails: product,RoutesArgument.addRestock: false})?.then((value) {
+                                if (value != null) {
+                                  controller.searchController.clear();
+                                  controller.getArrivedItemData();
+                                  Get.find<DashboardController>().getArrivedCount();
+                                }
+                              });
+                            },
+                            menuOnTap: () {_editProductBottomSheet(product);},
+                          );
+                        }),
+                    /*if ((getTotalPage() - 1) >= controller.currentPage.value && controller.shimmerLoaderState == ShimmerLoaderState.fetched && controller.products.isNotEmpty)
+                      Row(
+                        children: [
+                          const Spacer(),
+                          LoaderMoreButton(
+                            onTap: () {
+                              controller.currentPage.value = (controller.implantProductlist?.response?.page ?? 0) + 1;
+                              controller.getPaginationArrivedItemData(addMore: true, showLoading: false);
+                            },
+                          ),
+                          const Spacer(),
+                        ],
                       ),
-                    )
-                ],
+                    if (controller.shimmerLoaderState == ShimmerLoaderState.loading && controller.products.isNotEmpty && controller.isLoadingMore.value)*/
+                    if (controller.isLoadingMore.value)
+                      SizedBox(
+                        width: 40,
+                        height: 40,
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            color: primaryColor,
+                          ),
+                        ),
+                      )
+                  ],
+                ),
               ),
             ),
           ),
@@ -674,7 +686,7 @@ class ScanArrivedItemsScreen extends GetView<ScanArrivedItemsController> {
   }
 }
 
-class LoaderMoreButton extends StatelessWidget {
+/*class LoaderMoreButton extends StatelessWidget {
   final GestureTapCallback onTap;
 
   const LoaderMoreButton({
@@ -713,4 +725,4 @@ class LoaderMoreButton extends StatelessWidget {
               ],
             )));
   }
-}
+ }*/

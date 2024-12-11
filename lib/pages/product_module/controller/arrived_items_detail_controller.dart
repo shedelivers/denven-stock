@@ -15,7 +15,7 @@ class ArrivedItemsDetailController extends GetxController {
   RxBool isLoading = false.obs;
   RxInt currentPageIndex = 0.obs;
   RxList<Items> items = <Items>[].obs;
-  List<Items> searchItems = [];
+  List<ItemDTO> searchItems = [];
   RxList<ItemDTO> itemsPayload = <ItemDTO>[].obs;
   final CarouselController sliderController = CarouselController();
   final PageController pageController = PageController();
@@ -36,9 +36,9 @@ class ArrivedItemsDetailController extends GetxController {
   final FocusNode searchFocusNode = FocusNode();
   RxBool isFocus = false.obs;
 
-  final formKey = GlobalKey<FormState>();
 
   Rxn<ExtraItemModel> extraItems = Rxn();
+  final TextEditingController extraItemsController = TextEditingController();
   RxBool extraItemsLoading = false.obs;
   Map<String, dynamic> selectedItem = <String, dynamic>{};
 
@@ -136,6 +136,7 @@ class ArrivedItemsDetailController extends GetxController {
       itemsPayload[currentPageIndex.value].storages?.insert(index, Storages(
         sId: tempStorage.sId,
         qty: tempStorage.qty ?? 0,
+        name: tempStorage.name,
         expiredAt: dates,
       ));
     }
@@ -150,17 +151,14 @@ class ArrivedItemsDetailController extends GetxController {
       if (response.successful == false) {
         Utils.showSnackBar(response.error ?? "Unable to get data");
       } else {
+        bool runDraftNewItemsLoop = true;
         if (response.response != null) {
           int currentIndex = 0;
 
           var model = response.response;
           products.value = model;
           items.value = model?.items ?? [];
-          print('draft item => length: ${products.value?.draftNewItems?.length??""}');
           for(int i = 0; i < items.length ; i++){
-            if(items[i].draftItems != null){
-              print('draft item => name: ${items[i].draftItems?.name??""}');
-            }
             if(items[i].draftItems == null){
               itemsPayload.add(
                   ItemDTO(
@@ -195,90 +193,155 @@ class ArrivedItemsDetailController extends GetxController {
               calculateProgress(itemsPayload.length, currentPageIndex.value);
             } else {
 
-              itemsPayload.add(
-                  ItemDTO(
-                    isNew: false,
-                    id: items[i].draftItems?.id??0,
-                    name: items[i].draftItems?.name??"",
-                    supplierCode: items[i].draftItems?.supplierCode??"",
-                    supplier: products.value?.supplierName,
-                    status: items[i].draftItems?.status??"",
-                    unitPrice: items[i].draftItems?.price??0.0,
-                    orderedQuantity: items[i].draftItems?.quantity??0,
-                    quantity: items[i].draftItems?.quantity??0,
-                    minLevel: 1,
-                    manufacturer: null,
-                    type: "Pack",
-                    barcodes: items[i].draftItems?.barcodes,
-                  ));
+                itemsPayload.add(
+                    ItemDTO(
+                      isNew: false,
+                      id: items[i].draftItems?.id??0,
+                      name: items[i].draftItems?.name??"",
+                      supplierCode: items[i].draftItems?.supplierCode??"",
+                      supplier: products.value?.supplierName,
+                      status: items[i].draftItems?.status??"",
+                      unitPrice: items[i].draftItems?.price??0.0,
+                      orderedQuantity: items[i].draftItems?.quantity??0,
+                      quantity: items[i].draftItems?.quantity??0,
+                      minLevel: 1,
+                      manufacturer: null,
+                      type: "Pack",
+                      barcodes: items[i].draftItems?.barcodes,
+                      storages: [
+                        ...items[i].draftItems!.storages!.map((e) => Storages(
+                          qty: e.qty,
+                          sId: e.sId,
+                          name: e.name,
+                          expiredAt: [],
+                        ))
+                      ]
+                    ));
 
 
-              if(itemsPayload[i].storages == null){
-                itemsPayload[i].storages = [
-                  ...items[i].draftItems!.storages!.map((e) => Storages(
-                    qty: items[i].draftItems?.quantity,
-                    sId: e.sId,
-                    expiredAt: [],
-                  ))
-                ];
-              }
+                storageController.add(
+                    Rxn(<TextEditingController>[
+                      ...items[i].draftItems!.storages!.map((e) => TextEditingController(text:e.name??""))
+                    ]));
+
+                expiryDateController.add(
+                    Rxn(<TextEditingController>[
+                      ...items[i].draftItems!.storages!.map((e) => TextEditingController(text: e.expiredAt!.isNotEmpty? e.expiredAt![0]: ""))
+                    ]));
+
+                dynamicQuantityDateController.add(
+                    Rxn(<TextEditingController>[
+                      ...items[i].draftItems!.storages!.map((e) => TextEditingController(text:e.qty?.toString()??""))
+                    ]));
+
+                storageDateFocusNode.add(
+                    Rxn(<FocusNode>[
+                      ...items[i].draftItems!.storages!.map((e) => FocusNode())
+                    ]));
+
+                expiryDateFocusNode.add(
+                    Rxn(<FocusNode>[
+                      ...items[i].draftItems!.storages!.map((e) => FocusNode())
+                    ]));
+
+                dynamicQuantityDateFocusNode.add(
+                    Rxn(<FocusNode>[
+                      ...items[i].draftItems!.storages!.map((e) => FocusNode())
+                    ]));
 
 
-              storageController.add(
-                  Rxn(<TextEditingController>[
-                    ...items[i].draftItems!.storages!.map((e) => TextEditingController(text:e.name??""))
-                  ]));
-
-              expiryDateController.add(
-                  Rxn(<TextEditingController>[
-                    ...items[i].draftItems!.storages!.map((e) => TextEditingController(text: e.expiredAt!.isNotEmpty? e.expiredAt![0]: ""))
-                  ]));
-
-              dynamicQuantityDateController.add(
-                  Rxn(<TextEditingController>[
-                    ...items[i].draftItems!.storages!.map((e) => TextEditingController(text:e.qty?.toString()??""))
-                  ]));
-
-              storageDateFocusNode.add(
-                  Rxn(<FocusNode>[
-                    ...items[i].draftItems!.storages!.map((e) => FocusNode())
-                  ]));
-
-              expiryDateFocusNode.add(
-                  Rxn(<FocusNode>[
-                    ...items[i].draftItems!.storages!.map((e) => FocusNode())
-                  ]));
-
-              dynamicQuantityDateFocusNode.add(
-                  Rxn(<FocusNode>[
-                    ...items[i].draftItems!.storages!.map((e) => FocusNode())
-                  ]));
+                formKeys.add(GlobalKey<FormState>());
 
 
-              formKeys.add(GlobalKey<FormState>());
-              //    pageController.nextPage(duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+             if(products.value?.draftNewItems?.isNotEmpty??false){
+                  if (runDraftNewItemsLoop && i == items.length-1) {
+                    for (int k = 0; k < products.value!.draftNewItems!.length; k++) {
+                      currentIndex++;
+                      itemsPayload.add(
+                          ItemDTO(
+                            isNew: false,
+                            id: products.value?.draftNewItems?[k].id??0,
+                            name: products.value?.draftNewItems?[k].name??"",
+                            supplierCode: products.value?.draftNewItems?[k].supplierCode??"",
+                            supplier: products.value?.supplierName,
+                            status: products.value?.draftNewItems?[k].status??"",
+                            unitPrice: products.value?.draftNewItems?[k].price??0.0,
+                            orderedQuantity: products.value?.draftNewItems?[k].quantity??0,
+                            quantity: products.value?.draftNewItems?[k].quantity??0,
+                            minLevel: 1,
+                            manufacturer: null,
+                            type: "Pack",
+                            barcodes: products.value?.draftNewItems?[k].barcodes,
+                            storages: [
+                              ...?products.value?.draftNewItems?[k].storages?.map((e) => Storages(
+                                qty: e.qty,
+                                sId: e.sId,
+                                name: e.name,
+                                expiredAt: [],
+                              ))
+                            ]
+                          ));
+
+                      // products.value?.draftNewItems?[k].storages ??= [
+                      //   ...?products.value?.draftNewItems?[k].storages?.map((e) => Storages(
+                      //     qty: e.qty,
+                      //     sId: e.sId,
+                      //     expiredAt: [],
+                      //   ))
+                      // ];
 
 
-              // itemsPayload[i].storages.forEach((element) {
-              //
-              // })
+                      storageController.add(
+                          Rxn(<TextEditingController>[
+                            ...?products.value?.draftNewItems?[k].storages?.map((e) => TextEditingController(text:e.name??""))
+                          ]));
 
+                      expiryDateController.add(
+                          Rxn(<TextEditingController>[
+                            ...?products.value?.draftNewItems?[k].storages?.map((e) => TextEditingController(text: e.expiredAt!.isNotEmpty? e.expiredAt![0]: ""))
+                          ]));
+
+                      dynamicQuantityDateController.add(
+                          Rxn(<TextEditingController>[
+                            ...?products.value?.draftNewItems?[k].storages?.map((e) => TextEditingController(text:e.qty?.toString()??""))
+                          ]));
+
+                      storageDateFocusNode.add(
+                          Rxn(<FocusNode>[
+                            ...?products.value?.draftNewItems?[k].storages?.map((e) => FocusNode())
+                          ]));
+
+                      expiryDateFocusNode.add(
+                          Rxn(<FocusNode>[
+                            ...?products.value?.draftNewItems?[k].storages?.map((e) => FocusNode())
+                          ]));
+
+                      dynamicQuantityDateFocusNode.add(
+                          Rxn(<FocusNode>[
+                            ...?products.value?.draftNewItems?[k].storages?.map((e) => FocusNode())
+                          ]));
+
+
+                      formKeys.add(GlobalKey<FormState>());
+
+                      runDraftNewItemsLoop = false;
+                    }
+                }
+                }
 
               if(items[i].draftItems?.storages?[0].sId != -1){
                 currentIndex++;
-                print('currentIndex ==>1 ${currentIndex}');
-                if(items[i].draftItems?.storages?[0].sId != -1 && items[i].draftItems?.status?.toLowerCase() == 'return'){
-                  currentIndex--;
-                  print('currentIndex ==>2 ${currentIndex}');
-                }
-                print('currentIndex ==>:: ${currentIndex}');
               }
+
+                if(items[i].draftItems?.storages?[0].sId == -1 && items[i].draftItems?.status?.toLowerCase() == 'return'){
+                  currentIndex++;
+                }
             }
           }
 
           update();
-          Future.delayed(const Duration(milliseconds: 200), (){
-            pageController.jumpToPage(currentIndex++);
+          Future.delayed(const Duration(milliseconds: 500), (){
+            pageController.jumpToPage(currentIndex);
            // pageController.nextPage(duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
           });
 
@@ -385,7 +448,12 @@ class ArrivedItemsDetailController extends GetxController {
           Get.back(result: "DONE");
           update();
         } else {
-          Utils.showSnackBar(response.error ?? "Unable to get data");
+          Future.delayed(const Duration(milliseconds: 500), (){
+            pageController.jumpToPage(currentPageIndex.value);
+            // pageController.nextPage(duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+          });
+          Utils.showSnackBar("Fill all required field");
+         // Utils.showSnackBar(response.error ?? "Unable to get data");
         }
       }
     }
@@ -395,12 +463,12 @@ class ArrivedItemsDetailController extends GetxController {
   searchingFilter (String value) {
     searchValue.value = value;
     if(value.isNotEmpty){
-       searchItems = items.where((element) => (
-          element.productName!.toLowerCase().contains(value.toLowerCase()) ||
+       searchItems = itemsPayload.where((element) => (
+          element.name!.toLowerCase().contains(value.toLowerCase()) ||
               element.supplierCode!.toLowerCase().contains(value.toLowerCase())
       )).toList();
     }else{
-      searchItems = items;
+      searchItems = itemsPayload;
     }
   }
 
@@ -456,6 +524,7 @@ class ArrivedItemsDetailController extends GetxController {
       barcodes: [],
       storages: [
         Storages(
+        sId: -1,
         qty: quantity,
         expiredAt: [],
       )]
@@ -469,7 +538,7 @@ class ArrivedItemsDetailController extends GetxController {
     formKeys.add(GlobalKey<FormState>());
     items.add(
       Items(
-      id: id,
+      id: -1,
       productName: name,
       price: unitPrice,
       quanitity: orderedQuantity,
@@ -497,11 +566,19 @@ class ArrivedItemsDetailController extends GetxController {
           ));
         }
 
-        for (var storage in myPayload["storages"]) {
-          if (storage["sId"] == null) {
-            storage["sId"] = -1;
+        Map<String, dynamic> data = {"orderId 1" : products.value?.id.toString()??"", "items": payload};
+
+        printValue(tag: "addToDraft PayLoad: 1", data);
+
+        printValue(jsonEncode(payload));
+        if(myPayload['Status'] != "return"){
+          for (var storage in myPayload["storages"]) {
+            if (storage["sId"] == null) {
+              storage["sId"] = -1;
+            }
           }
         }
+
       }
 
       Map<String, dynamic> data = {"orderId" : products.value?.id.toString()??"", "items": payload};
@@ -515,7 +592,7 @@ class ArrivedItemsDetailController extends GetxController {
         Utils.showSnackBar(response.error ?? "Unable to get data");
       } else {
         Get.back();
-        Utils.showSnackBar('Add into draft successfully');
+        Utils.showSnackBar('Save into draft successfully');
       }
     }
   }

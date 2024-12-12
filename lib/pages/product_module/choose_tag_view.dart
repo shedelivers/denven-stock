@@ -373,44 +373,44 @@ class ChooseTagView extends GetView<ChooseTagController> {
 
 
 
-class LoaderMoreButton extends StatelessWidget {
-
-  final GestureTapCallback onTap;
-
-  const LoaderMoreButton({
-    super.key,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-        onTap: onTap,
-        child: Container(
-            margin: const EdgeInsets.symmetric(vertical: margin_20),
-            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
-            decoration: BoxDecoration(
-                color: primaryColor,
-                border: Border.all(color: primaryColor, width: 1),
-                borderRadius: BorderRadius.circular(6.0)),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                TextView(
-                  "Load more",
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w800,
-                      fontSize: 13),
-                ),
-                hGap(6.0),
-                const Icon(
-                  Icons.add,
-                  color: Colors.white,
-                  size: 18,
-                )
-              ],
-            )));
-  }
-}
+// class LoaderMoreButton extends StatelessWidget {
+//
+//   final GestureTapCallback onTap;
+//
+//   const LoaderMoreButton({
+//     super.key,
+//     required this.onTap,
+//   });
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return InkWell(
+//         onTap: onTap,
+//         child: Container(
+//             margin: const EdgeInsets.symmetric(vertical: margin_20),
+//             padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+//             decoration: BoxDecoration(
+//                 color: primaryColor,
+//                 border: Border.all(color: primaryColor, width: 1),
+//                 borderRadius: BorderRadius.circular(6.0)),
+//             child: Row(
+//               mainAxisSize: MainAxisSize.min,
+//               mainAxisAlignment: MainAxisAlignment.center,
+//               children: [
+//                 TextView(
+//                   "Load more",
+//                   style: const TextStyle(
+//                       color: Colors.white,
+//                       fontWeight: FontWeight.w800,
+//                       fontSize: 13),
+//                 ),
+//                 hGap(6.0),
+//                 const Icon(
+//                   Icons.add,
+//                   color: Colors.white,
+//                   size: 18,
+//                 )
+//               ],
+//             )));
+//   }
+// }

@@ -1,3 +1,4 @@
+import 'package:denvin_stock/components/colors.dart';
 import 'package:denvin_stock/components/common_webview_screen.dart';
 import 'package:denvin_stock/exports.dart';
 import 'package:flutter/cupertino.dart';
@@ -239,9 +240,9 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
                         title: Strings.product)
                     );
                   },
-                  child: const SizedBox(
+                  child: SizedBox(
                       width: 40,
-                      child: Center(child: Icon(CupertinoIcons.link, color: Color(0xff707070),size: 20,))),
+                      child: Center(child: Icon(CupertinoIcons.link, color: primaryColor,size: 20,))),
                 ),
               )
             ],

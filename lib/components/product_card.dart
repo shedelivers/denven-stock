@@ -1,4 +1,5 @@
 import 'package:denvin_stock/exports.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 
 class ProductCard extends StatelessWidget {
@@ -12,7 +13,8 @@ class ProductCard extends StatelessWidget {
   String? supplierCode;
   String? storageName;
   bool dontShowBorderAndMenu;
-  ProductCard({super.key,required this.menuOnTap,this.storageName,this.isThreeDotsActive = true, this.dontShowBorderAndMenu = false, required this.cardOnTap, this.name,this.imagePath,this.orderAt, this.price,this.supplierCode});
+  int? localMappingId;
+  ProductCard({super.key,required this.menuOnTap,this.storageName,this.isThreeDotsActive = true, this.dontShowBorderAndMenu = false, required this.cardOnTap, this.name,this.imagePath,this.orderAt, this.price,this.supplierCode, this.localMappingId});
 
   @override
   Widget build(BuildContext context) {
@@ -47,6 +49,13 @@ class ProductCard extends StatelessWidget {
                           supplierCode != null ? "#$supplierCode" : Strings.nA,
                           style: black_12_600(),
                         ),
+
+                        Visibility(
+                            visible: localMappingId != null,
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 7),
+                              child: imageAsset(scanIcon, width: 15),
+                            ))
                       ],
                     ),
                     Row(

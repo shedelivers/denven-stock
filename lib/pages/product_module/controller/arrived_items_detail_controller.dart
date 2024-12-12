@@ -213,7 +213,7 @@ class ArrivedItemsDetailController extends GetxController {
                           qty: e.qty,
                           sId: e.sId,
                           name: e.name,
-                          expiredAt: [],
+                          expiredAt: e.expiredAt,
                         ))
                       ]
                     ));
@@ -277,7 +277,7 @@ class ArrivedItemsDetailController extends GetxController {
                                 qty: e.qty,
                                 sId: e.sId,
                                 name: e.name,
-                                expiredAt: [],
+                                expiredAt: e.expiredAt,
                               ))
                             ]
                           ));

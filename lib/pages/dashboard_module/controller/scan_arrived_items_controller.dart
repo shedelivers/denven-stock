@@ -302,6 +302,7 @@ class ScanArrivedItemsController extends GetxController  {
                   supplierCode: productModal?.supplierCode,
                   orderAt: productModal?.orderedAt,
                   price: productModal?.price,
+                  localMappingId: productModal?.localMappingId,
                   menuOnTap: (){},
                   cardOnTap: () {
                     Get.back();

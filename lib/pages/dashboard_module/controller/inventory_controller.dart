@@ -285,6 +285,7 @@ class InventoryController extends GetxController {
                   supplierCode: productModal?.supplierCode,
                   orderAt: productModal?.orderedAt,
                   price: productModal?.price,
+                  localMappingId: productModal?.localMappingId,
                   menuOnTap: () {},
                   cardOnTap: () {},
               ).marginSymmetric(horizontal: 20.0),

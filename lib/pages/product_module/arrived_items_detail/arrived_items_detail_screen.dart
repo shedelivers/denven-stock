@@ -101,9 +101,11 @@ class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController>{
             controller.isFocus.value = true;},
           suffix: IconButton(icon: const Icon(CupertinoIcons.multiply),onPressed: (){
             controller.searchValue.value = "";
-            controller.searchController.clear();
             controller.isFocus.value = false;
             controller.searchFocusNode.unfocus();
+            Future.delayed(const Duration(milliseconds: 200),(){
+              controller.pageController.jumpToPage(controller.currentPageIndex.value);
+            });
             },),
         ).marginOnly(right: 20.0, left: 20.0),
 
@@ -765,16 +767,42 @@ class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController>{
         itemCount: controller.searchItems.length,
         padding: const EdgeInsets.all(10),
         separatorBuilder: (context, i) => const Divider(),
-        itemBuilder: (context, index){
+        itemBuilder: (context, searchItemsIndex){
           return ListTile(
             onTap: (){
+              ItemDTO itemDTO = controller.searchItems[searchItemsIndex];
 
+              // controller.itemsPayload.sort((a, b) {
+              //   bool aMatches = a.storages?[0].name != null && a.quantity == a.storages?[0].qty;
+              //   bool bMatches = b.storages?[0].name != null && b.quantity == b.storages?[0].qty;
+              //
+              //   if (aMatches && !bMatches) {
+              //     return -1;
+              //   } else if (!aMatches && bMatches) {
+              //     return 1;
+              //   } else {
+              //     return 0;
+              //   }
+              // });
+
+              bool itemComplete = (itemDTO.status == "return" ||
+                  (itemDTO.storages?.map((e) => e.name != null && e.name!.isNotEmpty ? e.qty ?? 0 : 0).reduce((value, element) => value + element) == itemDTO.quantity));
 
               controller.itemsPayload.sort((a, b) {
-                bool aMatches = a.storages?[0].name != null &&
-                    a.quantity == a.storages?[0].qty;
-                bool bMatches = b.storages?[0].name != null &&
-                    b.quantity == b.storages?[0].qty;
+
+                bool aMatches = (a.status == "return" ||
+                    (a.storages?.map((e) => e.name != null && e.name!.isNotEmpty ? e.qty ?? 0 : 0).reduce((value, element) => value + element) == a.quantity));
+
+                bool bMatches = (b.status == "return" ||
+                    (b.storages?.map((e) => e.name != null && e.name!.isNotEmpty ? e.qty ?? 0 : 0).reduce((value, element) => value + element) == b.quantity));
+
+
+                // bool aMatches = (a.status == "return" ||
+                //     (a.storages?[0].name != null && a.quantity == a.storages?[0].qty));
+                //
+                // bool bMatches = (b.status == "return" ||
+                //     (b.storages?[0].name != null && b.quantity == b.storages?[0].qty));
+
 
                 if (aMatches && !bMatches) {
                   return -1;
@@ -785,49 +813,86 @@ class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController>{
                 }
               });
 
-              int lastMatchIndex = controller.itemsPayload.lastIndexWhere((item) {
-                return item.storages?[0].name != null &&
-                    item.quantity == item.storages?[0].qty;
+
+
+              int? lastMatchIndex = controller.itemsPayload.lastIndexWhere((element) {
+                return element.status == "return" ||
+                    (element.storages?.map((e) => e.name != null && e.name!.isNotEmpty ? e.qty ?? 0 : 0).reduce((value, element) => value + element) == element.quantity);
               });
+
+              int jumpIndex = 0;
+
+              print('itemComplete ==> ${itemComplete} $lastMatchIndex');
+              if(itemComplete){
+                // int index1 = lastMatchIndex;
+                // // int index = controller.itemsPayload.indexWhere((element) => element.id == itemDTO.id);
+                // // controller.itemsPayload.removeAt(index);
+                // // controller.itemsPayload.insert(index1, itemDTO);
+                // int index = controller.itemsPayload.indexWhere((element) => element.id == itemDTO.id);
+                //
+                // jumpIndex = index;
+
+                controller.currentPageIndex.value = searchItemsIndex;
+                 int index = controller.itemsPayload.indexWhere((element) => element.id == itemDTO.id);
+
+                controller.update();
+                Future.delayed(const Duration(milliseconds: 500), (){
+                  controller.pageController.jumpToPage(searchItemsIndex);
+                });
+
+              } else {
+                int index = controller.itemsPayload.indexWhere((element) => element.id == itemDTO.id);
+
+                int index1 = lastMatchIndex;
+                controller.itemsPayload.removeAt(index);
+                controller.itemsPayload.insert(index1, itemDTO);
+                jumpIndex = index;
+                controller.update();
+
+                controller.itemsPayload.sort((a, b) {
+
+                  bool aMatches = (a.status == "return" ||
+                      (a.storages?.map((e) => e.name != null && e.name!.isNotEmpty ? e.qty ?? 0 : 0).reduce((value, element) => value + element) == a.quantity));
+
+                  bool bMatches = (b.status == "return" ||
+                      (b.storages?.map((e) => e.name != null && e.name!.isNotEmpty ? e.qty ?? 0 : 0).reduce((value, element) => value + element) == b.quantity));
+
+                  if (aMatches && !bMatches) {
+                    return -1;
+                  } else if (!aMatches && bMatches) {
+                    return 1;
+                  } else {
+                    return 0;
+                  }
+                });
+                int index2 = controller.itemsPayload.indexWhere((element) => element.id == itemDTO.id);
+
+
+                Future.delayed(const Duration(milliseconds: 500), (){
+                  controller.pageController.jumpToPage(index2);
+                });
+
+              }
 
               for (int i = 0; i < controller.itemsPayload.length ; i++) {
                 for (int k = 0; k < controller.itemsPayload[i].storages!.length ; k++){
 
-                  print("weopde ==> ${controller.itemsPayload[i].storages?[k].name??""}");
                   controller.storageController[i].value?[k].text = controller.itemsPayload[i].storages?[k].name??"";
+                  controller.dynamicQuantityDateController[i].value?[k].text = controller.itemsPayload[i].storages?[k].qty.toString()??"";
+                  controller.expiryDateController[i].value?[k].text = (controller.itemsPayload[i].storages?[k].expiredAt?.isEmpty??true? "":controller.itemsPayload[i].storages?[k].expiredAt?[0])!;
                 }
               }
 
-              print('lastMatchIndex => $lastMatchIndex');
-              print(jsonEncode(controller.itemsPayload));
-              controller.currentPageIndex.value == lastMatchIndex;
-              controller.update();
-              Future.delayed(const Duration(milliseconds: 500), (){
-                controller.pageController.jumpToPage(lastMatchIndex);
-              });
-
-              // controller.itemsPayload[index] = temp;
-              // controller.currentPageIndex.value = index;
-
-              // if(controller.formKeys[controller.currentPageIndex.value].currentState!.validate()){
-              //   print('true ==>');
-              // } else {
-              //   print('false ==>');
-              // }
 
 
-              // for (int i = 0; i < controller.itemsPayload.length; i++) {
-              //   if (controller.itemsPayload[i].id == controller.searchItems[index].id) {
-              //     Future.delayed(const Duration(milliseconds: 500), (){
-              //       controller.pageController.jumpToPage(i);
-              //     });
-              //   }
-              // }
-              //
-              //
-              //
-              //
-              //
+
+             // int index = controller.itemsPayload.indexWhere((element) => element.id == itemDTO.id);
+
+              // Future.delayed(const Duration(milliseconds: 500), (){
+              //   controller.pageController.jumpToPage(index);
+              //   print('jumpIndex ==> $index');
+              // });
+
               // controller.searchValue.value = "";
               // controller.isFocus.value = false;
               // controller.searchFocusNode.unfocus();
@@ -842,8 +907,8 @@ class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController>{
               controller.isFocus.value = false;
               controller.searchFocusNode.unfocus();
             },
-            title: Text(controller.searchItems[index].name??""),
-            subtitle: Text("${Strings.supplierCode}: ${controller.searchItems[index].supplierCode??""}"),
+            title: Text(controller.searchItems[searchItemsIndex].name??""),
+            subtitle: Text("${Strings.supplierCode}: ${controller.searchItems[searchItemsIndex].supplierCode??""}"),
           );
         },
       ),

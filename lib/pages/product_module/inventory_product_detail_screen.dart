@@ -479,8 +479,8 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
                     vGap(4.0),
                     SelectableText(
                         controller.products.value?.expiries != null && controller.products.value!.expiries!.isNotEmpty && controller.products.value?.expiries?.last.price != "null"
-                            ? "£ ${controller.products.value?.expiries?.last.price??"00.0"}"
-                            : "£ 00.00",
+                            ? "£ ${controller.products.value?.expiries?.last.price.toString()}"
+                            : "£00.00",
                         style: black_14_600()
                             ?.copyWith(color: black, fontSize: 15)),
 

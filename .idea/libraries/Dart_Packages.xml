@@ -287,7 +287,6 @@
           <value>
             <list>
               <option value="$USER_HOME$/fvm/versions/3.19.5/packages/flutter/lib" />
-              <option value="$USER_HOME$/flutter/packages/flutter/lib" />
             </list>
           </value>
         </entry>
@@ -380,7 +379,6 @@
           <value>
             <list>
               <option value="$USER_HOME$/fvm/versions/3.19.5/packages/flutter_test/lib" />
-              <option value="$USER_HOME$/flutter/packages/flutter_test/lib" />
             </list>
           </value>
         </entry>
@@ -388,7 +386,6 @@
           <value>
             <list>
               <option value="$USER_HOME$/fvm/versions/3.19.5/packages/flutter_web_plugins/lib" />
-              <option value="$USER_HOME$/flutter/packages/flutter_web_plugins/lib" />
             </list>
           </value>
         </entry>
@@ -833,7 +830,6 @@
           <value>
             <list>
               <option value="$USER_HOME$/fvm/versions/3.19.5/bin/cache/pkg/sky_engine/lib" />
-              <option value="$USER_HOME$/flutter/bin/cache/pkg/sky_engine/lib" />
             </list>
           </value>
         </entry>
@@ -1239,10 +1235,6 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/win32_registry-1.1.3/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/xdg_directories-1.0.4/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/xml-6.5.0/lib" />
-      <root url="file://$USER_HOME$/flutter/bin/cache/pkg/sky_engine/lib" />
-      <root url="file://$USER_HOME$/flutter/packages/flutter/lib" />
-      <root url="file://$USER_HOME$/flutter/packages/flutter_test/lib" />
-      <root url="file://$USER_HOME$/flutter/packages/flutter_web_plugins/lib" />
       <root url="file://$USER_HOME$/fvm/versions/3.19.5/bin/cache/pkg/sky_engine/lib" />
       <root url="file://$USER_HOME$/fvm/versions/3.19.5/packages/flutter/lib" />
       <root url="file://$USER_HOME$/fvm/versions/3.19.5/packages/flutter_test/lib" />

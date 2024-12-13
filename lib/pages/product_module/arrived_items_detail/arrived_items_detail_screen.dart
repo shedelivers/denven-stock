@@ -146,6 +146,7 @@ class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController>{
 
                 Expanded(
                   child: PageView(
+                    physics: const NeverScrollableScrollPhysics(),
                     controller: controller.pageController,
                       onPageChanged: (int index){
                       controller.currentPageIndex.value = index;
@@ -772,6 +773,60 @@ class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController>{
             onTap: (){
               ItemDTO itemDTO = controller.searchItems[searchItemsIndex];
 
+              List<ItemDTO> allCompleteItems = [];
+              List<ItemDTO> allInCompleteItems = [];
+
+              for (var element in controller.itemsPayload) {
+                int sumOfQuantity = element.storages?.map((e) => e.qty ?? 0).reduce((value, element) => value + element)??0;
+
+                  bool isAnyStorageNameNull = element.storages?.any((storage) => storage.name == null || storage.name == '') ?? false;
+
+                  if(
+                  !isAnyStorageNameNull && sumOfQuantity == element.quantity
+                  || element.status == "return"
+                  ){
+                    allCompleteItems.add(element);
+                  } else {
+                    allInCompleteItems.add(element);
+                  }
+
+              }
+
+              controller.itemsPayload.value = allCompleteItems+allInCompleteItems;
+
+              controller.update();
+
+                if(allCompleteItems.contains(itemDTO)){
+                  int index = controller.itemsPayload.indexWhere((element) => element.id == itemDTO.id);
+                  Future.delayed(const Duration(milliseconds: 500), (){
+                    controller.currentPageIndex.value = 0;
+                    controller.pageController.jumpToPage(index);
+                  });
+                }else{
+                  controller.itemsPayload.remove(itemDTO);
+                  controller.itemsPayload.insert(allCompleteItems.length, itemDTO);
+
+                  for (int i = 0; i < controller.itemsPayload.length ; i++) {
+                    for (int k = 0; k < controller.itemsPayload[i].storages!.length ; k++){
+
+                      controller.storageController[i].value?[k].text = controller.itemsPayload[i].storages?[k].name??"";
+                      controller.dynamicQuantityDateController[i].value?[k].text = controller.itemsPayload[i].storages?[k].qty.toString()??"";
+                      controller.expiryDateController[i].value?[k].text = (controller.itemsPayload[i].storages?[k].expiredAt?.isEmpty??true? "":controller.itemsPayload[i].storages?[k].expiredAt?[0])!;
+                    }
+                  }
+
+                  Future.delayed(const Duration(milliseconds: 500), (){
+                    int index = controller.itemsPayload.indexWhere((element) => element.id == itemDTO.id);
+                    controller.pageController.jumpToPage(index);
+                  });
+
+                  controller.update();
+                }
+
+
+
+
+/*
               // controller.itemsPayload.sort((a, b) {
               //   bool aMatches = a.storages?[0].name != null && a.quantity == a.storages?[0].qty;
               //   bool bMatches = b.storages?[0].name != null && b.quantity == b.storages?[0].qty;
@@ -881,7 +936,7 @@ class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController>{
                   controller.dynamicQuantityDateController[i].value?[k].text = controller.itemsPayload[i].storages?[k].qty.toString()??"";
                   controller.expiryDateController[i].value?[k].text = (controller.itemsPayload[i].storages?[k].expiredAt?.isEmpty??true? "":controller.itemsPayload[i].storages?[k].expiredAt?[0])!;
                 }
-              }
+              }*/
 
 
 

@@ -2,6 +2,8 @@ import 'dart:collection';
 import 'package:denvin_stock/exports.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+import '../../../components/get_app_access_popup.dart';
+
 class LoginController extends GetxController {
   late TextEditingController loginEmailController;
   late TextEditingController loginPasswordController;
@@ -85,24 +87,29 @@ class LoginController extends GetxController {
         Utils.showSnackBar(dataResponse.error ?? "Something went wrong");
       } else {
         if (dataResponse.response != null) {
-          var model = dataResponse.response;
-          StorageHelper storageHelper = StorageHelper();
-          storageHelper.saveUserModel(model);
-          storageHelper.saveUserId(model?.id);
-          storageHelper.saveUserName(model?.firstname);
-          // storageHelper.saveSubscriptionPlan(model?.subscriptionDetails);
-          if (storageHelper.getClinicId() == null) {
-             if(model?.clinicDetails?.length == 1){
-               storageHelper.saveClinicId(model?.clinicDetails?.first.key);
-               storageHelper.saveClinicCode(model?.clinicDetails?.first.id);
-               storageHelper.saveClinicModel(model?.clinicDetails?.first);
-               Get.offAllNamed(AppRoutes.dashboard);
-             } else {
-               Get.offAllNamed(AppRoutes.authClinicSelection, arguments: {RoutesArgument.selectClinic: 1});
-             }
+          if(dataResponse.response?.hasStockAccess == false){
+            getAppAccessPopUp();
           } else {
-            Get.offAllNamed(AppRoutes.dashboard);
+            var model = dataResponse.response;
+            StorageHelper storageHelper = StorageHelper();
+            storageHelper.saveUserModel(model);
+            storageHelper.saveUserId(model?.id);
+            storageHelper.saveUserName(model?.firstname);
+            // storageHelper.saveSubscriptionPlan(model?.subscriptionDetails);
+            if (storageHelper.getClinicId() == null) {
+              if(model?.clinicDetails?.length == 1){
+                storageHelper.saveClinicId(model?.clinicDetails?.first.key);
+                storageHelper.saveClinicCode(model?.clinicDetails?.first.id);
+                storageHelper.saveClinicModel(model?.clinicDetails?.first);
+                Get.offAllNamed(AppRoutes.dashboard);
+              } else {
+                Get.offAllNamed(AppRoutes.authClinicSelection, arguments: {RoutesArgument.selectClinic: 1});
+              }
+            } else {
+              Get.offAllNamed(AppRoutes.dashboard);
+            }
           }
+
         } else {
           Utils.showSnackBar(dataResponse.error ?? "Something went wrong");
         }

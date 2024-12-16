@@ -13,6 +13,7 @@ import 'package:denvin_stock/pages/settings_module/clinic_selection_screen.dart'
 import 'package:denvin_stock/pages/settings_module/change_password.dart';
 import 'package:denvin_stock/pages/settings_module/user_profile_screen.dart';
 
+import 'akandoc_lifestyle_module/binding/binding.dart';
 import 'settings_module/binding/settings_binding.dart';
 
 class AppPages {
@@ -177,6 +178,5 @@ class AppPages {
       transition: Transition.cupertino,
       bindings: [ProductBinding()],
     ),
-
   ];
 }

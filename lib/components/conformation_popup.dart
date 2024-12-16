@@ -1,6 +1,11 @@
 import '../exports.dart';
 
-Future<void> confirmPopUp({required String title, required String subtitle, required Function onConfirm, String? conFirmButtonText, String? cancelText}) async {
+Future<void> confirmPopUp({
+  required String title,
+  required String subtitle,
+  required Function onConfirm,
+  String? conFirmButtonText,
+  String? cancelText}) async {
   return showDialog(
     context: Get.context!,
     builder: (BuildContext context) {

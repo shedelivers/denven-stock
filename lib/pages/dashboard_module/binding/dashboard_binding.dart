@@ -15,5 +15,4 @@ class DashboardBinding extends Bindings {
     Get.lazyPut<ViewBasketController>(() => ViewBasketController());
     Get.lazyPut<BasketProductDetailController>(() => BasketProductDetailController());
   }
-
 }

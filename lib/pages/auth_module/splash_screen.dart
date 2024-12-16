@@ -1,5 +1,7 @@
 import 'package:denvin_stock/exports.dart';
 
+import '../../components/get_app_access_popup.dart';
+
 class SplashScreen extends StatelessWidget {
 
   late AuthApiProvider _authApiProvider;
@@ -17,11 +19,15 @@ class SplashScreen extends StatelessWidget {
       if (dataResponse.successful == false) {
         Get.offAndToNamed(AppRoutes.logIn);
       } else {
-        StorageHelper helper = StorageHelper();
-        if(helper.getClinicId() != null){
-            Get.offAllNamed(AppRoutes.dashboard);
+        if(dataResponse.response?.hasStockAccess == false){
+          getAppAccessPopUp();
         } else {
-          Get.offAllNamed(AppRoutes.authClinicSelection);
+          StorageHelper helper = StorageHelper();
+          if(helper.getClinicId() != null){
+            Get.offAllNamed(AppRoutes.dashboard);
+          } else {
+            Get.offAllNamed(AppRoutes.authClinicSelection);
+          }
         }
       }
     }

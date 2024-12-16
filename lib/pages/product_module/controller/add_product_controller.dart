@@ -111,7 +111,8 @@ class AddProductController extends GetxController implements CameraOnCompleteLis
 
   void addInitialValues() {
     productNameController.text = products.value?.name ?? "";
-    priceController.text = (products.value?.price ?? 0).toString();
+    priceController.text = (products.value?.quantity == 0?"0": products.value?.price ?? 0).toString();
+   //priceController.text = (products.value?.price ?? 0).toString();
     notesController.text = (products.value?.note ?? "").toString();
     minimumLevelController.text = products.value?.minLevel.toString() ?? "";
     minimumLevelCount.value = products.value?.minLevel ?? 0;

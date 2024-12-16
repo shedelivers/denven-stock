@@ -296,8 +296,7 @@ class ManualAddProductScreen extends GetView<AddProductController> {
                         readOnly: true,
                         suffix: Icon(Icons.lock, color: Colors.grey.withOpacity(0.7)),
                         hintText: Strings.enterPrice,
-                        hintStyle:
-                            black_14_400()?.copyWith(color: hintTextColor),
+                        hintStyle: black_14_400()?.copyWith(color: hintTextColor),
                         textInputType: TextInputType.number,
                         prefix: const Text("£ ",
                             style: TextStyle(

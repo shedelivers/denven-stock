@@ -33,7 +33,7 @@ class ArrivedItemCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10.0),
                 ),
-                child: imagePath != null ? ClipRRect(borderRadius: BorderRadius.circular(10.0),child: ShimmerImage(url: imagePath ?? "",fit: BoxFit.cover)) : imageAsset(imageIcon),
+                child: imagePath != null ? ClipRRect(borderRadius: BorderRadius.circular(10.0),child: ShimmerImage(url: imagePath ?? "",fit: BoxFit.cover)) : imageAsset(isThreeDotsActive?imageIcon:orderIcon),
               ),
               hGap(10.0),
               Expanded(

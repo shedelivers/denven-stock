@@ -523,6 +523,7 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
                     ),
                     vGap(4.0),
                     SelectableText(
+                        controller.products.value?.quantity == 0?"0":
                         controller.products.value?.price != null
                             ? "£ ${controller.products.value?.price.toString()}"
                             : "£00.00",

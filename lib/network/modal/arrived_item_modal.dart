@@ -443,7 +443,7 @@ class Storages {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['sId'] = sId;
+    data['sId'] = sId??-1;
     data['qty'] = qty;
     data['name'] = name;
     if (expiredAt != null) {

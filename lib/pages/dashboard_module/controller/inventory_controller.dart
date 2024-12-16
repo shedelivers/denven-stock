@@ -397,7 +397,6 @@ class InventoryController extends GetxController {
   }
 
   editProductBottomSheet(ProductModal product) {
-    debugPrint("=>sds ${product.productImage}");
     showModalBottomSheet(
       context: Get.context!,
       useRootNavigator: false,
@@ -443,7 +442,7 @@ class InventoryController extends GetxController {
                                 child: ShimmerImage(
                                     url: extractImagePath(product.productImage ?? ""),
                                     withBaseUrl: true,
-                                    thumbnail: fileIcon,
+                                    thumbnail: imageIcon,
                                     fit: BoxFit.cover)) : imageAsset(imageIcon),
 
                             // imageAsset(fileIcon),

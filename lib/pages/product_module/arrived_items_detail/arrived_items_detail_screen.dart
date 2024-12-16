@@ -9,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
+import '../../../components/utils/print_value.dart';
+
 class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController>{
   ArrivedItemsDetailScreen({super.key}){
     controller.getArguments();
@@ -469,27 +471,39 @@ class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController>{
                               }
                               return null;
                             },
-                            onTap: (){
+                            onTap: ()async{
 
                               Supplier supplier = Supplier(
-                                id: controller.itemsPayload[controller.currentPageIndex.value].storages?[index].sId??-1,
+                                id: controller.itemsPayload[controller.currentPageIndex.value].storages?[index].sId??0,
+                                name: controller.itemsPayload[controller.currentPageIndex.value].storages?[index].name??"",
                               );
 
-                              var list = controller.itemsPayload[controller.currentPageIndex.value].storages?.map((e) => e.sId ?? 0).toList()??[];
 
-                              print('itemsPayload ==> ${controller.itemsPayload[controller.currentPageIndex.value].storages?[0].sId}');
-                              print('list ==> ${list}');
-                              print('index ==> ${controller.currentPageIndex.value}');
 
-                              chooseStorageDialog(selectedItem: supplier,disabledList: controller.itemsPayload[controller.currentPageIndex.value].storages?.map((e) => e.sId ?? 0).toList()).then((value) {
-                                Storages tempStorage = controller.itemsPayload[controller.currentPageIndex.value].storages?.removeAt(index) ?? Storages();
-                                controller.itemsPayload[controller.currentPageIndex.value].storages?.insert(index, Storages(
-                                  sId: value?.id,
-                                  qty: tempStorage.qty,
-                                  expiredAt: tempStorage.expiredAt,
-                                  name: value?.name ?? ""
-                                ));
-                                controller.storageController[controller.currentPageIndex.value].value![index].text = value?.name ?? "";
+                              await chooseStorageDialog(selectedItem: supplier,
+                                  disabledList: controller.itemsPayload[controller.currentPageIndex.value].storages?.map((e) => e.sId ?? 0).toList())
+                                  .then((value) {
+                                    if(value != null){
+                                      print('value.id : ${value.id}');
+                                      print('value.id :2 ${value.name}');
+                                      print('value.id :data Before ${jsonEncode(controller.itemsPayload[controller.currentPageIndex.value])}');
+
+                                      controller.itemsPayload[controller.currentPageIndex.value].storages?[index].name = value.name??"";
+                                      controller.itemsPayload[controller.currentPageIndex.value].storages?[index].sId = value.id??0;
+                                      /*Storages tempStorage = controller.itemsPayload[controller.currentPageIndex.value].storages?.removeAt(index) ?? Storages();
+                                      controller.itemsPayload[controller.currentPageIndex.value].storages?.insert(index, Storages(
+                                          sId: value.id,
+                                          qty: tempStorage.qty,
+                                          expiredAt: tempStorage.expiredAt,
+                                          name: controller.storageController[controller.currentPageIndex.value].value![index].text
+                                      ));*/
+                                      controller.storageController[controller.currentPageIndex.value].value![index].text = value.name ?? "";
+                                      controller.itemsPayload[controller.currentPageIndex.value].storages?[index].name = controller.storageController[controller.currentPageIndex.value].value![index].text;
+
+                                      print('value.id :3 ${value.name}');
+                                      print('value.id :data After ${jsonEncode(controller.itemsPayload[controller.currentPageIndex.value])}');
+                                    }
+
                               });
                             },
                             inputFormatters: [DateFormatter()],
@@ -528,10 +542,15 @@ class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController>{
                             inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
                             // validator: (value)=> controller.itemsPayload[controller.currentPageIndex.value].status == "return" ? null : _validateForm(value, controller.itemsPayload[controller.currentPageIndex.value].quantity ?? 0, controller.dynamicQuantityDateController[controller.currentPageIndex.value].value!),
                             validator: (value) {
-                              controller.itemsPayload[controller.currentPageIndex.value].status == "return" ? null : value?.isEmptyField(messageTitle: Strings.storage);
+                              controller.itemsPayload[controller.currentPageIndex.value].status == "return" ? null
+                                  : value?.isEmptyField(messageTitle: Strings.storage);
                               if(controller.itemsPayload[controller.currentPageIndex.value].quantity != 0){
                                 if(controller.itemsPayload[controller.currentPageIndex.value].status != "return"){
-                                  return _validateForm(value, controller.itemsPayload[controller.currentPageIndex.value].quantity ?? 0, controller.dynamicQuantityDateController[controller.currentPageIndex.value].value!);
+                                  if (value == "0") {
+                                    return "Storing Quantity can't be zero.";
+                                  }
+                                  return _validateForm(value, controller.itemsPayload[controller.currentPageIndex.value].quantity ?? 0,
+                                      controller.dynamicQuantityDateController[controller.currentPageIndex.value].value!);
                                 }
                               }
                               return null;
@@ -1043,14 +1062,18 @@ class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController>{
                                             return ListTile(
                                               onTap: ()async{
 
-                                                Get.back();
-                                              var value = await  extraProduct(
-                                                  id: data?.externalProductId??0,
-                                                  supplierCode: data?.supplierCode??"",
-                                                  supplierName: data?.name??"",);
+                                                bool isAlreadyContainThisItem = controller.itemsPayload.any((item) => item.id == data?.externalProductId);
 
-                                             // Get.back(result: value);
-                                              print('Data 2 ==> ${value.toString()}');
+                                               if(isAlreadyContainThisItem){
+                                                 Utils.showSnackBar('This product is already added.');
+                                               }else {
+                                                 Get.back();
+                                                 controller.extraItemsController.clear();
+                                                 var value = await  extraProduct(
+                                                   id: data?.externalProductId??0,
+                                                   supplierCode: data?.supplierCode??"",
+                                                   supplierName: data?.name??"",);
+                                               }
 
 
                                               },
@@ -1250,6 +1273,7 @@ class QuantityValidator {
       if (controller.text.isEmpty) {
         return "All fields must be filled.";
       }
+
       int? value = int.tryParse(controller.text);
       if (value == null || value < 0) {
         return "All fields must contain a non-negative integer.";
@@ -1264,6 +1288,3 @@ class QuantityValidator {
     return null; // No errors
   }
 }
-
-
-

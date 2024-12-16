@@ -9,6 +9,7 @@ class UserModal {
   bool? emailConfirmed;
   String? phoneNumber;
   bool? phoneNumberConfirmed;
+  bool? hasStockAccess;
   int? securityId;
   String? createdAt;
   String? updatedAt;
@@ -30,6 +31,7 @@ class UserModal {
         this.emailConfirmed,
         this.phoneNumber,
         this.phoneNumberConfirmed,
+        this.hasStockAccess,
         this.securityId,
         this.createdAt,
         this.updatedAt,
@@ -48,6 +50,7 @@ class UserModal {
     emailConfirmed = json['emailConfirmed'];
     phoneNumber = json['phoneNumber'];
     phoneNumberConfirmed = json['phoneNumberConfirmed'];
+    hasStockAccess = json['hasStockAccess'];
     securityId = json['securityId'];
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
@@ -74,6 +77,7 @@ class UserModal {
     data['emailConfirmed'] = emailConfirmed;
     data['phoneNumber'] = phoneNumber;
     data['phoneNumberConfirmed'] = phoneNumberConfirmed;
+    data['hasStockAccess'] = hasStockAccess;
     data['securityId'] = securityId;
     data['createdAt'] = createdAt;
     data['updatedAt'] = updatedAt;

@@ -1,3 +1,4 @@
+import 'package:denvin_stock/components/utils/print_value.dart';
 import 'package:denvin_stock/exports.dart';
 
 import '../../components/get_app_access_popup.dart';
@@ -20,6 +21,8 @@ class SplashScreen extends StatelessWidget {
         Get.offAndToNamed(AppRoutes.logIn);
       } else {
         if(dataResponse.response?.hasStockAccess == false){
+          print('dataResponse.response?.hasStockAccess => ${dataResponse.response?.hasStockAccess}');
+
           getAppAccessPopUp();
         } else {
           StorageHelper helper = StorageHelper();

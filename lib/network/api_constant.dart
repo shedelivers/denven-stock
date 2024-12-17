@@ -24,6 +24,7 @@ class ApiConstants {
   static String storage = "$_stagingBaseURI/Storage";
   static String sampleData = "$_stagingBaseURI/SampleData";
   static String profile = "$_stagingBaseURI/User/me/Implant";
+  static String updateProfile = "$_stagingBaseURI/User";
   static String implantStock = "$_stagingBaseURI/Implants";
   static String productScan = "$_stagingBaseURI/Product";
   static String barcodeUri = "$_stagingBaseURI/Barcode";

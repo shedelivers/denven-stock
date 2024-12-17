@@ -48,6 +48,14 @@ getAppAccessPopUp () {
                   InkWell(
                       borderRadius: BorderRadius.circular(6.0),
                       onTap: (){
+                        Get.offAllNamed(AppRoutes.logIn);
+                      },
+                      child: Text("Login", style: primaryColor_16_700()).paddingSymmetric(horizontal: 20.0,vertical: 10.0)),
+
+
+                  InkWell(
+                      borderRadius: BorderRadius.circular(6.0),
+                      onTap: (){
 
                         String? encodeQueryParameters(Map<String, String> params) {
                           return params.entries

@@ -107,16 +107,65 @@ class ArrivedItemsDetailController extends GetxController {
   //   progressValue.value = "$progress%";
   //   update();
   // }
-  calculateProgress(int totalLength, int currentIndex) {
-    currentIndex = currentIndex.clamp(0, totalLength - 1);
-    progressPercent.value = (currentIndex + 1) / totalLength;
-    currentIndex = currentIndex  + 1;
-    double progress = (currentIndex / totalLength) * 100;
-    if (progress < (100 / totalLength)) {
-      progress = 100 / totalLength;
+
+  calculateProgress(int totalLength, int currentIndex,) {
+      currentIndex = currentIndex.clamp(0, totalLength - 1);
+      double progress = (currentIndex / totalLength) * 100;
+      if (currentIndex == 0) {
+        progress = 0;
+      }
+      print("progressValue.value  $progress: ${progressValue.value}");
+
+      progressValue.value = "${progress.toStringAsFixed(2)}%";
+      progressPercent.value = currentIndex / totalLength;
+
+    // refresh();
+  }
+
+  // calculateProgress(int totalLength, int currentIndex) {
+  //  currentIndex = currentIndex.clamp(0, totalLength - 1);
+  //   progressPercent.value = (currentIndex + 1) / totalLength;
+  //   currentIndex = currentIndex  + 1;
+  //   double progress = (currentIndex / totalLength) * 100;
+  //   if (progress < (100 / totalLength)) {
+  //     progress = 100 / totalLength;
+  //   }
+  //   print("progressValue.value  $progress: ${progressValue.value}");
+  //
+  //   progressValue.value = "${progress.toStringAsFixed(2)}%";
+  //  // update();
+  // }
+
+  bool isLastIndexIsValid = false;
+  lastIndexIsValid () {
+    if(currentPageIndex.value == itemsPayload.length -1){
+      if(itemsPayload[currentPageIndex.value].status == 'return'){
+        isLastIndexIsValid = true;
+      } else {
+        int sumOfQuantity = itemsPayload[currentPageIndex.value].storages?.map((e) => e.qty ?? 0).reduce((value, element) => value + element)??0;
+        bool isAnyStorageNameNull = itemsPayload[currentPageIndex.value].storages?.any((storage) => storage.name == null || storage.name == '') ?? false;
+        bool isAnyStorageQuantityNull = itemsPayload[currentPageIndex.value].storages?.any((storage) => storage.qty == null || storage.qty == 0) ?? false;
+
+        if(sumOfQuantity == itemsPayload[currentPageIndex.value].quantity && !isAnyStorageNameNull && !isAnyStorageQuantityNull){
+          isLastIndexIsValid = true;
+        } else {
+          isLastIndexIsValid = false;
+        }
+      }
+
+      if(isLastIndexIsValid == true){
+        printValue(tag: "isLastIndexIsValid: ||", isLastIndexIsValid);
+        progressValue.value = "100.00%";
+        progressPercent.value = 1;
+        //calculateProgress(itemsPayload.length, currentPageIndex.value, isTapped: true);
+      } else{
+        calculateProgress(itemsPayload.length, currentPageIndex.value);
+      }
+    } else {
+      isLastIndexIsValid = false;
     }
-    progressValue.value = "${progress.toStringAsFixed(2)}%";
-   // update();
+    update();
+    printValue(tag: "isLastIndexIsValid:", isLastIndexIsValid);
   }
 
   getExpiryDate(int index) async {
@@ -152,9 +201,7 @@ class ArrivedItemsDetailController extends GetxController {
         Utils.showSnackBar(response.error ?? "Unable to get data");
       } else {
         bool runDraftNewItemsLoop = true;
-        bool runDraftItemsLoop = true;
         if (response.response != null) {
-          int currentIndex = 0;
 
           var model = response.response;
           products.value = model;
@@ -268,7 +315,6 @@ class ArrivedItemsDetailController extends GetxController {
                   if (runDraftNewItemsLoop) {
 
                     for (int k = 0; k < products.value!.draftNewItems!.length; k++) {
-                      printValue('run once: ==< ${products.value!.draftNewItems!.length}');
 
                       int sumOfQuantity = products.value?.draftNewItems?[k].storages?.map((e) => e.qty ?? 0).reduce((value, element) => value + element)??0;
 
@@ -280,7 +326,6 @@ class ArrivedItemsDetailController extends GetxController {
                             && sumOfQuantity == products.value?.draftNewItems?[k].quantity
                             || products.value?.draftNewItems?[k].status == "return"
                         ){
-                          printValue('run once:2');
                           allCompleteItems.add(ItemDTO(
                               isNew: products.value?.draftNewItems?[k].isNew,
                               id: products.value?.draftNewItems?[k].id??0,
@@ -307,7 +352,6 @@ class ArrivedItemsDetailController extends GetxController {
 
 
                         } else {
-                          printValue('run once:22');
                           allInCompleteItems.add(
                               ItemDTO(
                                   isNew: products.value?.draftNewItems?[k].isNew,
@@ -367,27 +411,6 @@ class ArrivedItemsDetailController extends GetxController {
                 storageDateFocusNode[i].value?.add(FocusNode());
                 dynamicQuantityDateFocusNode[i].value?.add(FocusNode());
                 expiryDateFocusNode[i].value?.add(FocusNode());
-
-                // storageController[i].value?[k].text = itemsPayload[i].storages?[k].name??"";
-                // dynamicQuantityDateController[i].value?[k].text = itemsPayload[i].storages?[k].qty.toString()??"";
-                // expiryDateController[i].value?[k].text = (itemsPayload[i].storages?[k].expiredAt?.isEmpty??true? "":itemsPayload[i].storages?[k].expiredAt?[0])!;
-
-                print('itemsPayload.value wsw ==> ${itemsPayload[i].storages?.length}');
-
-
-                // storageController.add(Rxn(<TextEditingController>[
-                //   ...?itemsPayload[i].storages?.map((e) => TextEditingController(text:e.name??""))
-                //  ])
-                //
-                // );
-                // expiryDateController.add(Rxn(<TextEditingController>[TextEditingController(text: (itemsPayload[i].storages?[k].expiredAt?.isEmpty??true? "":itemsPayload[i].storages?[k].expiredAt?[0]))]));
-                // dynamicQuantityDateController.add(Rxn(<TextEditingController>[TextEditingController(text: itemsPayload[i].storages?[k].qty.toString()??"")]));
-                // storageDateFocusNode.add(Rxn(<FocusNode>[FocusNode()]));
-                // expiryDateFocusNode.add(Rxn(<FocusNode>[FocusNode()]));
-                // dynamicQuantityDateFocusNode.add(Rxn(<FocusNode>[FocusNode()]));
-                // formKeys.add(GlobalKey<FormState>());
-
-
 
                 // storageController[i].value?[k].text = itemsPayload[i].storages?[k].name??"";
                 // dynamicQuantityDateController[i].value?[k].text = itemsPayload[i].storages?[k].qty.toString()??"";
@@ -621,26 +644,9 @@ class ArrivedItemsDetailController extends GetxController {
 
   addToDraft () async {
     if (await Utils.hasNetwork()) {
-     // print('value.id :3 ${itemsPayload[currentPageIndex.value].storages?[1].name}');
-
-      //printValue(tag: 'value.id :3', itemsPayload.toJson());
-
-      Map<String, dynamic> data1 = {"orderId" : products.value?.id.toString()??"", "items": itemsPayload};
-
-      printValue(tag: "addToDraft PayLoad: Before", data1);
-      
       var payload = itemsPayload.map((element) {return element.toJson();}).toList();
 
       for(var myPayload in payload) {
-
-        // if (myPayload["storages"] is List  && myPayload["Status"] != "return") {
-        //   for (var storage in myPayload["storages"]) {
-        //     if (!storage.containsKey("expiredAt")) {
-        //       storage["expiredAt"] = [];
-        //     }
-        //   }
-        // }
-
 
         if(myPayload["Status"] == "return") {
           myPayload["storages"].clear();

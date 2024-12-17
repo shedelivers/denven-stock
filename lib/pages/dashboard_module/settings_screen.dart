@@ -3,11 +3,18 @@ import 'package:denvin_stock/pages/dashboard_module/policy_pages.dart';
 import '../../components/app_update.dart';
 import '../../components/conformation_popup.dart';
 
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends StatefulWidget {
   SettingsScreen({super.key});
 
+  @override
+  State<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
   final formGlobalKey = GlobalKey<FormState>();
+
   final loginController = Get.put(LoginController());
+
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +34,6 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  
   mainBuild() {
     return SingleChildScrollView(
       child: Column(
@@ -43,9 +49,10 @@ class SettingsScreen extends StatelessWidget {
           SettingItemView(
             title: "User Profile",
             image: imageAsset(userIcon,height: 20.0),
-            onTap: (){
+            onTap: ()async{
               // Utils.showSnackBar("Coming Soon");
-              Get.toNamed(AppRoutes.userProfileScreen);
+              var refresh = await Get.toNamed(AppRoutes.userProfileScreen);
+              setState(() {});
             },
           ),
           _divider(),
@@ -131,7 +138,7 @@ class SettingsScreen extends StatelessWidget {
         Center(child: imageAsset(appLogo, height: height_70)),
         vGap(height_10),
         TextView(
-          "${helper.getUserModel()?.firstname ?? ""} ${helper.getUserModel()?.lastname}",
+          "${helper.getUserFirstName() ?? ""} ${helper.getUserLastName()}",
           style: black_17_700()?.copyWith(color: primaryColor),
         ),
         vGap(height_10),

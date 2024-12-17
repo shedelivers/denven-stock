@@ -52,7 +52,7 @@ class HomeScreen extends GetView<HomeController> {
               Strings.welcome,
               style: black_22_700(),
             ),
-            TextView(helper.getUserName() ?? "N/A", style: primaryColor_18_600()),
+            TextView("${helper.getUserFirstName()} ${helper.getUserLastName()}" ?? "N/A", style: primaryColor_18_600()),
           ],
         ),
         Spacer(),

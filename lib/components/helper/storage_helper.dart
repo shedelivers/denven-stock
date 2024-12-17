@@ -5,7 +5,9 @@ import 'package:denvin_stock/exports.dart';
 
 class StorageHelper {
   static const String _userId = "userId";
-  static const String _userName = "userName";
+  static const String _firstName = "firstName";
+  static const String _lastName = "lastName";
+  static const String _mobileNumber = "mobileNumber";
   static const String _userModel = "userModel";
   static const String _subscriptionDetails = "subscriptionDetails";
   static const String _clinicModal = "clinicModal";
@@ -48,12 +50,28 @@ class StorageHelper {
     return _getPref(_userId);
   }
 
-  String? getUserName() {
-    return _getPref(_userName);
+  String? getUserFirstName() {
+    return _getPref(_firstName);
   }
 
-  void saveUserName(String? name) {
-    _savePref(_userName, name);
+  void saveUserFirstName(String? name) {
+    _savePref(_firstName, name);
+  }
+
+  String? getUserLastName() {
+    return _getPref(_lastName);
+  }
+
+  void saveUserLastName(String? name) {
+    _savePref(_lastName, name);
+  }
+
+  String? getUserPhoneNumber() {
+    return _getPref(_mobileNumber);
+  }
+
+  void saveUserPhoneNumber(String? name) {
+    _savePref(_mobileNumber, name);
   }
 
   void saveUserId(int? id) {

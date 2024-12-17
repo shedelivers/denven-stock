@@ -64,6 +64,35 @@ class AuthApiProvider {
     }
   }
 
+
+  Future<ComanResponseModal> updateProfile({required String userId, required Map<String, dynamic> data}) async {
+    try {
+      Response response = await _dio.patch('${ApiConstants.updateProfile}/$userId',
+          data: data,
+          options: Injector.getHeaderToken());
+      var dataResponse = ComanResponseModal.fromJson(response.data);
+      return dataResponse;
+    } on DioException catch (error) {
+      if (error.type == DioExceptionType.connectionTimeout) {
+        return ComanResponseModal(error: "Connection Timeout Exception", successful: false);
+      } else if (error.type == DioExceptionType.receiveTimeout) {
+        return ComanResponseModal(error: "Receive Timeout Exception", successful: false);
+      } else {
+        final response = error.response?.data;
+        if (response != null && response is Map<String, dynamic>) {
+          return ComanResponseModal.fromJson(response);
+        } else {
+          return ComanResponseModal(error: error.toString(), successful: false);
+        }
+      }
+    } catch (e) {
+      return ComanResponseModal(error: e.toString(), successful: false);
+    }
+
+  }
+
+
+
   Future<DataResponse> signUp(Map<String, dynamic> data) async {
     try {
       Response response = await _dio.post(ApiConstants.signUpUri, data: data);

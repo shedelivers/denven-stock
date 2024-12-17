@@ -133,7 +133,8 @@ class InventoryStockScreen extends GetView<InventoryController> {
               },
               child: NotificationListener<ScrollEndNotification>(
                 onNotification: (scrollInfo) {
-                  if(scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent){
+                  //scrollInfo.metrics.pixels >= scrollInfo.metrics.maxScrollExtent * 0.8
+                  if(scrollInfo.metrics.pixels >= scrollInfo.metrics.maxScrollExtent * 0.8){
                     if((getTotalPage() - 1) >= controller.currentPage.value && controller.shimmerLoaderState == ShimmerLoaderState.fetched && controller.products.isNotEmpty){
                       controller.currentPage.value = (controller.implantProductlist?.response?.page ?? 0) + 1;
                       controller.getPaginationImplantStockData(addMore: true, showLoading: false);

@@ -94,7 +94,9 @@ class LoginController extends GetxController {
             StorageHelper storageHelper = StorageHelper();
             storageHelper.saveUserModel(model);
             storageHelper.saveUserId(model?.id);
-            storageHelper.saveUserName(model?.firstname);
+            storageHelper.saveUserFirstName(model?.firstname);
+            storageHelper.saveUserLastName(model?.lastname);
+            storageHelper.saveUserPhoneNumber(model?.phoneNumber);
             // storageHelper.saveSubscriptionPlan(model?.subscriptionDetails);
             if (storageHelper.getClinicId() == null) {
               if(model?.clinicDetails?.length == 1){

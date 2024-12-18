@@ -50,7 +50,7 @@ getAppAccessPopUp () {
                       onTap: (){
                         Get.offAllNamed(AppRoutes.logIn);
                       },
-                      child: Text("Login", style: primaryColor_16_700()).paddingSymmetric(horizontal: 20.0,vertical: 10.0)),
+                      child: Text("Sign in", style: primaryColor_16_700()).paddingSymmetric(horizontal: 20.0,vertical: 10.0)),
 
 
                   InkWell(

@@ -25,6 +25,8 @@ const String search = "assets/icons/search.png";
 const String filter = "assets/icons/filter.png";
 const String googleLogo = "assets/icons/google.png";
 const String appleLogo = "assets/icons/apple.png";
+const String openBoxIcon = "assets/icons/open_box_icon.png";
+const String closeBoxIcon = "assets/icons/close_box_icon.png";
 
 const String userIcon = "assets/icons/settings/user.png";
 const String doctorIcon = "assets/icons/settings/doctor.png";

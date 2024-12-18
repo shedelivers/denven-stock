@@ -210,10 +210,12 @@ class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController> {
                         : Column(
                               children: [
                                 if (controller.itemsPayload.length ==
-                                        controller.currentPageIndex.value + 1 &&
-                                    controller.isLastIndexIsValid)
+                                    controller.currentPageIndex.value + 1)
+                                // if (controller.itemsPayload.length ==
+                                //         controller.currentPageIndex.value + 1 &&
+                                //     controller.isLastIndexIsValid)
                                   Visibility(
-                                      visible: controller.isLastIndexIsValid,
+                                      //visible: controller.isLastIndexIsValid,
                                       child: AppButton(
                                         onTap: () {
                                           if (controller
@@ -259,7 +261,7 @@ class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController> {
                                                 borderWidth: 1,
                                                 buttonText: "Next Product")
                                             : Visibility(
-                                          visible: controller.isLastIndexIsValid,
+                                          //visible: controller.isLastIndexIsValid,
                                               child: AppButton(
                                                   onTap: () async {
                                                     if (controller

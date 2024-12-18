@@ -286,6 +286,7 @@ class InventoryController extends GetxController {
                   orderAt: productModal?.orderedAt,
                   price: productModal?.price,
                   localMappingId: productModal?.localMappingId,
+                  type: productModal?.type??1,
                   menuOnTap: () {},
                   cardOnTap: () {},
               ).marginSymmetric(horizontal: 20.0),
@@ -353,6 +354,7 @@ class InventoryController extends GetxController {
                   orderAt: productModal?.orderedAt,
                   storageName: productModal?.storage?.name,
                   price: productModal?.price,
+                  type: productModal?.type??1,
                   menuOnTap: (){
                     editProductBottomSheet(productModal ?? ProductModal());
                   },

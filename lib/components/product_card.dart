@@ -14,7 +14,8 @@ class ProductCard extends StatelessWidget {
   String? storageName;
   bool dontShowBorderAndMenu;
   int? localMappingId;
-  ProductCard({super.key,required this.menuOnTap,this.storageName,this.isThreeDotsActive = true, this.dontShowBorderAndMenu = false, required this.cardOnTap, this.name,this.imagePath,this.orderAt, this.price,this.supplierCode, this.localMappingId});
+  int type;
+  ProductCard({super.key,required this.menuOnTap,this.storageName,this.isThreeDotsActive = true, this.dontShowBorderAndMenu = false, required this.cardOnTap, this.name,this.imagePath,this.orderAt, this.price,this.supplierCode, this.localMappingId, required this.type});
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +56,18 @@ class ProductCard extends StatelessWidget {
                             child: Padding(
                               padding: const EdgeInsets.only(left: 7),
                               child: imageAsset(scanIcon, width: 15),
-                            ))
+                            )),
+
+                        Visibility(
+                            visible: type ==1,
+                            replacement: Padding(
+                              padding: const EdgeInsets.only(left: 7),
+                              child: imageAsset(openBoxIcon, width: 15),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 7),
+                              child: imageAsset(closeBoxIcon, width: 15),
+                            )),
                       ],
                     ),
                     Row(

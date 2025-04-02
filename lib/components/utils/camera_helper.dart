@@ -118,11 +118,12 @@ class CameraHelper {
                         ),
                       ],
                     ).onTap(() async{
-                      if (await isStorageEnabled()) {
-                        Navigator.pop(context);
-                        // docImageDoc();
-                        getImageWithoutCropping(ImageSource.gallery);
-                      }
+                      getImageWithoutCropping(ImageSource.gallery);
+                      // if (await isStorageEnabled()) {
+                      //   Navigator.pop(context);
+                      //   // docImageDoc();
+                      //   getImageWithoutCropping(ImageSource.gallery);
+                      // }
                     }),
                     if(allowDocument)  const Divider(
                       height: 20,
@@ -137,11 +138,13 @@ class CameraHelper {
                         ),
                       ],
                     ).onTap(() async{
-                    if (await isStorageEnabled()) {
-                      Navigator.pop(context);
-                      docPick();
-                    }
+                    // if (await isStorageEnabled()) {
+                    //   Navigator.pop(context);
+                    //   docPick();
+                    // }
 
+                    Navigator.pop(context);
+                    docPick();
                     }),
                     const Divider(
                       height: 20,
@@ -156,11 +159,13 @@ class CameraHelper {
                         ),
                       ],
                     ).onTap(() async{
-                        if (await isCameraEnabled()) {
-                            Navigator.pop(context);
-                            getImageWithoutCropping(ImageSource.camera);
-
-                        }
+                      Navigator.pop(context);
+                      getImageWithoutCropping(ImageSource.camera);
+                        // if (await isCameraEnabled()) {
+                        //     Navigator.pop(context);
+                        //     getImageWithoutCropping(ImageSource.camera);
+                        //
+                        // }
                     }),
                   ],
                 ),

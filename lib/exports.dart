@@ -124,3 +124,4 @@ export 'package:denvin_stock/components/app_component/custom_product_box_view.da
 export 'package:denvin_stock/pages/product_module/update_quantity_screen.dart';
 
 export 'package:denvin_stock/pages/product_module/controller/move_storage_controller.dart';
+

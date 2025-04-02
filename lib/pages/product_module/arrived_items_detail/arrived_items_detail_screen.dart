@@ -123,16 +123,14 @@ class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController> {
               controller.isFocus.value = false;
               controller.searchFocusNode.unfocus();
               Future.delayed(const Duration(milliseconds: 200), () {
-                controller.pageController
-                    .jumpToPage(controller.currentPageIndex.value);
+                controller.pageController.jumpToPage(controller.currentPageIndex.value);
               });
             },
           ),
         ).marginOnly(right: 20.0, left: 20.0),
         Expanded(
           child: Visibility(
-            visible:
-                controller.searchValue.isEmpty && !controller.isFocus.value,
+            visible: controller.searchValue.isEmpty && !controller.isFocus.value,
             replacement: _searchItem(),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -218,11 +216,7 @@ class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController> {
                                       //visible: controller.isLastIndexIsValid,
                                       child: AppButton(
                                         onTap: () {
-                                          if (controller
-                                              .formKeys[controller
-                                                  .currentPageIndex.value]
-                                              .currentState!
-                                              .validate()) {
+                                          if (controller.formKeys[controller.currentPageIndex.value].currentState!.validate()) {
                                             controller.submit();
                                           }
                                         },

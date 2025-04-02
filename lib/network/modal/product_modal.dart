@@ -279,7 +279,7 @@ class Storage {
   }
 }
 
-class Supplier extends Serializable with CustomDropdownListFilter{
+class Supplier extends Serializable with CustomDropdownListFilter {
   int? id;
   String? name;
   String? phoneNo;
@@ -321,7 +321,7 @@ class Supplier extends Serializable with CustomDropdownListFilter{
     salesRepPhone = json['salesRepPhone'];
     accountID = json['accountID'];
     sendEmail = json['sendEmail'];
-    lActions = json['_Actions'] != null ? json['_Actions'].cast<String>() : null;
+    lActions = json['_Actions']?.cast<String>();
   }
 
   Map<String, dynamic> toJson() {

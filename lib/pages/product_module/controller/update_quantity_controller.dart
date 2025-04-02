@@ -103,7 +103,7 @@ class UpdateQuantityController extends GetxController {
             ExpiryDataDto(
               quantity: textQuantityController[i].text,
               at: textExpireController[i].text,
-              price: textPriceController[i].text
+              price: textPriceController[i].text == "null" || textPriceController[i].text.isEmpty? "0":textPriceController[i].text
             ),
           );
         }

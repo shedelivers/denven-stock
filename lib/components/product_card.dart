@@ -59,7 +59,7 @@ class ProductCard extends StatelessWidget {
                             )),
 
                         Visibility(
-                            visible: type ==1,
+                            visible: type == 1,
                             replacement: Padding(
                               padding: const EdgeInsets.only(left: 7),
                               child: imageAsset(openBoxIcon, width: 15),
@@ -126,8 +126,4 @@ class ProductCard extends StatelessWidget {
       return originalDateTimeString;
     }
   }
-
-
-
-
 }

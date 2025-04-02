@@ -74,7 +74,7 @@ ThemeData themeDark =  ThemeData(
         color:blackColor
 
     ),
-     titleTextStyle: TextStyle(color: Colors.white,fontSize: 20, fontWeight: FontWeight.w900),
+     titleTextStyle: const TextStyle(color: Colors.white,fontSize: 20, fontWeight: FontWeight.w900),
 
     elevation: 0,
   ),

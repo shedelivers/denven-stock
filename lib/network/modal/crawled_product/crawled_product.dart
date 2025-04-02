@@ -8,7 +8,6 @@ class CrawledProductDataModal  extends Serializable{
   String? manufacturer;
   String? type;
   String? supplierCode;
-
   String? method;
 
   CrawledProductDataModal(
@@ -19,7 +18,6 @@ class CrawledProductDataModal  extends Serializable{
       this.manufacturer,
       this.type,
       this.supplierCode,
-
       this.method});
 
   CrawledProductDataModal.fromJson(Map<String, dynamic> json) {
@@ -30,10 +28,10 @@ class CrawledProductDataModal  extends Serializable{
     manufacturer = json['manufacturer'];
     type = json['type'];
     supplierCode = json['supplierCode'];
-
     method = json['method'];
   }
 
+  @override
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['internalProductId'] = internalProductId;
@@ -43,7 +41,6 @@ class CrawledProductDataModal  extends Serializable{
     data['manufacturer'] = this.manufacturer;
     data['type'] = this.type;
     data['supplierCode'] = this.supplierCode;
-
     data['method'] = this.method;
     return data;
   }

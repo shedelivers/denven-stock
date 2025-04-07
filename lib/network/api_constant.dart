@@ -1,8 +1,8 @@
 class ApiConstants {
 
   ///Dev Url
-  // static const String _stagingBaseDomain ="https://denven-panel-stage.azurewebsites.net";
-  // static const String baseUrlForImage ="https://denven-panel-stage.azurewebsites.net";
+  // static const String _stagingBaseDomain = "https://denven-panel-stage.azurewebsites.net";
+  // static const String baseUrlForImage = "https://denven-panel-stage.azurewebsites.net";
 
 
   /// Live
@@ -16,7 +16,6 @@ class ApiConstants {
   //apis
   static String signIn = "$_stagingBaseURI/Auth/token";
   static String signUpUri = "$_stagingBaseURI/User/CreateImplantUser";
-
 
 
   static String supplier = "$_stagingBaseURI/Supplier";

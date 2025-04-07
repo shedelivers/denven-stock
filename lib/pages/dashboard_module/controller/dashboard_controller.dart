@@ -1,4 +1,5 @@
 import 'package:denvin_stock/exports.dart';
+import 'package:intercom_flutter/intercom_flutter.dart';
 
 import '../../../components/app_update.dart';
 
@@ -31,6 +32,7 @@ class DashboardController extends GetxController {
     getBasketCount();
     getArrivedCount();
     checkAppUpdate ();
+   // intercomUserLogIn ();
     super.onInit();
   }
   void updateIndex(int index) {
@@ -112,5 +114,22 @@ class DashboardController extends GetxController {
       }
     }
   }
+
+  void intercomUserLogIn () async {
+    StorageHelper helper = StorageHelper();
+    String userId = helper.getUserModel()?.id.toString() ?? "";
+    String email = helper.getUserModel()?.email ?? "";
+
+    if (userId.isNotEmpty) {
+      await Intercom.instance.loginIdentifiedUser(userId: userId);
+    } else if (email.isNotEmpty) {
+      await Intercom.instance.loginIdentifiedUser(email: email);
+    } else {
+      await Intercom.instance.loginUnidentifiedUser();
+    }
+    await Intercom.instance.setBottomPadding(100);
+    await Intercom.instance.setLauncherVisibility(IntercomVisibility.visible);
+  }
+
 
 }

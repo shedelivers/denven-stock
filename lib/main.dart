@@ -1,9 +1,17 @@
 import 'package:denvin_stock/exports.dart';
+import 'package:intercom_flutter/intercom_flutter.dart';
 import 'package:upgrader/upgrader.dart';
 
 CustomLoader customLoader = CustomLoader();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await Intercom.instance.initialize(
+      'j5x74qha',
+      iosApiKey: 'ios_sdk-7431ce308d7cff9a7b79aca1b012c267fc1bc417',
+      androidApiKey: 'android_sdk-c5cce85dd55f474ea6c4c48d43bedc689b1d64e9');
+
+
  // await Upgrader.clearSavedSettings();
   await StorageHelper.init();
   runApp(const MyApp());

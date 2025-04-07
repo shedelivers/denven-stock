@@ -297,10 +297,10 @@ packages:
     dependency: "direct dev"
     description:
       name: flutter_keyboard_visibility
-      sha256: "4983655c26ab5b959252ee204c2fffa4afeb4413cd030455194ec0caa3b8e7cb"
+      sha256: "98664be7be0e3ffca00de50f7f6a287ab62c763fc8c762e0a21584584a3ff4f8"
       url: "https://pub.dev"
     source: hosted
-    version: "5.4.1"
+    version: "6.0.0"
   flutter_keyboard_visibility_linux:
     dependency: transitive
     description:
@@ -495,6 +495,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.2.1+1"
+  intercom_flutter:
+    dependency: "direct main"
+    description:
+      name: intercom_flutter
+      sha256: "4eeb6ecc55cc8d0a5b44324e2f423dab4b242041794af555cb9c1d4a3c2efa95"
+      url: "https://pub.dev"
+    source: hosted
+    version: "9.0.9"
+  intercom_flutter_platform_interface:
+    dependency: transitive
+    description:
+      name: intercom_flutter_platform_interface
+      sha256: "42cd30ff7fb987567d5e58092c3625e01ddb3d1831ec269df7567f333236aa51"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.2"
+  intercom_flutter_web:
+    dependency: transitive
+    description:
+      name: intercom_flutter_web
+      sha256: d085e66d5b826301b21823963906ec20e35000b0ae7f695bbf8d13da8bc8f69f
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.1"
   intl:
     dependency: "direct dev"
     description:

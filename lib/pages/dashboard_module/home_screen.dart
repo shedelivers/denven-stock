@@ -1,4 +1,6 @@
 import 'package:denvin_stock/exports.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:intercom_flutter/intercom_flutter.dart';
 
 class HomeScreen extends GetView<HomeController> {
   HomeScreen({super.key});
@@ -55,7 +57,7 @@ class HomeScreen extends GetView<HomeController> {
             TextView("${helper.getUserFirstName()} ${helper.getUserLastName()}" ?? "N/A", style: primaryColor_18_600()),
           ],
         ),
-        Spacer(),
+        const Spacer(),
         Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [

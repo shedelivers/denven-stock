@@ -483,6 +483,30 @@ class ProductApiProvider {
   }
 
 
+  Future<DataResponse> hideUnHideProduct({String? id, Map<String, dynamic>? payload}) async {
+    try {
+      Response response = await _dio.patch("${ApiConstants.productScan}/$clinicId/HideUnhide/$id", data: payload,options: Injector.getHeaderToken());
+      var dataResponse = DataResponse.fromJson(response.data, (data) => null);
+      return dataResponse;
+    } on DioException catch (error) {
+      if (error.type == DioExceptionType.connectionTimeout) {
+        return DataResponse(error: "Connection Timeout Exception", successful: false);
+      } else if (error.type == DioExceptionType.receiveTimeout) {
+        return DataResponse(error: "Receive Timeout Exception", successful: false);
+      } else {
+        final response = error.response?.data;
+        if (response != null && response is Map<String, dynamic>) {
+          return DataResponse.fromJson(response,(json)=> null,);
+        } else {
+          return DataResponse(error: error.toString(), successful: false);
+        }
+      }
+    } catch (e) {
+      return DataResponse(error: e.toString(), successful: false);
+    }
+  }
+
+
   Future<DataResponse<ProductModal>> updateQty({String? productId,Map<String, dynamic>? data}) async {
     try {
       Response response = await _dio.patch("${ApiConstants.implantStock}/$clinicId/$productId", options: Injector.getHeaderToken(), data: data);
@@ -532,8 +556,9 @@ class ProductApiProvider {
 
       return CustomScanResponseModal(error: e.toString(), successful: false);
     }
-
   }
+
+
   Future<DataResponse<PaginationResponseModal<ProductModal>>> searchProductFromScanStock({String? barcode, String? type }) async {
     try {
       Response response = await _dio.get("${ApiConstants.productScan}/$clinicId/barcode/$barcode/$type/list", options: Injector.getHeaderToken());

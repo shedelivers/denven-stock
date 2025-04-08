@@ -60,12 +60,39 @@ class ConsumptionReportFilterDialog extends GetView<ConsumptionFilterController>
                           height: 20.0,
                         ),
 
+                        showHiddenView(hiddenList: controller.hiddenList.map((e) => DropdownMenuItem<ExpiryFilterDTO>(value: e, child: Text(e.title,),),).toList()),
+                        const SizedBox(
+                          height: 20.0,
+                        ),
+
+
                         chooseSupplierView(),
                         const SizedBox(
                           height: 10.0,
                         ),
 
                         chooseStorageView(),
+                        const SizedBox(
+                          height: 10.0,
+                        ),
+
+
+                        /*Row(
+                          children: [
+                            InkWell(
+                              onTap: (){
+                                controller.showHiddenProduct = !controller.showHiddenProduct;
+                                controller.filterModal.showHiddenProduct = controller.showHiddenProduct;
+                                controller.update();},
+                              child: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 4.0),
+                                  margin: const EdgeInsets.only(bottom: 10.0, right: 10),
+                                  decoration: BoxDecoration(border: Border.all(width: 2,color: controller.showHiddenProduct? primaryColor:greyText), borderRadius: BorderRadius.circular(30.0)),
+                                  child: TextView("Show hidden product",)),
+                            ),
+                          ],
+                        ),*/
+
                         const SizedBox(
                           height: 10.0,
                         ),
@@ -293,6 +320,50 @@ class ConsumptionReportFilterDialog extends GetView<ConsumptionFilterController>
   }
 
 
+  Widget showHiddenView({required List<DropdownMenuItem<ExpiryFilterDTO>> hiddenList}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Utils.textFieldLabel(label: "Hidden Products"),
+        vGap(10.0),
+        Container(
+          decoration: BoxDecoration(
+              color: textFieldFillColor,
+              border: Border(
+                  bottom: BorderSide(color: textFieldBorderColor, width: 1))),
+          child: ButtonTheme(
+            alignedDropdown: true,
+            child: DropdownButton<ExpiryFilterDTO>(
+              isExpanded: true,
+              value: controller.hiddenProduct,
+              hint: TextView(
+                "Show Hidden Products",
+                style: TextStyle(
+                    color: hintTextColor,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400
+                ),
+              ),
+              padding: const EdgeInsets.symmetric( vertical: 4.0),
+              icon: const Icon(Icons.keyboard_arrow_down_outlined, color: Colors.black, size: 22),
+              iconSize: 24,
+              style: const TextStyle(color: Colors.black,),
+              underline: Container(height: 0, color: Colors.transparent,),
+              onChanged: (value) async {
+                controller.hiddenProduct = value;
+                controller.filterModal.showHiddenProduct = value?.id;
+                controller.update();
+              },
+              elevation: 1,
+              items: hiddenList,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+
   skillItemView({required Supplier enumDatModal,required GestureTapCallback onDeleteTap}) {
     return Container(
         padding: const EdgeInsets.symmetric(horizontal: 10.0,vertical: 4.0),
@@ -364,6 +435,7 @@ class ConsumptionReportFilterDialog extends GetView<ConsumptionFilterController>
 class ConsumptionFilterController extends GetxController {
 
   ExpiryFilterDTO? selectedDatesCalendar;
+  ExpiryFilterDTO? hiddenProduct;
   ExpiryFilterDTO? selectedBarCodeCalendar;
   FilterModal filterModal = FilterModal();
 
@@ -401,6 +473,20 @@ class ConsumptionFilterController extends GetxController {
     ),
   ];
 
+
+  List<ExpiryFilterDTO> hiddenList = <ExpiryFilterDTO>[
+    ExpiryFilterDTO(
+        title: "Yes",
+        id: "0"
+    ),
+
+    ExpiryFilterDTO(
+        title: "No",
+        id: "1"
+    ),
+
+  ];
+
   FocusNode selectedSupplierFocusNode = FocusNode();
   FocusNode selectedStorageFocusNode = FocusNode();
 
@@ -412,6 +498,7 @@ class ConsumptionFilterController extends GetxController {
   resetButton() {
     selectedDatesCalendar = null;
     selectedBarCodeCalendar = null;
+    hiddenProduct = null;
     filterModal = FilterModal();
     update();
   }

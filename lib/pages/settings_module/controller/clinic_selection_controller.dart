@@ -11,12 +11,15 @@ class ClinicSelectionController extends GetxController {
   Rxn<ClinicDetails> selectedClinicId = Rxn<ClinicDetails>();
   late StorageHelper helper;
   late SettingApiProvider _settingsApiProvider;
+  late AuthApiProvider _authApiProvider;
   @override
   void onInit() {
     helper =  StorageHelper();
+    _authApiProvider = AuthApiProvider();
     _settingsApiProvider = SettingApiProvider();
     super.onInit();
   }
+
 
   getUserProfile(){
     String? clinicId = "";
@@ -54,7 +57,11 @@ class ClinicSelectionController extends GetxController {
     helper.saveClinicId(selectedClinicId.value?.key);
     helper.saveClinicCode(selectedClinicId.value?.id);
     helper.saveClinicModel(selectedClinicId.value);
+    // if(helper.getSubscriptionPlan() != null){
     Get.offAllNamed(AppRoutes.dashboard);
+    // } else {
+    //   Get.offAllNamed(AppRoutes.subscriptionScreen);
+    // }
   }
 
   Future getClinic() async {
@@ -64,17 +71,18 @@ class ClinicSelectionController extends GetxController {
         clinicId = helper.getClinicId();
       }
       isLoading.value = true;
-      DataResponse<PaginationResponseModal<ClinicDetails>> response = await _settingsApiProvider.getClinics();
+      DataResponse<UserModal?> response = await _authApiProvider.getMyProfile();
+      // DataResponse<PaginationResponseModal<ClinicDetails>> response = await _settingsApiProvider.getClinics();
       isLoading.value = false;
       if (response.successful == false) {
         Utils.showSnackBar(response.error ?? "Something went wrong");
       } else {
         if (response.response != null) {
           var model = response.response;
-          selectedList.value = List<SelectClinic>.generate(model?.data?.length ?? 0, (index) {
+          selectedList.value = List<SelectClinic>.generate(model?.clinicDetails?.length ?? 0, (index) {
             return SelectClinic(
-                isSelected: clinicId == model?.data?[index].key ? true : false,
-                clinicDetails: model?.data?[index]
+                isSelected: clinicId == model?.clinicDetails?[index].key ? true : false,
+                clinicDetails: model?.clinicDetails?[index]
             );
           });
         } else {

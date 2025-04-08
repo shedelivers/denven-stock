@@ -66,6 +66,8 @@ class InventoryController extends GetxController {
       filterPayload["page"] = 1;
       filterPayload["OrderCol"] = 10;
       filterPayload["OrderDir"] = "desc";
+      filterPayload["showHidden"] = myFilterModal.value?.showHiddenProduct == "0"? false: true;
+
       if (searchController.text.isNotEmpty) {
          filterPayload["search"] = searchController.text;
       }
@@ -398,6 +400,29 @@ class InventoryController extends GetxController {
     }
   }
 
+
+  Future<void> hideUnHideProduct({required int id,required bool isHidden }) async {
+    if (await Utils.hasNetwork()) {
+      isLoading.value = true;
+      Map<String,dynamic> payload = HashMap();
+      payload['Id'] = id;
+      payload['Status'] = 1;
+      payload['IsHidden'] = isHidden;
+      DataResponse response = await _productApiProvider.hideUnHideProduct(id: id.toString(), payload: payload);
+
+      if (response.successful == false) {
+        Utils.showSnackBar(response.error ?? "Something went wrong");
+        isLoading.value = false;
+      } else {
+        showInit();
+        // Utils.showSnackBar("Product deleted successfully");
+        // currentPage.value = 1;
+       // getInventoryData();
+      }
+    }
+  }
+
+
   editProductBottomSheet(ProductModal product) {
     showModalBottomSheet(
       context: Get.context!,
@@ -618,6 +643,40 @@ class InventoryController extends GetxController {
                           });
                         },
                       ),
+
+
+                      vGap(10.0),
+                      InkWell(
+                        onTap: (){
+                          Get.back();
+                          hideUnHideProduct(
+                              id: product.id??0,
+                              isHidden: product.hidden == true? false:true
+                          );
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10.0),
+                            border: Border.all(width: 1, color: textFieldBorderColor),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(product.hidden == true? Icons.visibility_off:Icons.visibility, color: black,),
+                              hGap(10.0),
+                              TextView(product.hidden == true?'Hide Product':'Show Product',style: black_17_600()?.copyWith(fontSize: 14,color: black)),
+                              const Spacer(),
+                              // CircleAvatar(
+                              //   backgroundColor: primaryLightColor,
+                              //   radius: 12,
+                              //   child: Icon(Icons.arrow_forward_ios_outlined, color: primaryColor,size: 14),
+                              // )
+                            ],
+                          ).paddingSymmetric(horizontal: 20.0,vertical: 12.0),
+                        ),
+                      ),
+
+
+
                       // vGap(10.0),
                       // BottomSheetItem(
                       //   title: "Clone",

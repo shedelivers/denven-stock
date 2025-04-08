@@ -5,15 +5,17 @@ class FilterModal {
   String? search;
   String? expiryState;
   String? barcodeStatus;
+  String? showHiddenProduct;
   List<Supplier>? selectedItem;
   List<Supplier>? selectedStorageItem;
 
-  FilterModal({ this.search, this.selectedItem, this.selectedStorageItem,});
+  FilterModal({ this.search, this.selectedItem, this.selectedStorageItem,this.showHiddenProduct});
 
   FilterModal.fromJson(Map<String, dynamic> json) {
     search = json['Search'];
     expiryState = json['expiryState'];
     barcodeStatus = json['barcodeStatus'];
+    showHiddenProduct = json['showHiddenProduct'];
     if (json['selectedItem'] != null) {
       selectedItem = <Supplier>[];
       json['selectedItem'].forEach((v) {
@@ -43,6 +45,10 @@ class FilterModal {
 
     if ((barcodeStatus ?? "").isNotEmpty) {
           data['barcodeStatus'] = barcodeStatus;
+    }
+
+    if ((showHiddenProduct ?? "").isNotEmpty) {
+      data['showHiddenProduct'] = showHiddenProduct;
     }
 
     if (selectedStorageItem != null) {

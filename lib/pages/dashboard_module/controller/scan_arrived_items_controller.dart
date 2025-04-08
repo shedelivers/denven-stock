@@ -229,6 +229,7 @@ class ScanArrivedItemsController extends GetxController  {
               TextView("you want to delete this product", style: black_14_600()?.copyWith(color: Colors.black.withOpacity(0.7)),).marginSymmetric(horizontal: 20.0),
               vGap(10.0),
               ProductCard(
+                isHidden: productModal?.hidden??false,
                 imagePath: productModal?.productImage != null && (productModal?.productImage??"").isNotEmpty ? "${ApiConstants.baseUrlForImage}/${extractImagePath(productModal?.productImage ?? "")}" : null,
                 name: productModal?.name,
                 dontShowBorderAndMenu: true,
@@ -297,6 +298,7 @@ class ScanArrivedItemsController extends GetxController  {
                   productModalList?.length ?? 0, (index) {
                 ProductModal? productModal = productModalList?[index];
                 return ProductCard(
+                  isHidden: productModal?.hidden??false,
                   imagePath: productModal?.productImage != null && productModal!.productImage!.isNotEmpty ? "${ApiConstants.baseUrlForImage}/${extractImagePath(productModal.productImage ?? "")}" : null,
                   name: productModal?.name,
                   dontShowBorderAndMenu: true,

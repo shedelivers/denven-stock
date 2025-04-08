@@ -233,7 +233,6 @@ class ProductApiProvider {
 
   Future<DataResponse<PaginationResponseModal<Supplier>>> postStorage(Map<String, dynamic> payload) async {
     try {
-      print('this is payload "${ApiConstants.storage}/$clinicId/false/false" => ${payload}');
 
       Response response = await _dio.post("${ApiConstants.storage}/$clinicId/false/false",data: payload, options: Injector.getHeaderToken(),);
       var dataResponse = DataResponse<PaginationResponseModal<Supplier>>.fromJson(response.data, (data) => PaginationResponseModal<Supplier>.fromJson(data as Map<String, dynamic>,(data) => Supplier.fromJson(data)));
@@ -858,6 +857,29 @@ class ProductApiProvider {
   Future<DataResponse> addToBasket({Map<String, dynamic>? data}) async {
     try {
       Response response = await _dio.post("${ApiConstants.basketUri}/$clinicId/1", data: data, options: Injector.getHeaderToken());
+      var dataResponse = DataResponse.fromJson(response.data,(json)=> null,);
+      return dataResponse;
+    } on DioException catch (error) {
+      if (error.type == DioExceptionType.connectionTimeout) {
+        return DataResponse(error: "Connection Timeout Exception", successful: false);
+      } else if (error.type == DioExceptionType.receiveTimeout) {
+        return DataResponse(error: "Receive Timeout Exception", successful: false);
+      } else {
+        final response = error.response?.data;
+        if (response != null && response is Map<String, dynamic>) {
+          return DataResponse.fromJson(response,(json)=> null,);
+        } else {
+          return DataResponse(error: error.toString(), successful: false);
+        }
+      }
+    } catch (e) {
+      return DataResponse(error: e.toString(), successful: false);
+    }
+  }
+
+  Future<DataResponse> openThePackage({Map<String, dynamic>? data}) async {
+    try {
+      Response response = await _dio.post("${ApiConstants.inventoryStock}/$clinicId/OpenProduct", data: data, options: Injector.getHeaderToken());
       var dataResponse = DataResponse.fromJson(response.data,(json)=> null,);
       return dataResponse;
     } on DioException catch (error) {

@@ -15,7 +15,8 @@ class ProductCard extends StatelessWidget {
   bool dontShowBorderAndMenu;
   int? localMappingId;
   int type;
-  ProductCard({super.key,required this.menuOnTap,this.storageName,this.isThreeDotsActive = true, this.dontShowBorderAndMenu = false, required this.cardOnTap, this.name,this.imagePath,this.orderAt, this.price,this.supplierCode, this.localMappingId, required this.type});
+  bool isHidden;
+  ProductCard({super.key,required this.menuOnTap,this.storageName,this.isThreeDotsActive = true, this.dontShowBorderAndMenu = false, required this.cardOnTap, this.name,this.imagePath,this.orderAt, this.price,this.supplierCode, this.localMappingId, required this.type, required this.isHidden});
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +57,13 @@ class ProductCard extends StatelessWidget {
                             child: Padding(
                               padding: const EdgeInsets.only(left: 7),
                               child: imageAsset(scanIcon, width: 15),
+                            )),
+
+                        Visibility(
+                            visible: isHidden,
+                            child: const Padding(
+                              padding: EdgeInsets.only(left: 7),
+                              child: Icon(Icons.visibility_off, size: 16,),
                             )),
 
                         Visibility(

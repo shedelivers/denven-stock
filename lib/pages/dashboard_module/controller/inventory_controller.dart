@@ -1,13 +1,18 @@
 import 'dart:async';
 import 'dart:collection';
 import 'dart:ui';
+import 'package:denvin_stock/components/conformation_popup.dart';
 import 'package:denvin_stock/components/product_card.dart';
 import 'package:denvin_stock/exports.dart';
 import 'package:denvin_stock/network/modal/barcode_modal.dart';
 import 'package:denvin_stock/network/modal/filter_modal.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 import '../../../../Network/modal/dto/add_bar_code_dto.dart';
 import '../../../../Network/modal/enum/shimmer_enum.dart';
+import '../../product_module/dialogs/stock_filter_dialog.dart';
 
 class InventoryController extends GetxController {
 
@@ -66,6 +71,7 @@ class InventoryController extends GetxController {
       filterPayload["page"] = 1;
       filterPayload["OrderCol"] = 10;
       filterPayload["OrderDir"] = "desc";
+      filterPayload["packageType"] = myFilterModal.value?.openProducts??"1";
       filterPayload["showHidden"] = myFilterModal.value?.showHiddenProduct == "0"? false: true;
 
       if (searchController.text.isNotEmpty) {
@@ -281,6 +287,7 @@ class InventoryController extends GetxController {
               TextView("you want to delete this product", style: black_14_600()?.copyWith(color: Colors.black.withOpacity(0.7)),).marginSymmetric(horizontal: 20.0),
               vGap(10.0),
               ProductCard(
+                    isHidden: productModal?.hidden??false,
                   imagePath: productModal?.productImage != null && (productModal?.productImage??"").isNotEmpty ? "${ApiConstants.baseUrlForImage}/${extractImagePath(productModal?.productImage ?? "")}" : null,
                   name: productModal?.name,
                   dontShowBorderAndMenu: true,
@@ -350,6 +357,7 @@ class InventoryController extends GetxController {
                   productModalList?.length ?? 0, (index) {
                 ProductModal? productModal = productModalList?[index];
                 return ProductCard(
+                  isHidden: productModal?.hidden??false,
                   imagePath: productModal?.productImage != null && productModal!.productImage!.isNotEmpty ? "${ApiConstants.baseUrlForImage}/${extractImagePath(productModal.productImage ?? "")}" : null,
                   name: productModal?.name,
                   supplierCode: productModal?.supplierCode,
@@ -644,15 +652,42 @@ class InventoryController extends GetxController {
                         },
                       ),
 
+                      Visibility(
+                        visible: product.type != 1,
+                          child: Column(
+                           children: [
+                            vGap(10.0),
+                            BottomSheetItem(
+                            title: "Open Product",
+                            iconUri: closeBoxIcon,
+                            onItemTap: () {
+                              Get.back();
+                              openProduct(
+                                  productId: product.id??0,
+                                productName: product.name??"",
+                                expiryDate: product.expiries??[]
+
+                              );
+                              },
+                          ),
+                        ],
+                      )),
 
                       vGap(10.0),
                       InkWell(
                         onTap: (){
-                          Get.back();
-                          hideUnHideProduct(
-                              id: product.id??0,
-                              isHidden: product.hidden == true? false:true
-                          );
+                          confirmPopUp(
+                              title: product.hidden == true?'Confirm Show Product':'Confirm Hide Product',
+                              subtitle: product.hidden == true?"Are you sure you want to show this product?":"Are you sure you want to hide this product?",
+                              onConfirm: (){
+                                Get.back();
+                                Get.back();
+                                hideUnHideProduct(
+                                    id: product.id??0,
+                                    isHidden: product.hidden == true? false:true
+                                );
+                              });
+
                         },
                         child: Container(
                           decoration: BoxDecoration(
@@ -661,9 +696,9 @@ class InventoryController extends GetxController {
                           ),
                           child: Row(
                             children: [
-                              Icon(product.hidden == true? Icons.visibility_off:Icons.visibility, color: black,),
+                              Icon(product.hidden == false? Icons.visibility_off:Icons.visibility, color: black,),
                               hGap(10.0),
-                              TextView(product.hidden == true?'Hide Product':'Show Product',style: black_17_600()?.copyWith(fontSize: 14,color: black)),
+                              TextView(product.hidden == false?'Hide Product':'Show Product',style: black_17_600()?.copyWith(fontSize: 14,color: black)),
                               const Spacer(),
                               // CircleAvatar(
                               //   backgroundColor: primaryLightColor,
@@ -770,6 +805,192 @@ class InventoryController extends GetxController {
         update();
       }
     }
+  }
+
+
+
+  openTheProduct({required int id, required int countInPack,required int countTimeInPack,required String expiry,}) async {
+    if (await Utils.hasNetwork()) {
+      Map<String, dynamic> payload = HashMap();
+      payload['Id'] = id;
+      payload['CountInPack'] = countInPack;
+      payload['CountTimeInPack'] = countTimeInPack;
+      payload['Expiry'] = expiry;
+      CustomLoader().show();
+      DataResponse response = await _productApiProvider.openThePackage(data: payload);
+      CustomLoader().hide();
+      isLoading.value = true;
+      if (response.successful == false) {
+        Utils.showSnackBar(response.error ?? "Something went wrong");
+        isLoading.value = false;
+      } else {
+        Get.back();
+        showInit();
+        // Utils.showSnackBar("Product deleted successfully");
+        // currentPage.value = 1;
+        // getInventoryData();
+      }
+    }
+  }
+
+
+  Future<void> openProduct({
+    required int productId,
+    required String productName,
+    required List<Expiries> expiryDate,
+}) async {
+
+    final TextEditingController numberOfProduct = TextEditingController(text: "12");
+    final TextEditingController packagesToOpen = TextEditingController(text: "1");
+    ExpiryFilterDTO? selectedExpiryDate;
+
+    List<ExpiryFilterDTO> expiryDateList = <ExpiryFilterDTO>[];
+
+    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+    for(Expiries expiry in expiryDate){
+      if(expiry.at != null && expiry.at != ""){
+        expiryDateList.add(
+            ExpiryFilterDTO(
+                title: expiry.at??"",
+                id: expiry.at??"0"
+            )
+        );
+      }
+    }
+
+    if(expiryDateList.isNotEmpty){
+      selectedExpiryDate = expiryDateList[0];
+    } else {
+      expiryDateList.add(
+          ExpiryFilterDTO(
+              title: "Without expiry",
+              id: ""
+          )
+      );
+    }
+
+
+    return Get.dialog(
+      GetBuilder<InventoryController>(
+        builder: (controller) {
+          return Container(
+            alignment: Alignment.center,
+            child: Container(
+                width: Get.width * 0.8,
+                padding: const EdgeInsets.symmetric(vertical: margin_10, horizontal: margin_20),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(radius_20)),
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextView(
+                              productName,
+                              style: black_15_700()?.copyWith(color: primaryColor),
+                            ),
+                          ),
+                          IconButton(onPressed: ()=> Get.back(), icon: const Icon(Icons.close)),
+                        ],
+                      ),
+
+                      vGap(10.0),
+                      Utils.textFieldLabel(label: "Number of items in the package"),
+                      vGap(10.0),
+                      CustomTextField(
+                        controller: numberOfProduct,
+                        hintText: "Count",
+                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                        validator: (value){
+                          if(value!.isEmpty){
+                            return "Number of items";
+                          } else if (int.parse(value) == 0){
+                            return "Number of items can't be 0";
+                          }
+                        },
+                      ),
+
+                      vGap(10.0),
+                      Utils.textFieldLabel(label: "Package expiry"),
+                      vGap(10.0),
+                      Container(
+                        decoration: BoxDecoration(
+                            color: textFieldFillColor,
+                            border: Border(
+                                bottom: BorderSide(color: textFieldBorderColor, width: 1))),
+                        child: ButtonTheme(
+                          alignedDropdown: true,
+                          child: DropdownButton<ExpiryFilterDTO>(
+                            isExpanded: true,
+                            value: selectedExpiryDate,
+                            hint: TextView(
+                              "Package expiry",
+                              style: TextStyle(
+                                  color: hintTextColor,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w400
+                              ),
+                            ),
+                            padding: const EdgeInsets.symmetric( vertical: 4.0),
+                            icon: const Icon(Icons.keyboard_arrow_down_outlined, color: Colors.black, size: 22),
+                            iconSize: 24,
+                            style: const TextStyle(color: Colors.black,),
+                            underline: Container(height: 0, color: Colors.transparent,),
+                            onChanged: (value) async {
+                              selectedExpiryDate = value;
+                              update();
+                            },
+                            elevation: 1,
+                            items: expiryDateList.map((e) => DropdownMenuItem<ExpiryFilterDTO>(value: e, child: Text(e.title,),),).toList()),
+                          ),
+                        ),
+
+                      vGap(10.0),
+                      Utils.textFieldLabel(label: "How many Packages to open"),
+                      vGap(10.0),
+                      CustomTextField(
+                        controller: packagesToOpen,
+                        hintText: "Count",
+                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                        validator: (value){
+                          if(value!.isEmpty){
+                            return "Packages to open";
+                          } else if (int.parse(value) == 0){
+                            return "Packages to open can't be 0";
+                          }
+                        },
+                      ),
+                      vGap(20.0),
+
+                      SizedBox(
+                        height: 70,
+                        child: AppButton(
+                            buttonText: "Open the package",
+                            onTap: (){
+                              if(formKey.currentState != null && formKey.currentState!.validate()){
+                                openTheProduct(
+                                    id: productId,
+                                    countInPack: int.parse(numberOfProduct.text),
+                                    countTimeInPack: int.parse(packagesToOpen.text),
+                                    expiry: selectedExpiryDate?.id == null ||  selectedExpiryDate?.id == ""? "":selectedExpiryDate?.title??"");
+                              }
+
+                            }),
+                      ),
+                    ],
+                  ),
+                ),
+            ),
+          );
+        }
+      ),
+    );
   }
 
 }

@@ -163,6 +163,7 @@ class InventoryStockScreen extends GetView<InventoryController> {
                                     orderAt: product.orderedAt,
                                     localMappingId: product.localMappingId,
                                     type: product.type??1,
+                                    isHidden: product.hidden??false,
                                     price: product.expiries!.isNotEmpty?product.expiries?.last.price??0:0,
                                    // price: product.price,
                                     cardOnTap: () {

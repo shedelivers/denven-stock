@@ -299,7 +299,7 @@ class ScanArrivedItemsController extends GetxController  {
                 ProductModal? productModal = productModalList?[index];
                 return ProductCard(
                   isHidden: productModal?.hidden??false,
-                  imagePath: productModal?.productImage != null && productModal!.productImage!.isNotEmpty ? "${ApiConstants.baseUrlForImage}/${extractImagePath(productModal.productImage ?? "")}" : null,
+                //  imagePath: productModal?.productImage != null && productModal!.productImage!.isNotEmpty ? "${ApiConstants.baseUrlForImage}/${extractImagePath(productModal.productImage ?? "")}" : null,
                   name: productModal?.name,
                   dontShowBorderAndMenu: true,
                   type: productModal?.type??1,

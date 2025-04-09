@@ -96,7 +96,6 @@ class ProductModal extends Serializable{
     storageId = json['storageId'];
     localMappingId = json['localMappingId'];
     globalMappingId = json['globalMappingId'];
-    productImage = json['productImage'];
     storage =
     json['storage'] != null ? Storage.fromJson(json['storage']) : null;
     supplier = json['supplier'] != null ? Supplier.fromJson(json['supplier']) : null;
@@ -131,6 +130,7 @@ class ProductModal extends Serializable{
     data['quantity'] = quantity;
     data['minLevel'] = minLevel;
     data['price'] = price;
+    data['productImage'] = productImage;
     if (expiries != null) {
       data['expiries'] = expiries!.map((v) => v.toJson()).toList();
     }
@@ -503,3 +503,16 @@ class MyResponse {
   }
 }
 
+class ProductImage {
+  String file;
+
+  ProductImage({required this.file});
+
+  factory ProductImage.fromJson(Map<String, dynamic> json) {
+    return ProductImage(file: json['file']);
+  }
+
+  Map<String, dynamic> toJson() {
+    return {'file': file};
+  }
+}

@@ -288,7 +288,7 @@ class InventoryController extends GetxController {
               vGap(10.0),
               ProductCard(
                     isHidden: productModal?.hidden??false,
-                  imagePath: productModal?.productImage != null && (productModal?.productImage??"").isNotEmpty ? "${ApiConstants.baseUrlForImage}/${extractImagePath(productModal?.productImage ?? "")}" : null,
+                 // imagePath: productModal?.productImage != null && (productModal?.productImage??"").isNotEmpty ? "${ApiConstants.baseUrlForImage}/${extractImagePath(productModal?.productImage ?? "")}" : null,
                   name: productModal?.name,
                   dontShowBorderAndMenu: true,
                   supplierCode: productModal?.supplierCode,
@@ -358,7 +358,7 @@ class InventoryController extends GetxController {
                 ProductModal? productModal = productModalList?[index];
                 return ProductCard(
                   isHidden: productModal?.hidden??false,
-                  imagePath: productModal?.productImage != null && productModal!.productImage!.isNotEmpty ? "${ApiConstants.baseUrlForImage}/${extractImagePath(productModal.productImage ?? "")}" : null,
+                //  imagePath: productModal?.productImage != null && productModal!.productImage!.isNotEmpty ? "${ApiConstants.baseUrlForImage}/${extractImagePath(productModal.productImage ?? "")}" : null,
                   name: productModal?.name,
                   supplierCode: productModal?.supplierCode,
                   orderAt: productModal?.orderedAt,

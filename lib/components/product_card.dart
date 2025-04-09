@@ -94,7 +94,7 @@ class ProductCard extends StatelessWidget {
                     Row(
                       children: [
                         TextView(
-                          price != null ? "£ $price" : "£ 00.00",
+                          type == 1? "":price != null ? "£ $price" : "£ 00.00",
                           style: greyColor_16_600()?.copyWith(color: blackColor),
                         ),
                         const Spacer(),

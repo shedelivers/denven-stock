@@ -2,6 +2,8 @@ import 'dart:collection';
 import 'package:denvin_stock/exports.dart';
 import 'package:intl/intl.dart';
 
+import '../../../components/utils/print_value.dart';
+
 class InventoryProductController extends GetxController {
 
   Rxn<ProductModal> products = Rxn();
@@ -62,6 +64,13 @@ class InventoryProductController extends GetxController {
       } else {
         if (response.response != null) {
           var model = response.response;
+          final jsonData = jsonDecode(model?.productImage??"Noo");
+
+          final productModal = ProductImage.fromJson(jsonData);
+
+          printValue(tag: "Product Images Print1:", productModal);
+          printValue(tag: "Product Images Print2:", jsonData);
+
           products.value = model;
           update();
         } else {

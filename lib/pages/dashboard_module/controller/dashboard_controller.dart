@@ -32,9 +32,11 @@ class DashboardController extends GetxController {
     getBasketCount();
     getArrivedCount();
     checkAppUpdate ();
-   // intercomUserLogIn ();
+    intercomUserLogIn ();
     super.onInit();
   }
+
+
   void updateIndex(int index) {
     currentIndex.value = index;
     update();
@@ -43,7 +45,7 @@ class DashboardController extends GetxController {
 
   @override
   void dispose() {
-
+    print('dispose DashboardController');
     // TODO: implement dispose
     super.dispose();
   }
@@ -120,16 +122,23 @@ class DashboardController extends GetxController {
     String userId = helper.getUserModel()?.id.toString() ?? "";
     String email = helper.getUserModel()?.email ?? "";
 
-    if (userId.isNotEmpty) {
-      await Intercom.instance.loginIdentifiedUser(userId: userId);
-    } else if (email.isNotEmpty) {
-      await Intercom.instance.loginIdentifiedUser(email: email);
-    } else {
-      await Intercom.instance.loginUnidentifiedUser();
+    if(email == "sachindevtest@yopmail.com"){
+      if (userId.isNotEmpty) {
+        await Intercom.instance.loginIdentifiedUser(userId: userId);
+      } else if (email.isNotEmpty) {
+        await Intercom.instance.loginIdentifiedUser(email: email);
+      } else {
+        await Intercom.instance.loginUnidentifiedUser();
+      }
+      await Intercom.instance.setBottomPadding(40);
+      await Intercom.instance.setLauncherVisibility(IntercomVisibility.visible);
     }
-    await Intercom.instance.setBottomPadding(100);
-    await Intercom.instance.setLauncherVisibility(IntercomVisibility.visible);
   }
 
+
+
+  void closeIntercom () async {
+    await Intercom.instance.setLauncherVisibility(IntercomVisibility.gone);
+  }
 
 }

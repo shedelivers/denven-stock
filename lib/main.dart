@@ -25,7 +25,7 @@ class GlobalVariable{
   static final GlobalKey<NavigatorState> navigatorState = GlobalKey<NavigatorState>();
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   static startFirstScreen(String message) {
@@ -34,6 +34,17 @@ class MyApp extends StatelessWidget {
     Get.offAllNamed(AppRoutes.logIn);
   }
 
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+
+  @override
+  void dispose() {
+    print('Dispose app');
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return GestureDetector(

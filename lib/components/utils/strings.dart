@@ -191,4 +191,8 @@ class Strings{
 
 
   static const String buildNumberDate = "Build: 0.0.1 (March)";
+
+  static const String appPlayStoreLink = "https://play.google.com/store/apps/details?id=com.denvin.stock.denvin_stock";
+  static const String appAppStoreLink = "https://apps.apple.com/app/id=com.denvin.stock";
+
 }

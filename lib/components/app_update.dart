@@ -85,13 +85,12 @@ updatePopUp (String appVersion, String newVersion) {
     cancelText: "Later",
     subtitle: 'A new version of App is available! Version $newVersion is now available-you have $appVersion. \n\nWould you like to update it now?',
     onConfirm: (){
-      const String appPlayStoreLink = "https://play.google.com/store/apps/details?id=com.denvin.stock.denvin_stock";
-      const String appAppStoreLink = "https://apps.apple.com/app/id=com.denvin.stock";
+
 
       if(Platform.isAndroid){
-        openUrlInApp(url: appPlayStoreLink);
+        openUrlInApp(url: Strings.appPlayStoreLink);
       }else if(Platform.isIOS){
-        openUrlInApp(url: appAppStoreLink);
+        openUrlInApp(url: Strings.appAppStoreLink);
       }
       },
   );

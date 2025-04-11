@@ -64,35 +64,39 @@ class LoginScreen extends GetView<LoginController>{
     return Form(
       key: formGlobalKey,
       autovalidateMode: AutovalidateMode.disabled,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CustomTextField(
-              hintText:Strings.email,
-              controller: controller.loginEmailController,
-              validator: (value) => value?.isValidEmail(),
-              focusNode: controller.loginEmailFocusNode,
-              onFieldSubmitted: (String? value) => FocusScope.of(Get.context!).requestFocus(controller.loginPasswordFocusNode)
-          ),
-          vGap(24),
-          Obx(
-            ()=> CustomTextField(
-              hintText: Strings.password,
-              maxLines: 1,
-              controller: controller.loginPasswordController,
-              obsecureText: controller.securePassword.value,
-              // validator: (value) {
-              //   return value?.validatePassword();
-              // },
-              suffix: IconButton(
-                  onPressed: ()=> controller.showOrHideLoginPasswordVisibility(),
-                  splashRadius: 10.0,
-                  icon: Icon(controller.securePassword.value ? Icons.visibility_off : Icons.visibility, color: darkGreyColor,)),
-              focusNode: controller.loginPasswordFocusNode,
-              onFieldSubmitted: (String? value) => FocusScope.of(Get.context!).unfocus(),
+      child: AutofillGroup(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CustomTextField(
+                hintText:Strings.email,
+                autofillHints: const [AutofillHints.newUsername, AutofillHints.username],
+                controller: controller.loginEmailController,
+                validator: (value) => value?.isValidEmail(),
+                focusNode: controller.loginEmailFocusNode,
+                onFieldSubmitted: (String? value) => FocusScope.of(Get.context!).requestFocus(controller.loginPasswordFocusNode)
             ),
-          ),
-        ],
+            vGap(24),
+            Obx(
+              ()=> CustomTextField(
+                hintText: Strings.password,
+                autofillHints: const [AutofillHints.password],
+                maxLines: 1,
+                controller: controller.loginPasswordController,
+                obsecureText: controller.securePassword.value,
+                // validator: (value) {
+                //   return value?.validatePassword();
+                // },
+                suffix: IconButton(
+                    onPressed: ()=> controller.showOrHideLoginPasswordVisibility(),
+                    splashRadius: 10.0,
+                    icon: Icon(controller.securePassword.value ? Icons.visibility_off : Icons.visibility, color: darkGreyColor,)),
+                focusNode: controller.loginPasswordFocusNode,
+                onFieldSubmitted: (String? value) => FocusScope.of(Get.context!).unfocus(),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

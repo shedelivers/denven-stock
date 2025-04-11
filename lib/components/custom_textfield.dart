@@ -162,6 +162,7 @@ class CustomTextField extends StatelessWidget {
   int? maxLength;
   InputBorder? border;
   Function(String)? onChanged;
+  Iterable<String>? autofillHints;
   Key? formKey;
 
   CustomTextField(
@@ -173,6 +174,7 @@ class CustomTextField extends StatelessWidget {
       this.hintStyle,
       this.hintText,
       this.maxLines,
+        this.autofillHints,
       this.inputFormatters,
       this.obsecureText,
       this.validator,
@@ -189,6 +191,7 @@ class CustomTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      autofillHints: autofillHints,
       key: formKey,
       controller: controller,
       focusNode: focusNode,

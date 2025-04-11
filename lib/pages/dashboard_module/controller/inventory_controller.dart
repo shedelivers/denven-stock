@@ -12,6 +12,7 @@ import 'package:flutter/widgets.dart';
 
 import '../../../../Network/modal/dto/add_bar_code_dto.dart';
 import '../../../../Network/modal/enum/shimmer_enum.dart';
+import '../../../network/modal/baske_modal.dart';
 import '../../product_module/dialogs/stock_filter_dialog.dart';
 
 class InventoryController extends GetxController {
@@ -665,9 +666,20 @@ class InventoryController extends GetxController {
                             iconUri: closeBoxIcon,
                             onItemTap: () {
                               Get.back();
+                              String productQuantity = "0";
+
+                              for(ProductModal prod in products){
+                                if(prod.type != 1 && prod.supplierCode == product.supplierCode && productQuantity == "0"){
+                                  if(product.expiries?.isNotEmpty??false){
+                                    productQuantity = product.expiries?[0].qty.toString()??"0";
+                                  }
+                                }
+                              }
+
                               openProduct(
-                                  productId: product.id??0,
+                               productId: product.id??0,
                                 productName: product.name??"",
+                                productQuantity: productQuantity,
                                 expiryDate: product.expiries??[]
 
                               );
@@ -840,10 +852,11 @@ class InventoryController extends GetxController {
   Future<void> openProduct({
     required int productId,
     required String productName,
+    required String productQuantity,
     required List<Expiries> expiryDate,
 }) async {
 
-    final TextEditingController numberOfProduct = TextEditingController(text: "12");
+    final TextEditingController numberOfProduct = TextEditingController(text: productQuantity);
     final TextEditingController packagesToOpen = TextEditingController(text: "1");
     ExpiryFilterDTO? selectedExpiryDate;
 

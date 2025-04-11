@@ -64,6 +64,7 @@ class LoginController extends GetxController {
         Utils.showSnackBar(dataResponse.error ?? dataResponse.error);
       } else {
         if (dataResponse.response != null) {
+          TextInput.finishAutofillContext();
           UniversalModel loginModel = dataResponse.response!;
           StorageHelper storageHelper = StorageHelper();
           storageHelper.saveUserToken(loginModel.token);

@@ -48,10 +48,40 @@ class ProductCard extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        TextView(
+
+                        RichText(
+                          text: TextSpan(
+                            style: black_12_600(),
+                            children: [
+                              if (supplierCode != null)
+                                ...supplierCode!.split('**').map((part) {
+                                  if (part.isNotEmpty) {
+                                    return TextSpan(text: "#$part", style: black_12_600());
+                                  } else {
+                                    return TextSpan(text: '**', style: black_14_600()?.copyWith(color: Colors.red));
+                                  }
+                                })
+                              else
+                                TextSpan(text: Strings.nA, style: black_12_600()),
+                            ],
+                          ),
+                        ),
+
+                       /* TextView(
                           supplierCode != null ? "#$supplierCode" : Strings.nA,
                           style: black_12_600(),
-                        ),
+                        ),*/
+
+                        Visibility(
+                            visible: type == 1,
+                            replacement: Padding(
+                              padding: const EdgeInsets.only(left: 7),
+                              child: imageAsset(openBoxIcon, width: 15, color: black),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 7),
+                              child: imageAsset(closeBoxIcon, width: 15, color: black),
+                            )),
 
                         Visibility(
                             visible: localMappingId != null,
@@ -67,16 +97,6 @@ class ProductCard extends StatelessWidget {
                               child: Icon(Icons.visibility_off, size: 16,),
                             )),
 
-                        Visibility(
-                            visible: type == 1,
-                            replacement: Padding(
-                              padding: const EdgeInsets.only(left: 7),
-                              child: imageAsset(openBoxIcon, width: 15),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 7),
-                              child: imageAsset(closeBoxIcon, width: 15),
-                            )),
                       ],
                     ),
                     Row(

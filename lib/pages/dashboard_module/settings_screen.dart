@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:denvin_stock/exports.dart';
 import 'package:denvin_stock/pages/dashboard_module/policy_pages.dart';
 import '../../components/app_update.dart';
 import '../../components/conformation_popup.dart';
+import '../../components/open_url.dart';
 
 class SettingsScreen extends StatefulWidget {
   SettingsScreen({super.key});
@@ -104,6 +107,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
             onTap: (){
               Get.to(const PolicyPages());
 
+            },
+          ),
+          _divider(),
+          SettingItemView(
+            title: "Rate US",
+            image: const Icon(Icons.star_rate_outlined),
+            onTap: (){
+              if(Platform.isAndroid){
+                openUrlInApp(url: Strings.appPlayStoreLink);
+              }else if(Platform.isIOS){
+                openUrlInApp(url: Strings.appAppStoreLink);
+              }
             },
           ),
           _divider(),

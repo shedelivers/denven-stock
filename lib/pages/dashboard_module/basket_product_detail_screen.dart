@@ -45,7 +45,8 @@ class BasketProductDetailScreen extends GetView<BasketProductDetailController> {
       () => Stack(
         alignment: Alignment.center,
         children: [
-          controller.showBannerCode.value ? controller.products.value?.productImage !=null && controller.products.value!.productImage!.isNotEmpty ? FullScreenWidget(
+          controller.showBannerCode.value ? controller.products.value?.productImage !=null && controller.products.value!.productImage!.isNotEmpty ?
+          FullScreenWidget(
             isOpen: (isOpen){
             },
             disposeLevel: DisposeLevel.Low,

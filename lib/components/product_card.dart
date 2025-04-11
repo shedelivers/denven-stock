@@ -7,7 +7,7 @@ class ProductCard extends StatelessWidget {
   final VoidCallback cardOnTap;
   String? name;
   String? orderAt;
-  String? imagePath;
+  List<String> imagePath;
   bool isThreeDotsActive;
   num? price;
   String? supplierCode;
@@ -16,7 +16,7 @@ class ProductCard extends StatelessWidget {
   int? localMappingId;
   int type;
   bool isHidden;
-  ProductCard({super.key,required this.menuOnTap,this.storageName,this.isThreeDotsActive = true, this.dontShowBorderAndMenu = false, required this.cardOnTap, this.name,this.imagePath,this.orderAt, this.price,this.supplierCode, this.localMappingId, required this.type, required this.isHidden});
+  ProductCard({super.key,required this.menuOnTap,this.storageName,this.isThreeDotsActive = true, this.dontShowBorderAndMenu = false, required this.cardOnTap, this.name,required this.imagePath,this.orderAt, this.price,this.supplierCode, this.localMappingId, required this.type, required this.isHidden});
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +38,8 @@ class ProductCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10.0),
                 ),
-                child: imagePath != null ? ClipRRect(borderRadius: BorderRadius.circular(10.0),child: ShimmerImage(url: imagePath ?? "",fit: BoxFit.cover)) : imageAsset(imageIcon),
+                child: imagePath.isNotEmpty? ClipRRect(borderRadius: BorderRadius.circular(10.0),
+                    child: ShimmerImage(url: imagePath[0] ?? "",fit: BoxFit.cover)) : imageAsset(imageIcon),
               ),
               hGap(10.0),
               Expanded(

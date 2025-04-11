@@ -10,7 +10,7 @@ export 'package:file_picker/file_picker.dart';
 export 'package:flutter_easyloading/flutter_easyloading.dart';
 export 'package:connectivity_plus/connectivity_plus.dart';
 export 'package:shimmer/shimmer.dart';
-export 'package:pinput/pinput.dart';
+// export 'package:pinput/pinput.dart';
 export 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 
 export 'package:denvin_stock/main.dart';

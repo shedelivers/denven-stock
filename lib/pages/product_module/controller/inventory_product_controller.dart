@@ -21,6 +21,7 @@ class InventoryProductController extends GetxController {
   late FocusNode expiryDateFocusNode;
   late FocusNode priceFocusNode;
   late ExpansionTileController expansionTileController;
+  RxInt productCarouselIndex = 0.obs;
 
 
   @override
@@ -64,12 +65,9 @@ class InventoryProductController extends GetxController {
       } else {
         if (response.response != null) {
           var model = response.response;
-          final jsonData = jsonDecode(model?.productImage??"Noo");
 
-          final productModal = ProductImage.fromJson(jsonData);
+          printValue(tag: "Product Images Print:", model?.productImage);
 
-          printValue(tag: "Product Images Print1:", productModal);
-          printValue(tag: "Product Images Print2:", jsonData);
 
           products.value = model;
           update();
@@ -79,6 +77,7 @@ class InventoryProductController extends GetxController {
       }
     }
   }
+
 
   String extractImagePath(String jsonString) {
     List<dynamic> jsonData = jsonDecode(jsonString);

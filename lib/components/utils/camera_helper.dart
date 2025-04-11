@@ -118,6 +118,7 @@ class CameraHelper {
                         ),
                       ],
                     ).onTap(() async{
+                      Navigator.pop(context);
                       getImageWithoutCropping(ImageSource.gallery);
                       // if (await isStorageEnabled()) {
                       //   Navigator.pop(context);
@@ -158,7 +159,7 @@ class CameraHelper {
                           size: 25,
                         ),
                       ],
-                    ).onTap(() async{
+                    ).onTap(() async {
                       Navigator.pop(context);
                       getImageWithoutCropping(ImageSource.camera);
                         // if (await isCameraEnabled()) {
@@ -280,9 +281,6 @@ class CameraHelper {
               const SizedBox(
                 height: 20,
               ),
-
-
-
             ],
           ),
         ),

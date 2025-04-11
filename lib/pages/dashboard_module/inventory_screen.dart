@@ -156,7 +156,8 @@ class InventoryStockScreen extends GetView<InventoryController> {
 
 
                                   return ProductCard(
-                                    imagePath: product.productImage != null && product.productImage!.isNotEmpty ? "${ApiConstants.baseUrlForImage}/${controller.extractImagePath(product.productImage ?? "")}" : null,
+                                    imagePath: product.productImage??[],
+                                   // imagePath: product.productImage != null && product.productImage!.isNotEmpty ? "${ApiConstants.baseUrlForImage}/${controller.extractImagePath(product.productImage ?? "")}" : null,
                                     name: product.name,
                                     supplierCode: product.supplierCode,
                                     storageName: product.storage?.name,

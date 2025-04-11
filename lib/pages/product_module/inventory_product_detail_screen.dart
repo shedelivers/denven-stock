@@ -79,19 +79,75 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
       () => Stack(
         alignment: Alignment.center,
         children: [
-          controller.showBannerCode.value ? controller.products.value?.productImage !=null && controller.products.value!.productImage!.isNotEmpty ? FullScreenWidget(
-            isOpen: (isOpen){
+          controller.showBannerCode.value ? controller.products.value?.productImage !=null && controller.products.value!.productImage!.isNotEmpty ?
+          SizedBox(
+                  width: Get.width,
+                  height: 200,
+                  child: Stack(
+                    children: [
+                      SizedBox(
+                        width: Get.width,
+                        height: 200,
+                        child: CarouselSlider(
+                          options: CarouselOptions(
+                            enlargeCenterPage: false,
+                            viewportFraction: 1.0,
+                            onPageChanged: (index, carouselPageChangedReason){
+                              controller.productCarouselIndex.value = index;
+                            }
+                          ),
+                          items: controller.products.value?.productImage?.map((i) {
+                            return FullScreenWidget(
+                              isOpen: (isOpen){
 
-            },
-            disposeLevel: DisposeLevel.Low,
-            child: SizedBox(
-                    width: Get.width,
-                    height: 200,
-                    child: ShimmerImage(
-                      url: controller.products.value?.productImage != null  ? "${ApiConstants.baseUrlForImage}/${controller.extractImagePath(controller.products.value?.productImage ?? "")}" : "",
-                      fit: BoxFit.cover,
-                    ),
-                  )) : SizedBox(
+                              },
+                              disposeLevel: DisposeLevel.Low,
+                              child: Container(
+                                  width: Get.width,
+                                  margin: const EdgeInsets.symmetric(horizontal: 5.0),
+                                  child: ShimmerImage(
+                                    url: i,
+                                    //  url: controller.products.value?.productImage != null  ? "${ApiConstants.baseUrlForImage}/${controller.extractImagePath(controller.products.value?.productImage?[0] ?? "")}" : "",
+                                    fit: BoxFit.cover,
+                                  )
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+
+                      Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              for (int i = 0; i < (controller.products.value?.productImage?.length ?? 0); i++)
+                                Container(
+                                  height: 10,
+                                  width: 10,
+                                  margin: const EdgeInsets.symmetric(horizontal: 3),
+                                  decoration: BoxDecoration(
+                                    color: controller.productCarouselIndex.value == i? primaryColor:greyText,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+
+                  // child: ShimmerImage(
+                  //   url: controller.products.value?.productImage?[0]??"",
+                  // //  url: controller.products.value?.productImage != null  ? "${ApiConstants.baseUrlForImage}/${controller.extractImagePath(controller.products.value?.productImage?[0] ?? "")}" : "",
+                  //   fit: BoxFit.cover,
+                  // ),
+
+                ) : SizedBox(
                         width: Get.width,
                         height: 200,
                         child: Center(

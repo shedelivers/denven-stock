@@ -3,6 +3,7 @@ import 'package:dio/src/form_data.dart' as dio;
 import 'package:dio/src/multipart_file.dart' as multipart;
 import 'package:http_parser/src/media_type.dart' as mediaType;
 import 'package:denvin_stock/exports.dart';
+import 'package:dio/dio.dart' as dio;
 
 class CreateUpdateProductDto {
   int? id;
@@ -25,7 +26,8 @@ class CreateUpdateProductDto {
   String? note;
   bool? isImageRemoved;
   String? TagCollection;
-  File? productImage;
+  List<File>? ProductImageMobile;
+  String? ExistingImages;
   CreateUpdateProductDto(
       {this.id,
       this.name,
@@ -44,7 +46,8 @@ class CreateUpdateProductDto {
       this.hidden,
       this.expiryData,
       this.barCode,
-      this.productImage,
+      this.ProductImageMobile,
+      this.ExistingImages,
       this.orderedAt,
         this.dontHaveSupplierCode,this.internalSupplierId
 
@@ -104,15 +107,39 @@ class CreateUpdateProductDto {
       data['TagCollection'] = TagCollection;
     }
     data['isImageRemoved'] = isImageRemoved;
-    if (productImage != null) {
-      data['ProductImageMobile'] = (productImage?.path ?? "").isNotEmpty
-          ? await multipart.MultipartFile.fromFile(productImage?.path ?? "",
-              filename: productImage?.path ?? "",
-              contentType: mediaType.MediaType(
-                  Utils.getFileType((productImage?.path ?? ""))!,
-                  (productImage?.path ?? "")))
-          : null;
+    if (ProductImageMobile != null && ProductImageMobile!.isNotEmpty) {
+      List<dio.MultipartFile> files = [];
+      for (var file in ProductImageMobile!) {
+        if (file.path.isNotEmpty) {
+          files.add(await dio.MultipartFile.fromFile(
+            file.path,
+            filename: file.path,
+            contentType: mediaType.MediaType(
+              Utils.getFileType(file.path)??"",
+              file.path,
+            ),
+          ));
+        }
+      }
+      data['ProductImageMobile'] = files;
     }
+
+
+    if ((ExistingImages??"").isNotEmpty) {
+      data['ExistingImages'] = ExistingImages;
+    }
+
+    /*if (ExistingImages != null && ExistingImages!.isNotEmpty) {
+      List<String> url = [];
+      for (var image in ExistingImages!) {
+        if (image.isNotEmpty) {
+          url.add(image);
+        }
+      }
+      data['ExistingImages'] = url;
+    }*/
+
+
     if ((expiryData ?? []).isNotEmpty) {
       for (int i = 0; i < (expiryData ?? []).length; i++) {
         data['Expiries[$i].At'] = expiryData?[i].at;

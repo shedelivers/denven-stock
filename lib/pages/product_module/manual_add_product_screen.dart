@@ -1,9 +1,11 @@
+import 'package:denvin_stock/components/colors.dart';
 import 'package:denvin_stock/components/conformation_popup.dart';
 import 'package:denvin_stock/components/dashed_rect.dart';
 import 'package:denvin_stock/exports.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:flutter/widgets.dart';
 import 'controller/add_product_controller.dart';
 
 
@@ -88,68 +90,73 @@ class ManualAddProductScreen extends GetView<AddProductController> {
     );
   }
 
-  _addImage() {
+  _addImage () {
     return Obx(
       () => Stack(
         alignment: Alignment.center,
         children: [
-          if (controller.imagePath.value.isNotEmpty && controller.myFile.value != null)
-            FullScreenWidget(isOpen: (isOpen){
 
-            },disposeLevel: DisposeLevel.High, child: imageFile(controller.myFile.value!, height: 140, width: Get.width, fit: BoxFit.cover).paddingSymmetric(horizontal: 20.0, vertical: 20.0)),
-          if (controller.imagePath.value.isNotEmpty)
-            Positioned(
-                right: 10,
-                top: 10,
-                child: CircleAvatar(
-                  backgroundColor: Colors.grey.shade200,
-                  radius: 16,
-                  child: const Icon(Icons.delete_rounded,size: 21,),
-                ).onTap(() {
-                  showAlertDialog(onYes: (){
-                    controller.imagePath.value = "";
-                    controller.myFile.value = null;
-                    controller.imageUrlToEdit.value = null;
-                  });
-                })),
-          if (controller.imagePath.value.isEmpty)
-            Container(
-              height: 140,
-              width: Get.width,
-              margin: const EdgeInsets.symmetric(vertical: 10.0),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20.0),
-              ),
-              child: DashedRect(
-                 strokeWidth: 2,
-                gap: 4.0,
-                color: Colors.grey.withOpacity(0.8),
-              ),
-            ).onTap(() {
-              controller.addBannerImage();
-            }).paddingSymmetric(horizontal: 20.0),
-          if (controller.imagePath.value.isEmpty)
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                controller.imageLoading.value
-                    ? Center(
-                        child: CircularProgressIndicator(
-                        color: primaryColor,
-                      ))
-                    : imageAsset(addPhotoIcon, height: 30.0),
-                vGap(8.0),
-                TextView(
-                  Strings.addPhotos,
-                  style: black_15_300()?.copyWith(color: hintTextColor),
-                )
-              ],
-            ).onTap(() {
-              controller.addBannerImage();
-            }).paddingSymmetric(horizontal: 20.0),
+          // if (controller.imagePath.value.isNotEmpty && controller.myFile.value != null)
+          //   FullScreenWidget(isOpen: (isOpen){
+          //
+          //   },disposeLevel: DisposeLevel.High,
+          //       child: imageFile(controller.myFile.value!, height: 140, width: Get.width, fit: BoxFit.cover)
+          //           .paddingSymmetric(horizontal: 20.0, vertical: 20.0)),
+          // if (controller.imagePath.value.isNotEmpty)
+          //   Positioned(
+          //       right: 10,
+          //       top: 10,
+          //       child: CircleAvatar(
+          //         backgroundColor: Colors.grey.shade200,
+          //         radius: 16,
+          //         child: const Icon(Icons.delete_rounded,size: 21,),
+          //       ).onTap(() {
+          //         showAlertDialog(onYes: (){
+          //           controller.imagePath.value = "";
+          //           controller.myFile.value = null;
+          //           controller.imageUrlToEdit.value = [];
+          //           // controller.imageUrlToEdit.value = null;
+          //         });
+          //       })),
+          // if (controller.imagePath.value.isEmpty)
+          //   Container(
+          //     height: 140,
+          //     width: Get.width,
+          //     margin: const EdgeInsets.symmetric(vertical: 10.0),
+          //     decoration: BoxDecoration(
+          //       borderRadius: BorderRadius.circular(20.0),
+          //     ),
+          //     child: DashedRect(
+          //        strokeWidth: 2,
+          //       gap: 4.0,
+          //       color: Colors.grey.withOpacity(0.8),
+          //     ),
+          //   ).onTap(() {
+          //     controller.addBannerImage();
+          //   }).paddingSymmetric(horizontal: 20.0),
+          // if (controller.imagePath.value.isEmpty)
+          //   Column(
+          //     mainAxisAlignment: MainAxisAlignment.center,
+          //     children: [
+          //       controller.imageLoading.value
+          //           ? Center(
+          //               child: CircularProgressIndicator(
+          //               color: primaryColor,
+          //             ))
+          //           : imageAsset(addPhotoIcon, height: 30.0),
+          //       vGap(8.0),
+          //       TextView(
+          //         Strings.addPhotos,
+          //         style: black_15_300()?.copyWith(color: hintTextColor),
+          //       )
+          //     ],
+          //   ).onTap(() {
+          //     controller.addBannerImage();
+          //   }).paddingSymmetric(horizontal: 20.0),
           if (controller.isEdit.value) _getEditImage(),
-          if (controller.isEdit.value)
-            controller.imageUrlToEdit.value != null ? Positioned(
+         /* if (controller.isEdit.value)
+            controller.imageUrlToEdit.isNotEmpty ?
+            Positioned(
                     right: 10,
                     top: 10,
                     child: CircleAvatar(
@@ -159,11 +166,12 @@ class ManualAddProductScreen extends GetView<AddProductController> {
                     ).onTap(() {
                       showAlertDialog(onYes: (){
                         controller.imagePath.value = "";
-                        controller.imageUrlToEdit.value = null;
+                        controller.imageUrlToEdit.value = [];
+                        // controller.imageUrlToEdit.value = null;
                         controller.myFile.value = null;
                       });
                     }))
-                : const SizedBox(),
+                : const SizedBox(),*/
         ],
       ),
     );
@@ -218,26 +226,113 @@ class ManualAddProductScreen extends GetView<AddProductController> {
     );
   }
 
+/*  Container(
+  height: 140,
+  width: Get.width,
+  margin: const EdgeInsets.symmetric(vertical: 10.0),
+  decoration: BoxDecoration(
+  borderRadius: BorderRadius.circular(20.0),
+  ),
+  child: DashedRect(
+  strokeWidth: 2,
+  gap: 4.0,
+  color: Colors.grey.withOpacity(0.8),
+  ),
+  )*/
 
   _getEditImage() {
-    if (controller.imagePath.value.isEmpty) {
-      if (controller.imageUrlToEdit.value != null) {
-        return FullScreenWidget(
-          isOpen: (isOpen){},
-          disposeLevel: DisposeLevel.High,
-          child: ShimmerImage(
-            url: controller.imageUrlToEdit.value ?? "",
-            width: Get.width,
-            height: 140,
-            fit: BoxFit.cover,
-          ).paddingSymmetric(horizontal: 20.0).marginSymmetric(vertical: 20),
-        );
-      } else {
-        return const SizedBox();
-      }
-    } else {
-      return const SizedBox();
-    }
+    return Container(
+      width: Get.width,
+      margin: const EdgeInsets.all(10),
+      padding: const EdgeInsets.fromLTRB(12, 12, 12,0),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20.0),
+          border: Border.all(color: Colors.grey.withOpacity(0.8),)
+      ),
+      child: Wrap(
+        children: [
+          ...controller.imageUrlToEdit.map((e) =>
+              SizedBox(
+                width: 100,
+                height: 100,
+                child: Stack(
+                  children: [
+                    ShimmerImage(
+                      url: e,
+                      width: 100,
+                      height: 100,
+                      fit: BoxFit.cover,
+                    ),
+
+                    Align(
+                      alignment: Alignment.topRight,
+                      child: CircleAvatar(
+                        backgroundColor: Colors.grey.shade200,
+                        radius: 16,
+                        child: const Icon(Icons.delete_rounded,size: 21,),
+                      ).onTap(() {
+                        showAlertDialog(onYes: (){
+                          //controller.imagePath.value = "";
+                          controller.imageUrlToEdit.remove(e);
+                        });
+                      }),
+                    )
+                  ],
+                ),
+              ).paddingOnly(right: 12)
+          ),
+          ...controller.myFile.map((e) =>
+              SizedBox(
+                width: 100,
+                height: 100,
+                child: Stack(
+                  children: [
+                    imageFile(e, height: 100, width: 100),
+                    // image.f(
+                    //   url: e,
+                    //   width: 100,
+                    //   height: 100,
+                    //   fit: BoxFit.cover,
+                    // ),
+
+                    Align(
+                      alignment: Alignment.topRight,
+                      child: CircleAvatar(
+                        backgroundColor: Colors.grey.shade200,
+                        radius: 16,
+                        child: const Icon(Icons.delete_rounded,size: 21,),
+                      ).onTap(() {
+                        showAlertDialog(onYes: (){
+                          //controller.imagePath.value = "";
+                          controller.myFile.remove(e);
+                        });
+                      }),
+                    )
+                  ],
+                ),
+              ).paddingOnly(right: 12, bottom: 12)
+          ),
+
+
+          Container(
+            height: 100,
+            width: 100,
+            decoration: BoxDecoration(
+                color: lightgreyText,
+                borderRadius: BorderRadius.circular(12)
+            ),
+            child: Icon(Icons.add, color: primaryColor,size: 40),
+          ).onTap(() {
+            if([...controller.myFile, ...controller.imageUrlToEdit].length == 5){
+              Utils.showSnackBar('You can add up to 5 product images.');
+            } else {
+              controller.addBannerImage();
+            }
+
+          }).paddingOnly(bottom: 12), // Add your extra widget here
+        ],
+      ),
+    );
   }
 
   _enterProductName() {
@@ -478,10 +573,8 @@ class ManualAddProductScreen extends GetView<AddProductController> {
                       validator: (value) {
                         if(controller.isOldExpiryData[i] == false){
                           value?.quantityValidation(messageTitle: Strings.quantity,value: value);
-                        }else{
-                          return null;
                         }
-
+                        return null;
                       },
                       focusNode: controller.dynamicQuantityDateFocusNode[i],
                       onFieldSubmitted: (String? value) =>

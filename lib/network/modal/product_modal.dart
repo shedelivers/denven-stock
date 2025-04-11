@@ -23,7 +23,7 @@ class ProductModal extends Serializable{
   String? globalMappingId;
   String? updatedAt;
   String? createdAt;
-  String? productImage;
+  List<String>? productImage;
   Storage? storage;
   Supplier? supplier;
   int? status;
@@ -77,7 +77,28 @@ class ProductModal extends Serializable{
       });
     }
     orderedAt = json['orderedAt'];
-    productImage = json['productImage'];
+    if (json['productImage'] != null && json['productImage'].toString().isNotEmpty) {
+      try {
+        final jsonString = json['productImage'].toString().trim();
+        if (jsonString.startsWith('[') && jsonString.endsWith(']')) {
+          final decoded = jsonDecode(jsonString) as List;
+          productImage = decoded
+              .where((e) => e is Map && e['file'] != null)
+              .map<String>((e) => e['file'].toString())
+              .toList();
+        } else {
+          print("Invalid JSON format for productImage: $jsonString");
+          productImage = [];
+        }
+      } catch (e, stackTrace) {
+        print("Error parsing product images: $e");
+        print("Invalid JSON data: ${json['productImage']}");
+        print(stackTrace);
+        productImage = [];
+      }
+    } else {
+      productImage = [];
+    }
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
     supplierCode = json['supplierCode'];
@@ -130,7 +151,9 @@ class ProductModal extends Serializable{
     data['quantity'] = quantity;
     data['minLevel'] = minLevel;
     data['price'] = price;
-    data['productImage'] = productImage;
+    data['productImage'] = productImage != null
+        ? jsonEncode(productImage!.map((url) => {'file': url}).toList())
+        : null;
     if (expiries != null) {
       data['expiries'] = expiries!.map((v) => v.toJson()).toList();
     }
@@ -503,16 +526,4 @@ class MyResponse {
   }
 }
 
-class ProductImage {
-  String file;
 
-  ProductImage({required this.file});
-
-  factory ProductImage.fromJson(Map<String, dynamic> json) {
-    return ProductImage(file: json['file']);
-  }
-
-  Map<String, dynamic> toJson() {
-    return {'file': file};
-  }
-}

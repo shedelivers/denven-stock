@@ -16,14 +16,12 @@ dependencies:
   package_info_plus: ^8.0.2
   url_launcher_ios: ^6.3.1
   upgrader: ^10.3.0
-  webview_flutter: ^4.8.0
+#  webview_flutter: ^4.8.0
   url_launcher: ^6.3.1
   intercom_flutter: ^9.0.9
-
-dev_dependencies:
-  flutter_test:
-    sdk: flutter
-
+  carousel_slider: ^5.0.0
+  webview_flutter: ^4.8.0
+  flutter_keyboard_visibility: ^6.0.0
   flutter_lints: ^3.0.0
   get: ^4.6.6
   flutter_screenutil: ^5.9.0
@@ -32,24 +30,28 @@ dev_dependencies:
   cached_network_image: ^3.3.0
   shimmer: ^3.0.0
   intl: ^0.17.0
-  flutter_keyboard_visibility: ^6.0.0
-  pinput: ^3.0.1
+#  flutter_keyboard_visibility: ^6.0.0
+#  pinput: ^3.0.1
   image_picker: ^1.0.5
   file_picker: ^6.1.1
-  permission_handler: ^11.1.0
+#  permission_handler: ^11.1.0
   get_storage: ^2.1.1
   dio: ^5.4.1
   google_fonts: 6.1.0
   connectivity_plus: ^5.0.2
   animated_custom_dropdown: ^3.0.0
-  carousel_slider: ^4.2.1
   barcode_widget: ^2.0.4
   barcode: ^2.2.6
   just_audio: ^0.9.37
   percent_indicator: ^4.2.3
   ai_barcode_scanner:
     path: ./barcode_scanner-master
+  webview_flutter_wkwebview: ^3.14.0
+  permission_handler: ^11.3.1
 
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
 
 flutter:
 

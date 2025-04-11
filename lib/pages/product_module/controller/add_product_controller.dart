@@ -16,7 +16,9 @@ class AddProductController extends GetxController implements CameraOnCompleteLis
   Rxn<int?> selectedSupplier = Rxn(null);
   Rxn<int?> selectedStorage = Rxn(null);
   RxInt minimumLevelCount = 1.obs;
-  Rxn<String?> imageUrlToEdit = Rxn(null);
+  RxList<String> imageUrlToEdit = <String>[].obs;
+  RxList<File> myFile = <File>[].obs;
+  // Rxn<String?> imageUrlToEdit = Rxn(null);
   RxBool dontHaveCode = false.obs;
   RxBool isLoading = false.obs;
   RxBool dummyLoading = false.obs;
@@ -73,7 +75,7 @@ class AddProductController extends GetxController implements CameraOnCompleteLis
   RxString fileName = "".obs;
   RxString fileType = "".obs;
   RxString imagePath = "".obs;
-  Rxn<File?> myFile = Rxn<File?>();
+
 
   @override
   void onInit() {
@@ -125,7 +127,8 @@ class AddProductController extends GetxController implements CameraOnCompleteLis
     if (storageList.any((element) => element.id == products.value?.storageId)) {
       selectedStorage.value = products.value?.storageId;
     }
-    imageUrlToEdit.value = products.value?.productImage != null && products.value?.productImage != "" ? "${ApiConstants.baseUrlForImage}/${extractImagePath(products.value?.productImage ?? "")}" : null;
+    imageUrlToEdit.value = products.value?.productImage??[];
+   // imageUrlToEdit.value = products.value?.productImage != null && products.value?.productImage != "" ? "${ApiConstants.baseUrlForImage}/${extractImagePath(products.value?.productImage ?? "")}" : null;
     isExpandedMoreFields.value = true;
     if((products.value?.expiries!.length ?? 0) > 0){
       for(Expiries expiries in products.value?.expiries ?? []){
@@ -441,6 +444,11 @@ class AddProductController extends GetxController implements CameraOnCompleteLis
         orderedAtDateString = DateFormat('yyyy/MM/dd').format(inputDate);
       }
 
+      List<Map<String, String>> existingImagesEncode = [];
+      for(var url in imageUrlToEdit){
+        existingImagesEncode.add({"file": url});
+      }
+
       dio.FormData formData = await CreateUpdateProductDto(
               internalSupplierId: selectedSupplier.value,
               name: productNameController.text,
@@ -449,7 +457,10 @@ class AddProductController extends GetxController implements CameraOnCompleteLis
               storageId: selectedStorage.value,
               price: priceController.text.isNotEmpty?priceController.text:"0",
               dontHaveSupplierCode: false.toString(),
-              productImage: File(imagePath.value),
+              ProductImageMobile: myFile,
+              ExistingImages: jsonEncode(existingImagesEncode),
+             // ExistingImages: imageUrlToEdit,
+              // productImage: File(imagePath.value),
               orderedAt: dateController.text.isNotEmpty ? "${orderedAtDateString}T00:00:00" : null,
               supplierCode: (supplierCodeController.text.isEmpty) ? "DEN${10000 + Random().nextInt(90000)}" : supplierCodeController.text,
               expiryData: expiryList,
@@ -489,7 +500,7 @@ class AddProductController extends GetxController implements CameraOnCompleteLis
             ExpiryDataDto(
                 quantity: dynamicQuantityDateController[i].text,
                 at: expiryDateController[i].text,
-              price: dynamicPriceController[i].text,
+                price: dynamicPriceController[i].text,
               ),
           );
         }
@@ -499,13 +510,18 @@ class AddProductController extends GetxController implements CameraOnCompleteLis
       String tagsStringList = myList.join(',');
       apiBarCode.addAll((addBarcodes).map((e) => BarCodeDataDto(barcode: e.barcode, removeAll: (e.removeAll ?? false).toString(), symbol: e.symbology
       )).toList());
-      print('Min Level is ==> ${minimumLevelController.text}');
+
+      List<Map<String, String>> existingImagesEncode = [];
+      for(var url in imageUrlToEdit){
+        existingImagesEncode.add({"file": url});
+      }
+
       dio.FormData formData = await CreateUpdateProductDto(
           id: products.value?.id,
-          productImage: File(imagePath.value),
+          ProductImageMobile: myFile,
+          ExistingImages: jsonEncode(existingImagesEncode),
           expiryData: expiryList,
           minLevel: minimumLevelController.text,
-          isImageRemoved: imageUrlToEdit.value == null ? true : false,
           barCode: apiBarCode,
           TagCollection: tagsStringList
       ).toJson();
@@ -591,8 +607,10 @@ class AddProductController extends GetxController implements CameraOnCompleteLis
   @override
   void onSuccessFile(File file, String fileTy) {
     imagePath.value = file.path;
-    imageUrlToEdit.value = file.path;
-    myFile.value = File(imagePath.value);
+    //imageUrlToEdit.add(file.path);
+   // imageUrlToEdit.value = file.path;
+   // myFile.value = File(imagePath.value);
+    myFile.add(File(imagePath.value));
     fileType.value = imagePath.substring(imagePath.lastIndexOf(".") + 1);
     fileName.value = file.path.split('/').last;
     imageLoading.value = false;

@@ -17,7 +17,6 @@ class ArrivedItemsDetailController extends GetxController {
   RxList<Items> items = <Items>[].obs;
   List<ItemDTO> searchItems = [];
   RxList<ItemDTO> itemsPayload = <ItemDTO>[].obs;
-  final CarouselController sliderController = CarouselController();
   final PageController pageController = PageController();
   List<Storages> selectedStorages = [];
   late ProductApiProvider _productApiProvider;

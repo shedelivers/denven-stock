@@ -8,6 +8,7 @@ Future<void> openUrlInApp({required String url}) async {
   }else if(url ==""){
     Utils.showSnackBar(Strings.somethingWentWrong);
   }else{
+
     try {
       await launchUrl(Uri.parse(url));
     } catch (e) {

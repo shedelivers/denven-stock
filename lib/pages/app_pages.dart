@@ -11,6 +11,8 @@ import 'package:denvin_stock/pages/product_module/move_storage_screen.dart';
 import 'package:denvin_stock/pages/settings_module/about_screen.dart';
 import 'package:denvin_stock/pages/settings_module/clinic_selection_screen.dart';
 import 'package:denvin_stock/pages/settings_module/change_password.dart';
+import 'package:denvin_stock/pages/settings_module/controller/training_videos_controller.dart';
+import 'package:denvin_stock/pages/settings_module/training_videos.dart';
 import 'package:denvin_stock/pages/settings_module/user_profile_screen.dart';
 import 'settings_module/binding/settings_binding.dart';
 
@@ -176,5 +178,14 @@ class AppPages {
       transition: Transition.cupertino,
       bindings: [ProductBinding()],
     ),
+
+    GetPage(
+      name: AppRoutes.trainingVideos,
+      page: () => const TrainingVideosScreen(),
+      transitionDuration: const Duration(milliseconds: 400),
+      transition: Transition.cupertino,
+      bindings: [SettingsBinding()],
+    ),
+
   ];
 }

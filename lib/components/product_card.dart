@@ -58,7 +58,7 @@ class ProductCard extends StatelessWidget {
                                   if (part.isNotEmpty) {
                                     return TextSpan(text: "#$part", style: black_12_600());
                                   } else {
-                                    return TextSpan(text: '**', style: black_14_600()?.copyWith(color: Colors.red));
+                                    return TextSpan(text: '**', style: black_14_600()?.copyWith(color: gradientColor3));
                                   }
                                 })
                               else
@@ -80,7 +80,7 @@ class ProductCard extends StatelessWidget {
                             ),
                             child: Padding(
                               padding: const EdgeInsets.only(left: 7),
-                              child: imageAsset(closeBoxIcon, width: 15, color: black),
+                              child: imageAsset(closeBoxIcon, width: 15, color: gradientColor3),
                             )),
 
                         Visibility(

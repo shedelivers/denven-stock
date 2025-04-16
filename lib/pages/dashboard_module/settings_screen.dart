@@ -91,6 +91,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
           //   },
           // ),
 
+        /*  _divider(),
+          SettingItemView(
+            title: "Training Videos",
+            image: const Icon(Icons.video_library,size: 20,),
+            onTap: (){
+              Get.toNamed(AppRoutes.trainingVideos);
+            },
+          ),*/
+
+
           _divider(),
           SettingItemView(
             title: "Change Password",

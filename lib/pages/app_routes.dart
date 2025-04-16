@@ -41,6 +41,7 @@ abstract class AppRoutes {
   static const chooseSupplierView = '/chooseSupplierView';
   static const addClinicView = '/addClinicView';
   static const dataAddOcrScreen = '/dataAddOcrScreen';
+  static const trainingVideos = '/trainingVideos';
 
   //implant Report Screen
   static const consumptionReportScreen = '/consumptionReportScreen';

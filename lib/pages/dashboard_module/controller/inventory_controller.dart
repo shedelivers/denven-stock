@@ -496,99 +496,107 @@ class InventoryController extends GetxController {
                           ),
                         ],
                       ),
-                      vGap(10.0),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(vertical: 12.0),
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                  border: Border.all(width: 1, color: textFieldBorderColor)),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  imageAsset(updateqtyIcon,
-                                      width: 20.0, color: black),
-                                  vGap(6.0),
-                                  TextView("Update Quantity", style: primaryColor_16_700()?.copyWith(color: black, fontSize: 14)),
-                                ],
-                              ),
-                            ).onTap(() {
-                              Get.back();
-                              if(product.expiries?.isNotEmpty ?? false) {
-                                Get.toNamed(AppRoutes.updateQuantity, arguments: {RoutesArgument.productDetails: product})?.then((value) {
-                                  if (value != null) {
-                                    currentPage.value = 1;
-                                    getInventoryData();
-                                  }
-                                });
-                              } else {
-                                Utils.showSnackBar("This product don't have quantity and expiry");
-                              }
+                      Visibility(
+                        visible: product.hidden==false,
+                        child: Column(
+                          children: [
+                            vGap(10.0),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(vertical: 12.0),
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10.0),
+                                        border: Border.all(width: 1, color: textFieldBorderColor)),
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        imageAsset(updateqtyIcon,
+                                            width: 20.0, color: black),
+                                        vGap(6.0),
+                                        TextView("Update Quantity", style: primaryColor_16_700()?.copyWith(color: black, fontSize: 14)),
+                                      ],
+                                    ),
+                                  ).onTap(() {
+                                    Get.back();
+                                    if(product.expiries?.isNotEmpty ?? false) {
+                                      Get.toNamed(AppRoutes.updateQuantity, arguments: {RoutesArgument.productDetails: product})?.then((value) {
+                                        if (value != null) {
+                                          currentPage.value = 1;
+                                          getInventoryData();
+                                        }
+                                      });
+                                    } else {
+                                      Utils.showSnackBar("This product don't have quantity and expiry");
+                                    }
 
-                            }),
-                          ),
-                          hGap(20.0),
-                          Expanded(
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(vertical: 12.0),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                  border: Border.all(width: 1, color: textFieldBorderColor),
+                                  }),
                                 ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    imageAsset(moveIcon, width: 20.0, color: black),
-                                    vGap(6.0),
-                                    TextView("Move to storage", style: primaryColor_16_700()?.copyWith(color: black, fontSize: 14)),
-                                  ],
+                                hGap(20.0),
+                                Expanded(
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(vertical: 12.0),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10.0),
+                                        border: Border.all(width: 1, color: textFieldBorderColor),
+                                      ),
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          imageAsset(moveIcon, width: 20.0, color: black),
+                                          vGap(6.0),
+                                          TextView("Move to storage", style: primaryColor_16_700()?.copyWith(color: black, fontSize: 14)),
+                                        ],
+                                      ),
+                                    ).onTap(() {
+                                      Get.back();
+                                      if(product.expiries?.isNotEmpty ?? false){
+                                        Get.toNamed(AppRoutes.moveStorage, arguments: {RoutesArgument.productDetails: product})?.then((value) {
+                                          if (value != null) {
+                                            currentPage.value = 1;
+                                            getInventoryData();
+                                          }
+                                        });
+                                      } else {
+                                        Utils.showSnackBar("Product is out of stock");
+                                      }
+                                    }
+                                    )
                                 ),
-                              ).onTap(() {
+                              ],
+                            ),
+                            vGap(10.0),
+                            BottomSheetItem(
+                              title: "Consumption",
+                              iconUri: consumIcon,
+                              onItemTap:() {
                                 Get.back();
                                 if(product.expiries?.isNotEmpty ?? false){
-                                  Get.toNamed(AppRoutes.moveStorage, arguments: {RoutesArgument.productDetails: product})?.then((value) {
+                                  Get.toNamed(AppRoutes.addConsumptionScreen, arguments: {RoutesArgument.productDetails: product})?.then((value) {
                                     if (value != null) {
                                       currentPage.value = 1;
                                       getInventoryData();
                                     }
                                   });
                                 } else {
-                                  Utils.showSnackBar("Product is out of stock");
+                                  Utils.showSnackBar("This product don't have quantity and expiry");
                                 }
-                              }
-                            )
-                          ),
-                        ],
+                              },
+                            ),
+                            vGap(10.0),
+                            BottomSheetItem(
+                              title: "Add to basket",
+                              iconUri: addBasketIcon,
+                              onItemTap:() {
+                                Get.back();
+                                addToBasket(product.id ?? 0);
+                              },
+                            ),
+                          ],
+                        ),
                       ),
-                      vGap(10.0),
-                      BottomSheetItem(
-                        title: "Consumption",
-                        iconUri: consumIcon,
-                        onItemTap:() {
-                          Get.back();
-                          if(product.expiries?.isNotEmpty ?? false){
-                            Get.toNamed(AppRoutes.addConsumptionScreen, arguments: {RoutesArgument.productDetails: product})?.then((value) {
-                              if (value != null) {
-                                currentPage.value = 1;
-                                getInventoryData();
-                              }
-                            });
-                          } else {
-                            Utils.showSnackBar("This product don't have quantity and expiry");
-                          }
-                        },
-                      ),
-                      vGap(10.0),
-                      BottomSheetItem(
-                        title: "Add to basket",
-                        iconUri: addBasketIcon,
-                        onItemTap:() {
-                          Get.back();
-                          addToBasket(product.id ?? 0);
-                        },
-                      ),
+
                       vGap(10.0),
                       BottomSheetItem(
                         title: "Edit Details",
@@ -607,6 +615,7 @@ class InventoryController extends GetxController {
                           });
                         },
                       ),
+
                       vGap(10.0),
                       BottomSheetItem(
                         title: "View Details",
@@ -624,37 +633,45 @@ class InventoryController extends GetxController {
                           });
                         },
                       ),
-                      vGap(10.0),
-                      BottomSheetItem(
-                        title: "Add Barcode",
-                        iconUri: scanIcon,
-                        onItemTap: () {
-                          Get.back();
-                          Get.toNamed(AppRoutes.scannerScreen)?.then((value) {
-                            if (value != null) {
-                              BarcodeModal? barcode = value;
-                              addBarCode(
-                                  addBarcodeDto: AddBarcodeDto(
-                                      localMappingId: product.localMappingId,
-                                      supplierCode: product.supplierCode,
-                                      supplierId: product.supplier?.id,
-                                      ApiRequest: true,
-                                      commands: [
-                                        CommandsDto(
-                                            symbology: barcode?.symbology ?? "",
-                                            barcode: barcode?.barcode ?? "",
-                                            command: 1)
-                                      ]
-                                  )
-                              );
-                              // controller.checkBarCodeAdded(value, onGettingItemTap: () {
-                              //   Utils.showSnackBar("Bar Code Already Added");
-                              // }, onNotGettingItemTap: () {
-                              // });
-                            }
-                          });
-                        },
-                      ),
+
+                      Visibility(
+                          visible: product.hidden==false,
+                          child: Column(
+                        children: [
+                          vGap(10.0),
+                          BottomSheetItem(
+                            title: "Add Barcode",
+                            iconUri: scanIcon,
+                            onItemTap: () {
+                              Get.back();
+                              Get.toNamed(AppRoutes.scannerScreen)?.then((value) {
+                                if (value != null) {
+                                  BarcodeModal? barcode = value;
+                                  addBarCode(
+                                      addBarcodeDto: AddBarcodeDto(
+                                          localMappingId: product.localMappingId,
+                                          supplierCode: product.supplierCode,
+                                          supplierId: product.supplier?.id,
+                                          ApiRequest: true,
+                                          commands: [
+                                            CommandsDto(
+                                                symbology: barcode?.symbology ?? "",
+                                                barcode: barcode?.barcode ?? "",
+                                                command: 1)
+                                          ]
+                                      )
+                                  );
+                                  // controller.checkBarCodeAdded(value, onGettingItemTap: () {
+                                  //   Utils.showSnackBar("Bar Code Already Added");
+                                  // }, onNotGettingItemTap: () {
+                                  // });
+                                }
+                              });
+                            },
+                          ),
+                        ],
+                      )),
+
 
                       Visibility(
                         visible: product.type != 1,
@@ -692,7 +709,7 @@ class InventoryController extends GetxController {
                       InkWell(
                         onTap: (){
                           confirmPopUp(
-                              title: product.hidden == true?'Confirm Show Product':'Confirm Hide Product',
+                              title: product.hidden == true?'Confirm Unhide Product':'Confirm Hide Product',
                               subtitle: product.hidden == true?"Are you sure you want to show this product?":"Are you sure you want to hide this product?",
                               onConfirm: (){
                                 Get.back();
@@ -713,7 +730,7 @@ class InventoryController extends GetxController {
                             children: [
                               Icon(product.hidden == false? Icons.visibility_off:Icons.visibility, color: black,),
                               hGap(10.0),
-                              TextView(product.hidden == false?'Hide Product':'Show Product',style: black_17_600()?.copyWith(fontSize: 14,color: black)),
+                              TextView(product.hidden == false?'Hide Product':'Unhide product',style: black_17_600()?.copyWith(fontSize: 14,color: black)),
                               const Spacer(),
                               // CircleAvatar(
                               //   backgroundColor: primaryLightColor,

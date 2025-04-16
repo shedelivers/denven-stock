@@ -122,20 +122,16 @@ class DashboardController extends GetxController {
     String userId = helper.getUserModel()?.id.toString() ?? "";
     String email = helper.getUserModel()?.email ?? "";
 
-    if(email == "sachindevtest@yopmail.com"){
-      if (userId.isNotEmpty) {
-        await Intercom.instance.loginIdentifiedUser(userId: userId);
-      } else if (email.isNotEmpty) {
-        await Intercom.instance.loginIdentifiedUser(email: email);
-      } else {
-        await Intercom.instance.loginUnidentifiedUser();
-      }
-      await Intercom.instance.setBottomPadding(40);
-      await Intercom.instance.setLauncherVisibility(IntercomVisibility.visible);
+    if (userId.isNotEmpty) {
+      await Intercom.instance.loginIdentifiedUser(userId: userId);
+    } else if (email.isNotEmpty) {
+      await Intercom.instance.loginIdentifiedUser(email: email);
+    } else {
+      await Intercom.instance.loginUnidentifiedUser();
     }
+    await Intercom.instance.setBottomPadding(40);
+    await Intercom.instance.setLauncherVisibility(IntercomVisibility.visible);
   }
-
-
 
   void closeIntercom () async {
     await Intercom.instance.setLauncherVisibility(IntercomVisibility.gone);

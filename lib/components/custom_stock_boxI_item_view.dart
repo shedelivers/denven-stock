@@ -1,6 +1,8 @@
 
 import 'package:denvin_stock/exports.dart';
 
+import '../network/modal/enum/shimmer_enum.dart';
+
 class CustomStockBoxItemView extends StatelessWidget {
   final String image;
   final String title;

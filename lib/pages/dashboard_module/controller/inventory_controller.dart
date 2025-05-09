@@ -10,8 +10,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-import '../../../../Network/modal/dto/add_bar_code_dto.dart';
-import '../../../../Network/modal/enum/shimmer_enum.dart';
+import '../../../../network/modal/dto/add_bar_code_dto.dart';
+import '../../../../network/modal/enum/shimmer_enum.dart';
 import '../../../network/modal/baske_modal.dart';
 import '../../product_module/dialogs/stock_filter_dialog.dart';
 

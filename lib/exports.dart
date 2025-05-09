@@ -64,14 +64,14 @@ export 'package:denvin_stock/pages/dashboard_module/controller/dashboard_control
 export 'package:denvin_stock/pages/dashboard_module/controller/home_controller.dart';
 export 'package:denvin_stock/pages/dashboard_module/controller/inventory_controller.dart';
 
-export 'package:denvin_stock/Network/modal/enum/shimmer_enum.dart';
+export 'package:denvin_stock/network/modal/enum/shimmer_enum.dart';
 export 'package:flutter_spinkit/flutter_spinkit.dart';
 
 export 'package:denvin_stock/network/api_provider/log_interceptor.dart';
 export 'package:denvin_stock/network/modal/consumer_modal.dart';
 export 'package:denvin_stock/network/modal/product_modal.dart';
 
-export 'package:denvin_stock/Network/modal/dto/add_bar_code_dto.dart';
+export 'package:denvin_stock/network/modal/dto/add_bar_code_dto.dart';
 export 'package:denvin_stock/network/modal/consumer_modal.dart';
 export 'package:denvin_stock/network/modal/crawled_product/crawled_product.dart';
 export 'package:denvin_stock/network/modal/dto/delete_bar_code_dto.dart';

@@ -48,7 +48,7 @@ class MoveStorageController extends GetxController {
       storageController.add(Rxn(<TextEditingController>[TextEditingController()]));
       storageFocusNode.add(Rxn(<FocusNode>[FocusNode()]));
       quantityFocusNode.add(Rxn(<FocusNode>[FocusNode()]));
-      movesMainLists.add(Rxn(<Moves>[Moves(expiry: products.value?.expiries?[i].at ?? "")]));
+      movesMainLists.add(Rxn(<Moves>[Moves(expiry: products.value?.expiries?[i].at ?? "",price: products.value?.expiries?[i].price ?? 0,)]));
       counter.add(0);
     }
   }
@@ -79,12 +79,15 @@ class MoveStorageController extends GetxController {
     storageController[index].value?.add(TextEditingController());
     storageFocusNode[index].value?.add(FocusNode());
     quantityFocusNode[index].value?.add(FocusNode());
-    movesMainLists[index].value?.add(Moves(expiry: products.value?.expiries?[index].at ?? ""));
+    movesMainLists[index].value?.add(Moves(
+        expiry: products.value?.expiries?[index].at ?? "",
+      price: products.value?.expiries?[index].price ?? 0,
+    ));
     update();
   }
 
 
-  submit() async {
+  Future<void> submit() async {
     if(await Utils.hasNetwork()){
       List<Map<String,dynamic>> myMoves = [];
       for(int i=0; i< movesMainLists.length; i++){
@@ -163,13 +166,15 @@ class MoveStorageDto {
 class Moves {
   String? expiry;
   int? qty;
+  dynamic? price;
   int? storageId;
 
-  Moves({this.expiry, this.qty, this.storageId});
+  Moves({this.expiry, this.qty, this.storageId, this.price});
 
   Moves.fromJson(Map<String, dynamic> json) {
     expiry = json['Expiry'];
     qty = json['Qty'];
+    price = json['price'];
     storageId = json['StorageId'];
   }
 
@@ -177,6 +182,7 @@ class Moves {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['Expiry'] = expiry;
     data['Qty'] = qty;
+    data['price'] = price;
     data['StorageId'] = storageId;
     return data;
   }

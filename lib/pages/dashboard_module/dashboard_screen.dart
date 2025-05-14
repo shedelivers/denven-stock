@@ -22,7 +22,7 @@ class DashboardScreen extends GetView<DashboardController> {
           dialogStyle: Platform.isIOS? UpgradeDialogStyle.cupertino:UpgradeDialogStyle.material,
           child: Scaffold(
             bottomNavigationBar: ClipRRect(
-              borderRadius: const BorderRadius.only(topLeft: Radius.circular(13), topRight:Radius.circular(13)),
+              borderRadius: const BorderRadius.only(topLeft: Radius.circular(20 ), topRight:Radius.circular(13)),
               child: BottomNavigationBar(
                 selectedItemColor: whiteColor,
                 unselectedItemColor: unSelectedNevTextColor,
@@ -61,7 +61,7 @@ class DashboardScreen extends GetView<DashboardController> {
               ),
             ),
             body: _mainBody(),
-          
+
           ),
         ),
       ),

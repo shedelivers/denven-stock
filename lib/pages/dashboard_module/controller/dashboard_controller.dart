@@ -116,8 +116,7 @@ class DashboardController extends GetxController {
       }
     }
   }
-
-  void intercomUserLogIn () async {
+  void intercomUserLogIn() async {
     StorageHelper helper = StorageHelper();
     String userId = helper.getUserModel()?.id.toString() ?? "";
     String email = helper.getUserModel()?.email ?? "";
@@ -129,9 +128,15 @@ class DashboardController extends GetxController {
     } else {
       await Intercom.instance.loginUnidentifiedUser();
     }
-    await Intercom.instance.setBottomPadding(40);
+
+    final size = WidgetsBinding.instance.platformDispatcher.views.first.physicalSize /
+        WidgetsBinding.instance.platformDispatcher.views.first.devicePixelRatio;
+    double bottomPadding = size.height * 0.15;
+
+    await Intercom.instance.setBottomPadding(bottomPadding.toInt());
     await Intercom.instance.setLauncherVisibility(IntercomVisibility.visible);
   }
+
 
   void closeIntercom () async {
     await Intercom.instance.setLauncherVisibility(IntercomVisibility.gone);

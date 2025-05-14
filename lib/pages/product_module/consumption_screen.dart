@@ -215,6 +215,12 @@ class ConsumptionScreen extends GetView<ConsumptionController> {
                       Expanded(
                         child: CustomTextField(
                             hintText: Strings.quantity,
+                            validator: (value) {
+                              if (value!.isEmpty){
+                                return "Quantity is mandatory";
+                              }
+                              return null;
+                            },
                             controller: controller.quantityController[index].value![subIndex],
                             textInputType: TextInputType.number,
                             onChanged: (qtyValue) {

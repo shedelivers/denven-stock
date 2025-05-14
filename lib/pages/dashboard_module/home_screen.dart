@@ -52,7 +52,7 @@ class HomeScreen extends GetView<HomeController> {
           children: [
             TextView(
               Strings.welcome,
-              style: black_22_700(),
+              style: black_20_700(),
             ),
             TextView("${helper.getUserFirstName()} ${helper.getUserLastName()}" ?? "N/A", style: primaryColor_18_600()),
           ],
@@ -63,7 +63,7 @@ class HomeScreen extends GetView<HomeController> {
           children: [
             TextView(
               Strings.clinic,
-              style: black_15_400(),
+              style: black_14_400(),
             ),
             TextView(helper.getClinicModel()?.name ?? "N/A", style: black_14_400()?.copyWith(color: hintTextColor)),
           ],

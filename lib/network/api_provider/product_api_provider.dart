@@ -435,6 +435,7 @@ class ProductApiProvider {
     }
   }
 
+
   Future<DataResponse> deleteProduct({String? productId}) async {
     try {
       Response response = await _dio.delete("${ApiConstants.implantStock}/$clinicId/$productId", options: Injector.getHeaderToken());

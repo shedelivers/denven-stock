@@ -214,13 +214,14 @@ class InventoryController extends GetxController {
       payload[ApiConstants.barcode] = code.barcode;
       payload[ApiConstants.symbology] = code.symbology;
       Utils.showLoader(message: "Search...");
+      print("BARCODESEARCH -----> ${code.barcode}");
       DataResponse<PaginationResponseModal<ProductModal>> response = await _productApiProvider.searchProductFromScanStock(barcode: code.barcode, type: code.symbology);
       Utils.hideLoader();
       if (response.successful == false) {
         Utils.showSnackBar(response.error ?? "Unable to get product");
         if(response.error == "No product found") {
           Get.toNamed(AppRoutes.chooseSupplierView, arguments: {RoutesArgument.barCode : code,})?.then((value) {
-            if (value != null) {
+              if (value != null) {
               currentPage.value = 1;
               getInventoryData();
               Get.find<DashboardController>().getSummary();
@@ -513,7 +514,7 @@ class InventoryController extends GetxController {
                                     child: Column(
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
-                                        imageAsset(updateqtyIcon,
+                                        imageAsset( updateqtyIcon,
                                             width: 20.0, color: black),
                                         vGap(6.0),
                                         TextView("Update Quantity", style: primaryColor_16_700()?.copyWith(color: black, fontSize: 14)),

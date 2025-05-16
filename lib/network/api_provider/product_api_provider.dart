@@ -436,6 +436,31 @@ class ProductApiProvider {
   }
 
 
+  Future<DataResponse<ProductModal?>> updateProductQty({String? id, Map<String, dynamic>? payload}) async {
+    try {
+      Response response = await _dio.patch("${ApiConstants.inventoryStock}/$clinicId/$id/UpdateQty", data: payload,options: Injector.getHeaderToken());
+      var dataResponse = DataResponse.fromJson(response.data, (data) => null);
+      return dataResponse;
+    } on DioException catch (error) {
+      if (error.type == DioExceptionType.connectionTimeout) {
+        return DataResponse(error: "Connection Timeout Exception", successful: false);
+      } else if (error.type == DioExceptionType.receiveTimeout) {
+        return DataResponse(error: "Receive Timeout Exception", successful: false);
+      } else {
+        final response = error.response?.data;
+        if (response != null && response is Map<String, dynamic>) {
+          return DataResponse.fromJson(response, (data) => ProductModal.fromJson(data as Map<String, dynamic>));
+        } else {
+          return DataResponse(error: error.toString(), successful: false);
+        }
+      }
+    } catch (e) {
+      return DataResponse(error: e.toString(), successful: false);
+    }
+  }
+
+
+
   Future<DataResponse> deleteProduct({String? productId}) async {
     try {
       Response response = await _dio.delete("${ApiConstants.implantStock}/$clinicId/$productId", options: Injector.getHeaderToken());
@@ -835,7 +860,6 @@ class ProductApiProvider {
   Future<ComanResponseModal> addBarCode({required AddBarcodeDto addBarcodeDto}) async {
     try {
       Response response = await _dio.patch("${ApiConstants.inventoryStock}/$clinicId/UpdateBarcode", data: addBarcodeDto.toJson(), options: Injector.getHeaderToken());
-      print("BARCODEDATAFINAL -----> ${addBarcodeDto.toJson()}");
       var dataResponse = ComanResponseModal.fromJson(response.data);
       return dataResponse;
     } on DioException catch (error) {

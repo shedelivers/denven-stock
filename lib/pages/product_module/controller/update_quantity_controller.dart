@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'package:denvin_stock/components/utils/print_value.dart';
 import 'package:denvin_stock/exports.dart';
 import 'package:denvin_stock/network/modal/dto/create_update_product.dart';
 import 'package:intl/intl.dart';import 'package:dio/src/form_data.dart' as dio;
@@ -96,31 +97,58 @@ class UpdateQuantityController extends GetxController {
 
   submit() async {
     if(await Utils.hasNetwork()) {
-      List<ExpiryDataDto> expiryList = [];
+      // List<ExpiryDataDto> expiryList = [];
+      // for (int i = 0; i < numberOfFoams.value; i++) {
+      //   if (textQuantityController[i].text.isNotEmpty || textExpireController[i].text.isNotEmpty) {
+      //     expiryList.add(
+      //       ExpiryDataDto(
+      //         quantity: textQuantityController[i].text,
+      //         at: textExpireController[i].text,
+      //         price: textPriceController[i].text == "null" || textPriceController[i].text.isEmpty? "0":textPriceController[i].text
+      //       ),
+      //     );
+      //   }
+      // }
+
+     // dio.FormData formData = await CreateUpdateProductDto(id: products.value?.id, expiryData: expiryList,).toJson();
+
+
+
+      List<Map<String, dynamic>> expiryList = [];
       for (int i = 0; i < numberOfFoams.value; i++) {
         if (textQuantityController[i].text.isNotEmpty || textExpireController[i].text.isNotEmpty) {
-          expiryList.add(
-            ExpiryDataDto(
-              quantity: textQuantityController[i].text,
-              at: textExpireController[i].text,
-              price: textPriceController[i].text == "null" || textPriceController[i].text.isEmpty? "0":textPriceController[i].text
-            ),
+          expiryList.add({
+            "qty": textQuantityController[i].text,
+            "at": textExpireController[i].text,
+            "price": textPriceController[i].text == "null" || textPriceController[i].text.isEmpty? "0":textPriceController[i].text
+          }
           );
         }
       }
 
-      dio.FormData formData = await CreateUpdateProductDto(id: products.value?.id, expiryData: expiryList,).toJson();
+      Map<String, dynamic> payload = {
+        "Id": products.value?.id,
+        "expiries": expiryList,
+      };
+
+
+      printValue(tag: 'NOW PAYLOAD IS:', payload);
+
       isLoading.value = true;
-      DataResponse<dynamic> response = await _productApiProvider.editProductV2(productId: products.value?.id.toString() ?? "", payload: formData);
+      DataResponse<ProductModal?> response = await _productApiProvider.updateProductQty(id: products.value?.id.toString() ?? "", payload: payload);
       isLoading.value = false;
+
+      printValue(tag: "RESPONSE IS:", response.successful);
+
       if (response.successful == false) {
         Utils.showSnackBar(response.error ?? "Something went wrong");
       } else {
-        if (response.response != null) {
+        Get.back(result: "refresh");
+       /* if (response.response != null) {
           Get.back(result: "refresh");
         } else {
           Utils.showSnackBar(response.error ?? "Something went wrong");
-        }
+        }*/
       }
     }
   }

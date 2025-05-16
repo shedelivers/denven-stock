@@ -847,7 +847,7 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
                           ?.copyWith(color: const Color(0xff707070)),
                     ),
                     vGap(4.0),
-                    SelectableText(controller.products.value?.manufacturer ?? Strings.nA, style: black_14_600()?.copyWith(color: black, fontSize: 15)),
+                     SelectableText(controller.products.value?.manufacturer ?? Strings.nA, style: black_14_600()?.copyWith(color: black, fontSize: 15),textAlign: TextAlign.end,),
                   ],
                 ),
               ),

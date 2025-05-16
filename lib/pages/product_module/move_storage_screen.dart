@@ -107,10 +107,13 @@ class MoveStorageScreen extends GetView<MoveStorageController> {
         SafeArea(child:
         Obx(()=> AppButton(
             isLoading: controller.isLoading.value,
-            onTap:(){
-            if (formGlobalKey.currentState!.validate()) {
-              controller.submit();
-            }
+            onTap:()async{
+              if(controller.isLoading.value == false){
+                if (formGlobalKey.currentState!.validate()) {
+                  await controller.submit();
+                }
+              }
+
           },buttonText: 'Move to storage',),
         )
         ).paddingSymmetric(horizontal: 20.0),

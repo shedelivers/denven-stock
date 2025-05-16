@@ -685,12 +685,15 @@ class InventoryController extends GetxController {
                             iconUri: closeBoxIcon,
                             onItemTap: () {
                               Get.back();
-                              String productQuantity = "0";
+                              String productQuantity = "12";
 
                               for(ProductModal prod in products){
-                                if(prod.type != 1 && prod.supplierCode == product.supplierCode && productQuantity == "0"){
-                                  if(product.expiries?.isNotEmpty??false){
-                                    productQuantity = product.expiries?[0].qty.toString()??"0";
+                                print('supplierCode Test 1: ${prod.supplierCode}');
+                                print('supplierCode Test 2: ${product.supplierCode}**');
+                                print('supplierCode Test prod.type: ${product.type}');
+                                if(prod.type == 1 && prod.supplierCode == "${product.supplierCode}**"){
+                                  if(prod.expiries?.isNotEmpty??false){
+                                    productQuantity = prod.expiries?[0].qty.toString()??"12";
                                   }
                                 }
                               }

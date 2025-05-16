@@ -52,6 +52,7 @@ class Strings{
   static const String stock = "Stock";
   static const String scanArrivedItems = "Scan Arrived Items";
   static const String searchProduct = "Search Product";
+  static const String searchOrder = "Search Order";
   static const String searchSupplier = "Search Supplier";
   static const String searchStorage = "Search Storage";
   static const String manualEntry = "Manual Entry";

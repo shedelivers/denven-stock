@@ -48,7 +48,7 @@ class ScanArrivedItemsScreen extends GetView<ScanArrivedItemsController> {
                       children: [
                         Expanded(
                             child: CustomTextFieldV3(
-                              hintText: Strings.searchProduct,
+                              hintText: Strings.searchOrder,
                               controller: controller.searchController,
                               focusNode: controller.searchFocusNode,
                               onFieldSubmitted: (String? value) => FocusScope.of(Get.context!).unfocus(),

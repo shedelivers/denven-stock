@@ -129,11 +129,14 @@ class DashboardController extends GetxController {
       await Intercom.instance.loginUnidentifiedUser();
     }
 
-    final size = WidgetsBinding.instance.platformDispatcher.views.first.physicalSize /
-        WidgetsBinding.instance.platformDispatcher.views.first.devicePixelRatio;
-    double bottomPadding = size.height * 0.15;
-
-    await Intercom.instance.setBottomPadding(bottomPadding.toInt());
+    if (GetPlatform.isAndroid ) {
+      final size = WidgetsBinding.instance.platformDispatcher.views.first.physicalSize /
+          WidgetsBinding.instance.platformDispatcher.views.first.devicePixelRatio;
+      double bottomPadding = size.height * 0.15;
+      await Intercom.instance.setBottomPadding(bottomPadding.toInt());
+    } else if (GetPlatform.isIOS ) {
+      await Intercom.instance.setBottomPadding(40);
+    }
     await Intercom.instance.setLauncherVisibility(IntercomVisibility.visible);
   }
 

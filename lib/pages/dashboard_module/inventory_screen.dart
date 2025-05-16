@@ -131,52 +131,64 @@ class InventoryStockScreen extends GetView<InventoryController> {
                 await Get.find<DashboardController>().getSummary();
                 await controller.getInventoryData(showLoading: false);
               },
-              child: ListView.builder(
-                controller: controller.scrollController,
-                itemCount: controller.products.length + (controller.isLoadingMore.value ? 1 : 0),
-                itemBuilder: (context, index) {
-                  if (controller.isLoading.value) {
-                    return Utils.circularLoader(marginTop: 30);
-                  }
-
-                  if (controller.products.isEmpty) {
-                    return Utils.noDataFound(message: "No Product Found").marginOnly(top: 20.0);
-                  }
-
-                  if (index < controller.products.length) {
-                    ProductModal? product = controller.products[index];
-                    return ProductCard(
-                      imagePath: product.productImage ?? [],
-                      name: product.name,
-                      supplierCode: product.supplierCode,
-                      storageName: product.storage?.name,
-                      orderAt: product.orderedAt,
-                      localMappingId: product.localMappingId,
-                      type: product.type ?? 1,
-                      isHidden: product.hidden ?? false,
-                      price: product.expiries!.isNotEmpty ? product.expiries?.last.price ?? 0 : 0,
-                      cardOnTap: () {
-                        Get.toNamed(AppRoutes.productDetailScreen, arguments: {
-                          RoutesArgument.productDetails: product,
-                          RoutesArgument.addRestock: false
-                        })?.then((value) {
-                          if (value != null) {
-                            controller.searchController.clear();
-                            controller.getInventoryData();
-                          }
-                        });
-                      },
-                      menuOnTap: () => controller.editProductBottomSheet(product),
+              child: NotificationListener<ScrollEndNotification>(
+    onNotification: (scrollInfo) {
+    //scrollInfo.metrics.pixels >= scrollInfo.metrics.maxScrollExtent * 0.8
+    if(scrollInfo.metrics.pixels >= scrollInfo.metrics.maxScrollExtent * 0.8){
+    if((getTotalPage() - 1) >= controller.currentPage.value && controller.shimmerLoaderState == ShimmerLoaderState.fetched && controller.products.isNotEmpty){
+    controller.currentPage.value = (controller.implantProductlist?.response?.page ?? 0) + 1;
+    controller.getPaginationImplantStockData(addMore: true, showLoading: false);
+    }
+    }
+    return true;
+    },
+    child: ListView.builder(
+                  controller: controller.scrollController,
+                  itemCount: controller.products.length + (controller.isLoadingMore.value ? 1 : 0),
+                  itemBuilder: (context, index) {
+                    if (controller.isLoading.value) {
+                      return Utils.circularLoader(marginTop: 30);
+                    }
+                
+                    if (controller.products.isEmpty) {
+                      return Utils.noDataFound(message: "No Product Found").marginOnly(top: 20.0);
+                    }
+                
+                    if (index < controller.products.length) {
+                      ProductModal? product = controller.products[index];
+                      return ProductCard(
+                        imagePath: product.productImage ?? [],
+                        name: product.name,
+                        supplierCode: product.supplierCode,
+                        storageName: product.storage?.name,
+                        orderAt: product.orderedAt,
+                        localMappingId: product.localMappingId,
+                        type: product.type ?? 1,
+                        isHidden: product.hidden ?? false,
+                        price: product.expiries!.isNotEmpty ? product.expiries?.last.price ?? 0 : 0,
+                        cardOnTap: () {
+                          Get.toNamed(AppRoutes.productDetailScreen, arguments: {
+                            RoutesArgument.productDetails: product,
+                            RoutesArgument.addRestock: false
+                          })?.then((value) {
+                            if (value != null) {
+                              controller.searchController.clear();
+                              controller.getInventoryData();
+                            }
+                          });
+                        },
+                        menuOnTap: () => controller.editProductBottomSheet(product),
+                      );
+                    }
+                
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      child: Center(
+                        child: CircularProgressIndicator(color: primaryColor),
+                      ),
                     );
-                  }
-
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    child: Center(
-                      child: CircularProgressIndicator(color: primaryColor),
-                    ),
-                  );
-                },
+                  },
+                ),
               ),
             ),
           ),

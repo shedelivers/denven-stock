@@ -834,6 +834,7 @@ class ProductApiProvider {
   Future<ComanResponseModal> addBarCode({required AddBarcodeDto addBarcodeDto}) async {
     try {
       Response response = await _dio.patch("${ApiConstants.inventoryStock}/$clinicId/UpdateBarcode", data: addBarcodeDto.toJson(), options: Injector.getHeaderToken());
+      print("BARCODEDATAFINAL -----> ${addBarcodeDto.toJson()}");
       var dataResponse = ComanResponseModal.fromJson(response.data);
       return dataResponse;
     } on DioException catch (error) {

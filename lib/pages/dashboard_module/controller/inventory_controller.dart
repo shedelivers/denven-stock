@@ -394,6 +394,7 @@ class InventoryController extends GetxController {
       Map<String,dynamic> payload = HashMap();
       payload[ApiConstants.barcode] = code.barcode;
       payload[ApiConstants.symbology] = code.symbology;
+      print("BARCODEDATA -----> ${code.barcode}");
 
       CustomScanResponseModal<ProductModal> response = await _productApiProvider.searchProductFromScan(data: payload);
 
@@ -805,6 +806,7 @@ class InventoryController extends GetxController {
       customLoader.show();
       ComanResponseModal response = await _productApiProvider.addBarCode(addBarcodeDto: addBarcodeDto);
       customLoader.hide();
+      print("BARCODEDATA -----> ${addBarcodeDto}");
       if (response.successful == false) {
         Utils.showSnackBar(response.error ?? "Something went wrong");
       } else {

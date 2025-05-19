@@ -35,13 +35,22 @@ class DashboardController extends GetxController {
     intercomUserLogIn ();
     super.onInit();
   }
-
-
   void updateIndex(int index) {
     currentIndex.value = index;
     update();
-    // pageController.animateToPage(index, duration: const Duration(milliseconds: 500), curve: Curves.ease);
+
+    if (index == 0) {
+      Intercom.instance.setLauncherVisibility(IntercomVisibility.visible);
+    } else {
+      Intercom.instance.setLauncherVisibility(IntercomVisibility.gone);
+    }
   }
+
+  // void updateIndex(int index) {
+  //   currentIndex.value = index;
+  //   update();
+  //   // pageController.animateToPage(index, duration: const Duration(milliseconds: 500), curve: Curves.ease);
+  // }
 
   @override
   void dispose() {

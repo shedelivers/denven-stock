@@ -190,7 +190,8 @@ class HomeScreen extends GetView<HomeController> {
                       ],
                     ),
                   ).onTap(() {
-                    Get.find<DashboardController>().currentIndex.value = 2;
+                    Get.find<DashboardController>().updateIndex(2);
+                    // Get.find<DashboardController>().currentIndex.value = 2;
                   }),
                 ),
                 hGap(5.0),
@@ -316,7 +317,9 @@ class HomeScreen extends GetView<HomeController> {
                         ],
                       ),
                     ).onTap(() {
-                      Get.find<DashboardController>().currentIndex.value = 1;
+                        
+                      // Get.find<DashboardController>().currentIndex.value = 1;
+                      Get.find<DashboardController>().updateIndex(1);
                     }),
                   ),
                   hGap(5.0),
@@ -399,6 +402,7 @@ class HomeScreen extends GetView<HomeController> {
                         ],
                       ),
                     ).onTap(() {
+
                       Get.toNamed(AppRoutes.viewBasketScreen)?.then((value) {
                         controller.getBasketCount();
                       });

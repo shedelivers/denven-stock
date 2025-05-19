@@ -261,7 +261,7 @@ class _AiBarcodeScannerState extends State<AiBarcodeScanner> {
                     return;
                   }
 
-                  final String code = barcode.barcodes.first.rawValue ?? "";
+                  final String code = barcode.barcodes.first.displayValue ?? "";
 
                   if ((widget.validator != null && !widget.validator!(code))) {
                     setState(() {
@@ -275,6 +275,7 @@ class _AiBarcodeScannerState extends State<AiBarcodeScanner> {
                     _isSuccess = true;
                     if (widget.hapticFeedback) HapticFeedback.lightImpact();
                     log('Barcode rawValue => $code');
+                    log('Barcode displayValue => $code');
                     widget.onScan(code);
                   });
                   if (widget.canPop && mounted && Navigator.canPop(context)) {

@@ -46,7 +46,8 @@ class ScannerScreen extends GetView<ScannerController> {
             if(isScan){
               isScan = false;
               if(barcodeCapture.barcodes.isNotEmpty){
-                Get.back(result: BarcodeModal(removeAll: false, barcode: barcodeCapture.barcodes.first.rawValue, symbology: barcodeCapture.barcodes.first.format.name.toUpperCase()));
+                // Utils.showSnackBar("CODE----------> ${barcodeCapture.barcodes.first.displayValue}");
+                Get.back(result: BarcodeModal(removeAll: false, barcode: barcodeCapture.barcodes.first.displayValue?.replaceAll(RegExp(r'[\x00-\x1F]'), ''), symbology: barcodeCapture.barcodes.first.format.name.toUpperCase()));
                 await player.play();
               } else {
                 Get.back();

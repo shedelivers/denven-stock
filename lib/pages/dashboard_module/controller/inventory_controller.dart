@@ -810,7 +810,7 @@ class InventoryController extends GetxController {
       customLoader.show();
       ComanResponseModal response = await _productApiProvider.addBarCode(addBarcodeDto: addBarcodeDto);
       customLoader.hide();
-      print("BARCODEDATA -----> ${addBarcodeDto}");
+      print("BARCODEDATA -----> ${addBarcodeDto.commands?[0].barcode}");
       if (response.successful == false) {
         Utils.showSnackBar(response.error ?? "Something went wrong");
       } else {

@@ -10,11 +10,10 @@ ThemeData themeData =  ThemeData(
   brightness: Brightness.light,
   primaryColor: Colors.white,
   scaffoldBackgroundColor: Colors.white,
-  bottomAppBarColor: Colors.white,
-  backgroundColor: Colors.white,
+  bottomAppBarTheme: const BottomAppBarThemeData(color: Colors.white),
   fontFamily: FontFamily.openSans,
   dialogBackgroundColor:Colors.white ,
-  dialogTheme: const DialogTheme(
+  dialogTheme: const DialogThemeData(
     backgroundColor: Colors.white,
   ),
   appBarTheme: AppBarTheme(
@@ -53,8 +52,7 @@ ThemeData themeDark =  ThemeData(
   brightness: Brightness.dark,
   primaryColor: Colors.black,
   scaffoldBackgroundColor: Colors.black,
-  bottomAppBarColor: Colors.black,
-  backgroundColor: Colors.black,
+  bottomAppBarTheme: const BottomAppBarThemeData(color: Colors.black),
   fontFamily: FontFamily.openSans,
   datePickerTheme:  DatePickerThemeData(
       cancelButtonStyle: ButtonStyle(foregroundColor: MaterialStateProperty.resolveWith<Color>(
@@ -79,34 +77,34 @@ ThemeData themeDark =  ThemeData(
     elevation: 0,
   ),
   textTheme: TextTheme(
-       button: const TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.w600),
+       labelLarge: const TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.w600),
 
-      caption: const TextStyle(color: Colors.white, fontWeight: FontWeight.w300),
+      bodySmall: const TextStyle(color: Colors.white, fontWeight: FontWeight.w300),
 
-    headline1: const TextStyle(
+    displayLarge: const TextStyle(
         color: Colors.white, fontSize: 24, fontWeight: FontWeight.w900),
-    headline2: const TextStyle(
+    displayMedium: const TextStyle(
         color: Colors.white,fontSize: 20, fontWeight: FontWeight.w900),
-    headline3: const TextStyle(
+    displaySmall: const TextStyle(
         color: Colors.white,fontSize: 18, fontWeight: FontWeight.w900),
-    headline4: TextStyle(
+    headlineMedium: TextStyle(
         color: Colors.grey.shade600, fontSize: 16, fontWeight: FontWeight.w900),
-    headline5: TextStyle(
+    headlineSmall: TextStyle(
         color: blackColor, fontSize: 16, fontWeight: FontWeight.w800),
-    headline6: TextStyle(
+    titleLarge: TextStyle(
         color: blackColor,fontSize: 20, fontWeight: FontWeight.w900),
-    bodyText1: const TextStyle(
+    bodyLarge: const TextStyle(
         color: Colors.white, fontSize: 16, fontWeight: FontWeight.w400),
-    bodyText2: TextStyle(
+    bodyMedium: TextStyle(
         color: Colors.white.withOpacity(0.8),
         fontSize: 14,
         fontWeight: FontWeight.w400),
-    overline: TextStyle(color: Colors.black),
-    subtitle1: TextStyle(
+    labelSmall: TextStyle(color: Colors.black),
+    titleMedium: TextStyle(
       color: Colors.grey.shade600,
       fontSize: 14,
     ),
-    subtitle2: TextStyle(color: Colors.white),
+    titleSmall: TextStyle(color: Colors.white),
   ),
   iconTheme: IconThemeData(color: COLOR_middleBlueM),
 

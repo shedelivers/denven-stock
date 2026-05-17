@@ -2,7 +2,7 @@ name: denvin_stock
 description: "A new Flutter project."
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 1.0.9+11
+version: 5.3.0+46
 
 environment:
   sdk: '>=3.3.3 <4.0.0'
@@ -44,14 +44,22 @@ dependencies:
   barcode: ^2.2.6
   just_audio: ^0.9.37
   percent_indicator: ^4.2.3
-  ai_barcode_scanner:
-    path: ./barcode_scanner-master
+  # Temporarily disabled for iOS Simulator builds on Apple Silicon.
+  # ai_barcode_scanner pulls in mobile_scanner -> Google MLKit pods whose
+  # binaries don't ship an arm64-iossimulator slice.
+  # ai_barcode_scanner:
+  #   path: ./barcode_scanner-master
   webview_flutter_wkwebview: ^3.14.0
   permission_handler: ^11.3.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+dependency_overrides:
+  # win32 5.5.0 (transitive via connectivity_plus_windows) uses
+  # UnmodifiableUint8ListView which was removed in Dart 3.5+.
+  win32: ^5.5.4
 
 flutter:
 

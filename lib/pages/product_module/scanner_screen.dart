@@ -1,67 +1,46 @@
-import 'package:ai_barcode_scanner/ai_barcode_scanner.dart';
+// Temporarily stubbed out so the project can build on the iOS Simulator.
+// The real scanner depends on `ai_barcode_scanner` / `mobile_scanner`, whose
+// underlying Google MLKit pods ship fat-frameworks without an arm64
+// iOS-Simulator slice. Re-enable the import + AiBarcodeScanner widget when
+// building for a real device.
 import 'package:denvin_stock/exports.dart';
 
-
 class ScannerScreen extends GetView<ScannerController> {
-
   late AudioPlayer player;
+
   ScannerScreen({super.key}) {
-    isScan = true;
     player = AudioPlayer();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await player.setAsset('assets/scanned_beep.wav');
     });
   }
 
-  String barcode = "";
-  bool isScan = true;
   @override
   Widget build(BuildContext context) {
     return MyAnnotatedRegion(
       child: Scaffold(
-          body: _mainBody()
+        backgroundColor: Colors.black,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          title: TextView("Scan", style: whiteColor_18_700()),
+          centerTitle: true,
+          leading: IconButton(
+            onPressed: () => Get.back(),
+            icon: const Icon(Icons.arrow_back_outlined,
+                color: Colors.white, size: 26),
+          ),
+        ),
+        body: const Center(
+          child: Padding(
+            padding: EdgeInsets.all(24),
+            child: Text(
+              "Barcode scanner is disabled on the iOS Simulator.\nRun on a physical device to scan.",
+              style: TextStyle(color: Colors.white, fontSize: 16),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
       ),
     );
   }
-
-  _mainBody(){
-    return Stack(
-      children: [
-        AiBarcodeScanner(
-          canPop: false,
-          bottomBar: const SizedBox(),
-          onScan: (String value) {
-            // if(isScan){
-            //   isScan = false;
-            //   if(value.isNotEmpty){
-            //     Get.back(result: BarcodeModal(removeAll: false, barcode: value, symbology: "Code ${value.substring(value.length - 4)}"));
-            //   } else {
-            //     Get.back();
-            //     Utils.showSnackBar("Unable to detect QR/Barcode");
-            //   }
-            // }
-          },
-          onDetect: (BarcodeCapture barcodeCapture) async {
-            print(barcodeCapture);
-            if(isScan){
-              isScan = false;
-              if(barcodeCapture.barcodes.isNotEmpty){
-                // Utils.showSnackBar("CODE----------> ${barcodeCapture.barcodes.first.displayValue}");
-                Get.back(result: BarcodeModal(removeAll: false, barcode: barcodeCapture.barcodes.first.displayValue?.replaceAll(RegExp(r'[\x00-\x1F]'), ''), symbology: barcodeCapture.barcodes.first.format.name.toUpperCase()));
-                await player.play();
-              } else {
-                Get.back();
-                Utils.showSnackBar("Unable to detect QR/Barcode");
-              }
-            }
-          },
-        ),
-        AppBar(backgroundColor: Colors.transparent,title: TextView("Scan",style: whiteColor_18_700(),),centerTitle: true,leading: IconButton(
-          onPressed: ()=> Get.back(),
-          icon: const Icon(Icons.arrow_back_outlined, color: Colors.white, size: 26),
-        ).marginOnly(left: 10.0)),
-      ],
-    );
-  }
-
 }

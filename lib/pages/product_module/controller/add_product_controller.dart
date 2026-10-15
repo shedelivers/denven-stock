@@ -1,6 +1,7 @@
 import 'dart:collection';
 import 'dart:io';
 import 'dart:math';
+import 'package:denvin_stock/components/conformation_popup.dart';
 import 'package:denvin_stock/exports.dart';
 import 'package:denvin_stock/network/modal/barcode_modal.dart';
 import 'package:denvin_stock/network/modal/dto/create_update_product.dart';
@@ -24,6 +25,7 @@ class AddProductController extends GetxController implements CameraOnCompleteLis
   RxBool dummyLoading = false.obs;
   RxBool imageLoading = false.obs;
   RxBool isEdit = false.obs;
+  bool _isDeletingProduct = false;
   RxBool showSupplierMenu = true.obs;
   RxBool isExpandedMoreFields = false.obs;
 
@@ -143,7 +145,9 @@ class AddProductController extends GetxController implements CameraOnCompleteLis
     }
     if (products.value?.barcode?.isNotEmpty ?? false) {
       if (products.value?.barcode?[0].barcodes?.isNotEmpty ?? false) {
-        for (Barcodes code in products.value?.barcode?[0].barcodes ?? []) {
+        // Same visibility as Product Details: hide Denven barcodes.
+        for (Barcodes code in (products.value?.barcode?[0].barcodes ?? [])
+            .where((code) => code.isDenvenBarcode != true)) {
           barcodes.add(BarcodeModal(
               barcode: code.barcode,
               symbology: code.type,
@@ -542,6 +546,62 @@ class AddProductController extends GetxController implements CameraOnCompleteLis
         } else {
           Utils.showSnackBar(response.error ?? "Unable to add product");
         }
+      }
+    }
+  }
+
+  void confirmDeleteProduct() {
+    if (!isEdit.value) {
+      return;
+    }
+    confirmPopUp(
+      title: 'Delete Product',
+      subtitle: 'Are you sure you want to delete this product?',
+      cancelText: 'Cancel',
+      conFirmButtonText: 'Delete',
+      onConfirm: () {
+        deleteProductFromEdit();
+      },
+    );
+  }
+
+  Future<void> deleteProductFromEdit() async {
+    final product = products.value;
+    final productId = product?.id;
+    final clinicKey = StorageHelper().getClinicId();
+    if (productId == null || clinicKey == null || clinicKey.isEmpty) {
+      Utils.showSnackBar("Unable to delete product");
+      return;
+    }
+    if (_isDeletingProduct) {
+      return;
+    }
+    if (await Utils.hasNetwork()) {
+      _isDeletingProduct = true;
+      customLoader.show();
+      try {
+        DataResponse response = await _productApiProvider.deleteProductBySupport(
+          productId: productId.toString(),
+        );
+        if (response.successful == false) {
+          Utils.showSnackBar(response.error ?? "Unable to delete product");
+        } else {
+          Utils.showSnackBar("Product deleted successfully", isSuccess: true);
+          if (Get.isRegistered<InventoryController>()) {
+            final InventoryController inventoryController = Get.find<InventoryController>();
+            inventoryController.currentPage.value = 1;
+            inventoryController.getInventoryData();
+          }
+          if (Get.isRegistered<DashboardController>()) {
+            final DashboardController dashboardController = Get.find<DashboardController>();
+            dashboardController.getSummary();
+            dashboardController.updateIndex(2);
+          }
+          Get.until((route) => route.settings.name == AppRoutes.dashboard);
+        }
+      } finally {
+        customLoader.hide();
+        _isDeletingProduct = false;
       }
     }
   }

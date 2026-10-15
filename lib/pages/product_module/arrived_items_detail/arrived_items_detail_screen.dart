@@ -10,7 +10,7 @@ import 'package:percent_indicator/percent_indicator.dart';
 import '../../../components/utils/print_value.dart';
 
 class ArrivedItemsDetailScreen extends GetView<ArrivedItemsDetailController> {
-  ArrivedItemsDetailScreen({super.key}) {
+      ArrivedItemsDetailScreen({super.key}) {
     controller.getArguments();
   }
 

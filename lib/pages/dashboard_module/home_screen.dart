@@ -1,6 +1,5 @@
 import 'package:denvin_stock/exports.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:intercom_flutter/intercom_flutter.dart';
 
 class HomeScreen extends GetView<HomeController> {
   HomeScreen({super.key});
@@ -45,28 +44,46 @@ class HomeScreen extends GetView<HomeController> {
 
   _welcomeHeading() {
     StorageHelper helper = StorageHelper();
+    final userName =
+        '${helper.getUserFirstName()} ${helper.getUserLastName()}'.trim();
+    final clinicName = helper.getClinicModel()?.name ?? 'N/A';
+
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TextView(
-              Strings.welcome,
-              style: black_20_700(),
-            ),
-            TextView("${helper.getUserFirstName()} ${helper.getUserLastName()}" ?? "N/A", style: primaryColor_18_600()),
-          ],
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextView(
+                Strings.welcome,
+                style: black_20_700(),
+              ),
+              TextView(
+                userName.isEmpty ? 'N/A' : userName,
+                style: primaryColor_18_600(),
+                maxLine: 2,
+              ),
+            ],
+          ),
         ),
-        const Spacer(),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            TextView(
-              Strings.clinic,
-              style: black_14_400(),
-            ),
-            TextView(helper.getClinicModel()?.name ?? "N/A", style: black_14_400()?.copyWith(color: hintTextColor)),
-          ],
+        SizedBox(width: 12.w),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              TextView(
+                Strings.clinic,
+                style: black_14_400(),
+              ),
+              TextView(
+                clinicName,
+                style: black_14_400()?.copyWith(color: hintTextColor),
+                maxLine: 2,
+                textAlign: TextAlign.end,
+              ),
+            ],
+          ),
         ),
       ],
     ).paddingSymmetric(horizontal: 20.0);

@@ -10,6 +10,7 @@ void main() async {
       'j5x74qha',
       iosApiKey: 'ios_sdk-7431ce308d7cff9a7b79aca1b012c267fc1bc417',
       androidApiKey: 'android_sdk-c5cce85dd55f474ea6c4c48d43bedc689b1d64e9');
+  await Intercom.instance.setThemeMode(IntercomTheme.light);
 
 
  // await Upgrader.clearSavedSettings();

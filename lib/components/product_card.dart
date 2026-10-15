@@ -14,9 +14,10 @@ class ProductCard extends StatelessWidget {
   String? storageName;
   bool dontShowBorderAndMenu;
   int? localMappingId;
+  bool? hasOnlyDenvenBarcode;
   int type;
   bool isHidden;
-  ProductCard({super.key,required this.menuOnTap,this.storageName,this.isThreeDotsActive = true, this.dontShowBorderAndMenu = false, required this.cardOnTap, this.name,required this.imagePath,this.orderAt, this.price,this.supplierCode, this.localMappingId, required this.type, required this.isHidden});
+  ProductCard({super.key,required this.menuOnTap,this.storageName,this.isThreeDotsActive = true, this.dontShowBorderAndMenu = false, required this.cardOnTap, this.name,required this.imagePath,this.orderAt, this.price,this.supplierCode, this.localMappingId, this.hasOnlyDenvenBarcode, required this.type, required this.isHidden});
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +68,7 @@ class ProductCard extends StatelessWidget {
                           ),
                         ),
 
-                       /* TextView(
+                        /* TextView(
                           supplierCode != null ? "#$supplierCode" : Strings.nA,
                           style: black_12_600(),
                         ),*/
@@ -84,7 +85,7 @@ class ProductCard extends StatelessWidget {
                             )),
 
                         Visibility(
-                            visible: localMappingId != null,
+                            visible: localMappingId != null && hasOnlyDenvenBarcode == false,
                             child: Padding(
                               padding: const EdgeInsets.only(left: 7),
                               child: imageAsset(scanIcon, width: 15),
@@ -130,7 +131,7 @@ class ProductCard extends StatelessWidget {
             ],
           ),
         ).onTap(cardOnTap),
-       if(isThreeDotsActive ?? false) dontShowBorderAndMenu ? const SizedBox() : Positioned(
+        if(isThreeDotsActive ?? false) dontShowBorderAndMenu ? const SizedBox() : Positioned(
           right: 0,
           top: 0,
           child: Container(

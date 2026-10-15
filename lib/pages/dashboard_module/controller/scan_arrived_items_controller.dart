@@ -273,15 +273,15 @@ class ScanArrivedItemsController extends GetxController  {
   }
 
   void showScannedResultDialog(List<ProductModal>? productModalList, bool isRestock) {
-    showDialog(
+    showModalBottomSheet(
       context: Get.context!,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(10.0)),
+      ),
       builder: (BuildContext context) {
-        return Dialog(
-          surfaceTintColor: Colors.transparent,
-          backgroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.0),
-          ),
+        return SafeArea(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
@@ -295,30 +295,37 @@ class ScanArrivedItemsController extends GetxController  {
                 ],
               ).marginSymmetric(horizontal: 20.0),
               vGap(10.0),
-              ...List.generate(
-                  productModalList?.length ?? 0, (index) {
-                ProductModal? productModal = productModalList?[index];
-                return ProductCard(
-                  imagePath: productModal?.productImage??[],
-                  isHidden: productModal?.hidden??false,
-                //  imagePath: productModal?.productImage != null && productModal!.productImage!.isNotEmpty ? "${ApiConstants.baseUrlForImage}/${extractImagePath(productModal.productImage ?? "")}" : null,
-                  name: productModal?.name,
-                  dontShowBorderAndMenu: true,
-                  type: productModal?.type??1,
-                  supplierCode: productModal?.supplierCode,
-                  orderAt: productModal?.orderedAt,
-                  price: productModal?.price,
-                  localMappingId: productModal?.localMappingId,
-                  menuOnTap: (){},
-                  cardOnTap: () {
-                    Get.back();
-                    Get.toNamed(AppRoutes.productDetailScreen, arguments: {
-                      RoutesArgument.productDetails : productModal,
-                      RoutesArgument.addRestock : productModal?.quantity == 0 || productModal?.quantity == null  ? true :   isRestock,
-                    })?.then((value) => showInit());
+              ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxHeight: MediaQuery.of(context).size.height * 0.6,
+                ),
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: productModalList?.length ?? 0,
+                  itemBuilder: (context, index) {
+                    ProductModal? productModal = productModalList?[index];
+                    return ProductCard(
+                      imagePath: productModal?.productImage??[],
+                      isHidden: productModal?.hidden??false,
+                      name: productModal?.name,
+                      dontShowBorderAndMenu: true,
+                      type: productModal?.type??1,
+                      supplierCode: productModal?.supplierCode,
+                      orderAt: productModal?.orderedAt,
+                      price: productModal?.price,
+                      localMappingId: productModal?.localMappingId,
+                      menuOnTap: (){},
+                      cardOnTap: () {
+                        Get.back();
+                        Get.toNamed(AppRoutes.productDetailScreen, arguments: {
+                          RoutesArgument.productDetails : productModal,
+                          RoutesArgument.addRestock : productModal?.quantity == 0 || productModal?.quantity == null  ? true :   isRestock,
+                        })?.then((value) => showInit());
+                      },
+                    ).marginSymmetric(horizontal: 10.0);
                   },
-                ).marginSymmetric(horizontal: 10.0);
-              }),
+                ),
+              ),
               vGap(20),
             ],
           ),

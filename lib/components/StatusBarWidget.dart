@@ -9,7 +9,11 @@ class MyAnnotatedRegion extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AnnotatedRegion<SystemUiOverlayStyle>(value: statusBarTheme(isDark: isDark??false), child: Container(color: whiteColor, child: child));
+    final dark = isDark ?? false;
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: statusBarTheme(isDark: dark),
+      child: dark ? child : Container(color: whiteColor, child: child),
+    );
   }
 
 

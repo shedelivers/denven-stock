@@ -67,10 +67,18 @@ class ConsumerScreen extends GetView<ConsumerController> {
                 ],
               )
                   : Expanded(
-                      child: ListView.separated(
+                      child: NotificationListener<Notification>(
+                        onNotification: _onScrollNotification,
+                        child: ListView.separated(
                           separatorBuilder: (_, index) => vGap(10.0),
-                          itemCount: controller.consumerList.length,
+                          itemCount: controller.consumerList.length + (controller.isLoadingMore.value ? 1 : 0),
                           itemBuilder: (_, index) {
+                            if (index >= controller.consumerList.length) {
+                              return const Padding(
+                                padding: EdgeInsets.symmetric(vertical: 16.0),
+                                child: Center(child: CircularProgressIndicator(strokeWidth: 2.5)),
+                              );
+                            }
                             var consumer = controller.consumerList[index];
                             return Container(
                               margin: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -100,10 +108,24 @@ class ConsumerScreen extends GetView<ConsumerController> {
                               ),
                             );
                           }),
+                      ),
                     )
         ],
       ),
     );
+  }
+
+  bool _onScrollNotification(Notification notification) {
+    ScrollMetrics? metrics;
+    if (notification is ScrollUpdateNotification) {
+      metrics = notification.metrics;
+    } else if (notification is ScrollMetricsNotification) {
+      metrics = notification.metrics;
+    }
+    if (metrics != null && metrics.axis == Axis.vertical && metrics.extentAfter < 200) {
+      controller.loadMoreCustomers();
+    }
+    return false;
   }
 
   void showAlertDialog(String consumerId) {

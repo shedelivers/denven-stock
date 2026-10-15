@@ -106,6 +106,8 @@ export 'package:denvin_stock/pages/auth_module/login_screen.dart';
 export 'package:denvin_stock/pages/dashboard_module/binding/dashboard_binding.dart';
 export 'package:denvin_stock/pages/dashboard_module/dashboard_screen.dart';
 export 'package:denvin_stock/pages/product_module/binding/product_binding.dart';
+export 'package:denvin_stock/pages/product_module/binding/scanner_binding.dart';
+export 'package:denvin_stock/pages/product_module/binding/update_quantity_binding.dart';
 export 'package:denvin_stock/pages/product_module/inventory_product_detail_screen.dart';
 
 export 'package:denvin_stock/components/utils/camera_helper.dart';

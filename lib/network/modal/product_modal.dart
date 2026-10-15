@@ -20,6 +20,7 @@ class ProductModal extends Serializable{
   List<String>? lActions;
   int? storageId;
   int? localMappingId;
+  bool? hasOnlyDenvenBarcode;
   String? globalMappingId;
   String? updatedAt;
   String? createdAt;
@@ -57,6 +58,7 @@ class ProductModal extends Serializable{
         this.lActions,
         this.storageId,
         this.localMappingId,
+        this.hasOnlyDenvenBarcode,
         this.globalMappingId,
         this.storage,
         this.supplier,
@@ -116,6 +118,7 @@ class ProductModal extends Serializable{
     lActions = json['_Actions'] != null ?  json['_Actions'].cast<String>() : [];
     storageId = json['storageId'];
     localMappingId = json['localMappingId'];
+    hasOnlyDenvenBarcode = json['hasOnlyDenvenBarcode'];
     globalMappingId = json['globalMappingId'];
     storage =
     json['storage'] != null ? Storage.fromJson(json['storage']) : null;
@@ -178,6 +181,7 @@ class ProductModal extends Serializable{
     data['_Actions'] = lActions;
     data['storageId'] = storageId;
     data['localMappingId'] = localMappingId;
+    data['hasOnlyDenvenBarcode'] = hasOnlyDenvenBarcode;
     data['globalMappingId'] = globalMappingId;
     if (storage != null) {
       data['storage'] = storage!.toJson();
@@ -436,13 +440,15 @@ class Barcodes {
   String? barcode;
   String? type;
   String? uniqueId;
+  bool? isDenvenBarcode;
 
-  Barcodes({this.barcode, this.type, this.uniqueId});
+  Barcodes({this.barcode, this.type, this.uniqueId, this.isDenvenBarcode});
 
   Barcodes.fromJson(Map<String, dynamic> json) {
     barcode = json['barcode'];
     type = json['type'];
     uniqueId = json['uniqueId'];
+    isDenvenBarcode = json['isDenvenBarcode'];
   }
 
   Map<String, dynamic> toJson() {
@@ -450,6 +456,7 @@ class Barcodes {
     data['barcode'] = barcode;
     data['type'] = type;
     data['uniqueId'] = uniqueId;
+    data['isDenvenBarcode'] = isDenvenBarcode;
     return data;
   }
 }
@@ -525,5 +532,3 @@ class MyResponse {
     return data;
   }
 }
-
-

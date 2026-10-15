@@ -43,6 +43,7 @@ post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
     target.build_configurations.each do |config|
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
       # Allow arm64 iOS Simulator slice so the app can run on Apple Silicon simulators.
       # Some prebuilt Google MLKit pods otherwise default to EXCLUDED_ARCHS = arm64,
       # which causes Xcode to filter out every simulator destination.

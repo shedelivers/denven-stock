@@ -28,11 +28,18 @@ class ManualAddProductScreen extends GetView<AddProductController> {
               centerLogo: true,
               showBack: true,
               showLogo: false,
-              // showOcrButton: IconButton(onPressed: () {
-              //   Get.toNamed(AppRoutes.dataAddOcrScreen);
-              // },
-              //     icon: const Icon(Icons.add)).marginOnly(right: 10.0),
               title: controller.isEdit.value ? Strings.editDetails : Strings.addDetails,
+              showOcrButton: controller.isEdit.value
+                  ? Container(
+                      margin: const EdgeInsets.only(right: 8),
+                      height: 36,
+                      width: 36,
+                      child: IconButton(
+                        onPressed: controller.confirmDeleteProduct,
+                        icon: Image.asset(deleteIcon),
+                      ),
+                    )
+                  : null,
             ),
             body: _mainBody()),
       );

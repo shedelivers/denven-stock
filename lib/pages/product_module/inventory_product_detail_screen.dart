@@ -16,33 +16,33 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
   Widget build(BuildContext context) {
     return MyAnnotatedRegion(
       child:  Obx(() => Scaffold(
-              backgroundColor: Colors.white,
-              appBar: myAppBar(
-                  showBack: true,
-                  showLogo: false,
-                  title: "Product Detail",
-                  centerLogo: true,
-                  showOcrButton: Container(
-                    margin: const EdgeInsets.only(right: 8),
-                    height: 36,
-                    width: 36,
-                    child: IconButton(
-                        onPressed: (){
-                          if(!controller.isLoading.value){
-                            Get.toNamed(AppRoutes.addManualProduct, arguments: {
-                              RoutesArgument.productDetails: controller.products.value,
-                              RoutesArgument.isEdit: true,
-                              RoutesArgument.productType: ProductType.edit
-                            })?.then((value) {
-                              if (value != null) {
-                                controller.getProductById();
-                              }
-                            });
+          backgroundColor: Colors.white,
+          appBar: myAppBar(
+              showBack: true,
+              showLogo: false,
+              title: "Product Detail",
+              centerLogo: true,
+              showOcrButton: Container(
+                margin: const EdgeInsets.only(right: 8),
+                height: 36,
+                width: 36,
+                child: IconButton(
+                    onPressed: (){
+                      if(!controller.isLoading.value){
+                        Get.toNamed(AppRoutes.addManualProduct, arguments: {
+                          RoutesArgument.productDetails: controller.products.value,
+                          RoutesArgument.isEdit: true,
+                          RoutesArgument.productType: ProductType.edit
+                        })?.then((value) {
+                          if (value != null) {
+                            controller.getProductById();
                           }
-                        },
-                        icon: Image.asset(editIcon)),
-                  )),
-              body: controller.isLoading.value ? Utils.circularLoader() : _mainBody()),
+                        });
+                      }
+                    },
+                    icon: Image.asset(editIcon)),
+              )),
+          body: controller.isLoading.value ? Utils.circularLoader() : _mainBody()),
       ),
     );
   }
@@ -68,99 +68,99 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
 
   _addToBasket(){
     return controller.showAddToCart.value ?  AppButton(
-      onTap: (){
-        controller.addToBasket();
-      }, buttonText: "Add to basket"
+        onTap: (){
+          controller.addToBasket();
+        }, buttonText: "Add to basket"
     ).marginSymmetric(horizontal: 20.0) : const SizedBox();
   }
 
   _banner() {
     return Obx(
-      () => Stack(
+          () => Stack(
         alignment: Alignment.center,
         children: [
           controller.showBannerCode.value ? controller.products.value?.productImage !=null && controller.products.value!.productImage!.isNotEmpty ?
           SizedBox(
+            width: Get.width,
+            height: 200,
+            child: Stack(
+              children: [
+                SizedBox(
                   width: Get.width,
                   height: 200,
-                  child: Stack(
-                    children: [
-                      SizedBox(
-                        width: Get.width,
-                        height: 200,
-                        child: CarouselSlider(
-                          options: CarouselOptions(
-                            enlargeCenterPage: false,
-                            viewportFraction: 1.0,
-                            onPageChanged: (index, carouselPageChangedReason){
-                              controller.productCarouselIndex.value = index;
-                            }
-                          ),
-                          items: controller.products.value?.productImage?.map((i) {
-                            return FullScreenWidget(
-                              isOpen: (isOpen){
+                  child: CarouselSlider(
+                    options: CarouselOptions(
+                        enlargeCenterPage: false,
+                        viewportFraction: 1.0,
+                        onPageChanged: (index, carouselPageChangedReason){
+                          controller.productCarouselIndex.value = index;
+                        }
+                    ),
+                    items: controller.products.value?.productImage?.map((i) {
+                      return FullScreenWidget(
+                        isOpen: (isOpen){
 
-                              },
-                              disposeLevel: DisposeLevel.Low,
-                              child: Container(
-                                  width: Get.width,
-                                  margin: const EdgeInsets.symmetric(horizontal: 5.0),
-                                  child: ShimmerImage(
-                                    url: i,
-                                    //  url: controller.products.value?.productImage != null  ? "${ApiConstants.baseUrlForImage}/${controller.extractImagePath(controller.products.value?.productImage?[0] ?? "")}" : "",
-                                    fit: BoxFit.cover,
-                                  )
-                              ),
-                            );
-                          }).toList(),
+                        },
+                        disposeLevel: DisposeLevel.Low,
+                        child: Container(
+                            width: Get.width,
+                            margin: const EdgeInsets.symmetric(horizontal: 5.0),
+                            child: ShimmerImage(
+                              url: i,
+                              //  url: controller.products.value?.productImage != null  ? "${ApiConstants.baseUrlForImage}/${controller.extractImagePath(controller.products.value?.productImage?[0] ?? "")}" : "",
+                              fit: BoxFit.cover,
+                            )
                         ),
-                      ),
-
-                      Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Padding(
-                          padding: const EdgeInsets.only(bottom: 8),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              for (int i = 0; i < (controller.products.value?.productImage?.length ?? 0); i++)
-                                Container(
-                                  height: 10,
-                                  width: 10,
-                                  margin: const EdgeInsets.symmetric(horizontal: 3),
-                                  decoration: BoxDecoration(
-                                    color: controller.productCarouselIndex.value == i? primaryColor:greyText,
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
+                      );
+                    }).toList(),
                   ),
+                ),
 
-
-                  // child: ShimmerImage(
-                  //   url: controller.products.value?.productImage?[0]??"",
-                  // //  url: controller.products.value?.productImage != null  ? "${ApiConstants.baseUrlForImage}/${controller.extractImagePath(controller.products.value?.productImage?[0] ?? "")}" : "",
-                  //   fit: BoxFit.cover,
-                  // ),
-
-                ) : SizedBox(
-                        width: Get.width,
-                        height: 200,
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              imageAsset(blankImageIcon, color: Colors.grey, height: 40),
-                              Utils.noDataFound(
-                                  message: "Image not uploaded"),
-                            ],
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        for (int i = 0; i < (controller.products.value?.productImage?.length ?? 0); i++)
+                          Container(
+                            height: 10,
+                            width: 10,
+                            margin: const EdgeInsets.symmetric(horizontal: 3),
+                            decoration: BoxDecoration(
+                              color: controller.productCarouselIndex.value == i? primaryColor:greyText,
+                              shape: BoxShape.circle,
+                            ),
                           ),
-                        ),
-                      )
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+
+            // child: ShimmerImage(
+            //   url: controller.products.value?.productImage?[0]??"",
+            // //  url: controller.products.value?.productImage != null  ? "${ApiConstants.baseUrlForImage}/${controller.extractImagePath(controller.products.value?.productImage?[0] ?? "")}" : "",
+            //   fit: BoxFit.cover,
+            // ),
+
+          ) : SizedBox(
+            width: Get.width,
+            height: 200,
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  imageAsset(blankImageIcon, color: Colors.grey, height: 40),
+                  Utils.noDataFound(
+                      message: "Image not uploaded"),
+                ],
+              ),
+            ),
+          )
               : _barCodeSlider(),
           Positioned(
             left: 10,
@@ -173,7 +173,7 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
                   color: textFieldBorderColor,
                   borderRadius: BorderRadius.circular(8.0)),
               child: Obx(
-                () => Row(
+                    () => Row(
                   children: [
                     Container(
                       height: 25,
@@ -228,47 +228,47 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
   _barCodeSlider() {
     return getBarCodeCount(controller.products.value?.barcode) != 0
         ? CarouselSlider(
-            options: CarouselOptions(
-              height: 200.0,
-              autoPlay: false,
-              disableCenter: false,
-              enlargeCenterPage: true,
-              enableInfiniteScroll: false,
-              viewportFraction: 1.0,
-              onPageChanged: (index, reason) {
-                controller.currentBarcodeIndex.value = index + 1;
-              },
-            ),
-            items: getBarCodeList(controller.products.value?.barcode).map((i) {
-              return Builder(
-                builder: (BuildContext context) {
-                  return Container(
-                    padding: const EdgeInsets.only(left: 10.0, right: 10.0, bottom: 50.0, top: 10),
-                    width: Get.width,
-                    height: 180,
-                    child: BarcodeWidget(
-                      barcode: Barcode.code128(escapes: true),
-                      data: i,
-                      height: 140,
-                    ),
-                  );
-                },
-              );
-            }).toList(),
-          ) : SizedBox(
-            width: Get.width,
-            height: 200,
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  imageAsset(barIcon, color: Colors.grey, height: 40),
-                  Utils.noDataFound(
-                      message: "No barcode added to this product"),
-                ],
+      options: CarouselOptions(
+        height: 200.0,
+        autoPlay: false,
+        disableCenter: false,
+        enlargeCenterPage: true,
+        enableInfiniteScroll: false,
+        viewportFraction: 1.0,
+        onPageChanged: (index, reason) {
+          controller.currentBarcodeIndex.value = index + 1;
+        },
+      ),
+      items: getBarCodeList(controller.products.value?.barcode).map((i) {
+        return Builder(
+          builder: (BuildContext context) {
+            return Container(
+              padding: const EdgeInsets.only(left: 10.0, right: 10.0, bottom: 50.0, top: 10),
+              width: Get.width,
+              height: 180,
+              child: BarcodeWidget(
+                barcode: Barcode.code128(escapes: true),
+                data: i,
+                height: 140,
               ),
-            ),
-          );
+            );
+          },
+        );
+      }).toList(),
+    ) : SizedBox(
+      width: Get.width,
+      height: 200,
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            imageAsset(barIcon, color: Colors.grey, height: 40),
+            Utils.noDataFound(
+                message: "No barcode added to this product"),
+          ],
+        ),
+      ),
+    );
   }
 
   _enterProductName() {
@@ -341,7 +341,7 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
                     borderRadius: BorderRadius.circular(20.0),
                     border: Border.all(color: primaryColor, width: 2),
                   ),
-                 // child: SelectableText(myTag ?? "",style: const TextStyle(fontSize: 14),maxLines: 1,),
+                  // child: SelectableText(myTag ?? "",style: const TextStyle(fontSize: 14),maxLines: 1,),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -361,95 +361,95 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
 
   _actionButtons() {
     return controller.addRestock.value == false ? Container(
-            width: Get.width,
-            padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 4.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      width: Get.width,
+      padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 4.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          InkWell(
+            borderRadius: BorderRadius.circular(16.0),
+            onTap: () {
+              Get.toNamed(AppRoutes.addProstheticsScreen, arguments: {
+                RoutesArgument.productDetails: controller.products.value
+              })?.then((value) {
+                if(value != null){
+                  if(value == "BACK"){
+                    Get.back(result: "BACK");
+                  }
+                }
+              });
+            },
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                InkWell(
-                  borderRadius: BorderRadius.circular(16.0),
-                  onTap: () {
-                    Get.toNamed(AppRoutes.addProstheticsScreen, arguments: {
-                      RoutesArgument.productDetails: controller.products.value
-                    })?.then((value) {
-                      if(value != null){
-                        if(value == "BACK"){
-                          Get.back(result: "BACK");
-                        }
-                      }
-                    });
-                  },
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      CircleAvatar(
-                        backgroundColor: primaryLightColor.withOpacity(0.7),
-                        child: imageAsset(prostheticsIcon, height: 20.0),
-                      ),
-                      vGap(4.0),
-                      TextView("Add Prosthetics".toUpperCase(), style: black_12_600()?.copyWith(color: greyIconColor)),
-                    ],
-                  ).paddingAll(10.0),
+                CircleAvatar(
+                  backgroundColor: primaryLightColor.withOpacity(0.7),
+                  child: imageAsset(prostheticsIcon, height: 20.0),
                 ),
-                InkWell(
-                  borderRadius: BorderRadius.circular(16.0),
-                  onTap: () {
-                    Get.toNamed(AppRoutes.addPlacements, arguments: {
-                      RoutesArgument.productDetails: controller.products.value
-                    })?.then((value) {
-                      if(value != null){
-                        if(value == "BACK"){
-                          Get.back(result: "BACK");
-                        }
-                      }
-                    });
-                  },
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      CircleAvatar(
-                        backgroundColor: primaryLightColor.withOpacity(0.7),
-                        child: imageAsset(placementIcon, height: 20.0),
-                      ),
-                      vGap(4.0),
-                      TextView("Add Placement".toUpperCase(),
-                          style:
-                              black_12_600()?.copyWith(color: greyIconColor)),
-                    ],
-                  ).paddingAll(10.0),
-                ),
+                vGap(4.0),
+                TextView("Add Prosthetics".toUpperCase(), style: black_12_600()?.copyWith(color: greyIconColor)),
               ],
-            ),
-          )
+            ).paddingAll(10.0),
+          ),
+          InkWell(
+            borderRadius: BorderRadius.circular(16.0),
+            onTap: () {
+              Get.toNamed(AppRoutes.addPlacements, arguments: {
+                RoutesArgument.productDetails: controller.products.value
+              })?.then((value) {
+                if(value != null){
+                  if(value == "BACK"){
+                    Get.back(result: "BACK");
+                  }
+                }
+              });
+            },
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                CircleAvatar(
+                  backgroundColor: primaryLightColor.withOpacity(0.7),
+                  child: imageAsset(placementIcon, height: 20.0),
+                ),
+                vGap(4.0),
+                TextView("Add Placement".toUpperCase(),
+                    style:
+                    black_12_600()?.copyWith(color: greyIconColor)),
+              ],
+            ).paddingAll(10.0),
+          ),
+        ],
+      ),
+    )
         : Align(
-            alignment: Alignment.centerRight,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
-              margin: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(6.0),
-                  border: Border.all(color: primaryColor, width: 1)),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.add,
-                    color: primaryColor,
-                    size: 14,
-                  ),
-                  hGap(3.0),
-                  Text(
-                    "Add Restock",
-                    style: TextStyle(color: primaryColor, fontSize: 14),
-                  )
-                ],
-              ),
-            ).onTap(() {
-              _addRestockBottomSheet();
-            }),
-          );
+      alignment: Alignment.centerRight,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
+        margin: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(6.0),
+            border: Border.all(color: primaryColor, width: 1)),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.add,
+              color: primaryColor,
+              size: 14,
+            ),
+            hGap(3.0),
+            Text(
+              "Add Restock",
+              style: TextStyle(color: primaryColor, fontSize: 14),
+            )
+          ],
+        ),
+      ).onTap(() {
+        _addRestockBottomSheet();
+      }),
+    );
   }
 
   _otherDetails() {
@@ -474,7 +474,7 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
                     SelectableText(
                         controller.products.value?.quantity != null
                             ? controller.products.value?.quantity.toString() ??
-                                "0"
+                            "0"
                             : "0",
                         style: black_14_600()
                             ?.copyWith(color: black, fontSize: 15)),
@@ -647,7 +647,7 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
         controller: controller.expansionTileController,
         iconColor: primaryColor,
         //iconColor: Colors.transparent,
-       // collapsedIconColor: Colors.transparent,
+        // collapsedIconColor: Colors.transparent,
         initiallyExpanded: true,
         childrenPadding: const EdgeInsets.only(left: 20.0, right: 20.0, bottom: 20.0),
         title: Row(
@@ -699,7 +699,7 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
                     ),
                     vGap(4.0),
                     SelectableText(controller.products.value?.supplierCode ?? Strings.nA, style: black_14_600()?.copyWith(color: black, fontSize: 15)),
-                  //  SelectableText(controller.products.value?.manufacturer ?? Strings.nA, style: black_14_600()?.copyWith(color: black, fontSize: 15)),
+                    //  SelectableText(controller.products.value?.manufacturer ?? Strings.nA, style: black_14_600()?.copyWith(color: black, fontSize: 15)),
                   ],
                 ),
               ),
@@ -769,14 +769,14 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         controller.products.value?.expiriesWithPrice?[index].date  != null && controller.products.value!.expiriesWithPrice![index].date!.isNotEmpty ?? false?
-                          Container(
+                        Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 2.0),
                             margin: const EdgeInsets.only(bottom: 6.0),
                             decoration: BoxDecoration(
                                 color: controller.products.value?.expiriesWithPrice != null ? controller.getExpiryColor(index: index, list: controller.products.value!.expiriesWithPrice ?? []) : Colors.grey,
                                 borderRadius: BorderRadius.circular(6.0)
                             ),
-                              child: SelectableText(controller.products.value?.expiriesWithPrice?[index].date ?? Strings.nA, style: black_14_600()?.copyWith(color: Colors.white, fontSize: 15))):
+                            child: SelectableText(controller.products.value?.expiriesWithPrice?[index].date ?? Strings.nA, style: black_14_600()?.copyWith(color: Colors.white, fontSize: 15))):
                         //    child: SelectableText("${controller.convertExpiryDateFormat(controller.products.value?.expiriesWithPrice?[index].date ?? Strings.nA)} ", style: black_14_600()?.copyWith(color: Colors.white, fontSize: 15))):
                         Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 2.0),
@@ -786,7 +786,7 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
                                 borderRadius: BorderRadius.circular(6.0)
                             ),
                             child: SelectableText(Strings.nA, style: black_14_600()?.copyWith(color: Colors.white, fontSize: 15)))
-                           // Text(Strings.nA, style: black_14_600()?.copyWith(color: Colors.black, fontSize: 15))
+                        // Text(Strings.nA, style: black_14_600()?.copyWith(color: Colors.black, fontSize: 15))
                       ],
                     ),
                   ),
@@ -807,9 +807,9 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
                   ...List.generate(
                     controller.products.value?.expiries?.length ?? 0,
                         (index) => Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 2.0),
-                            margin: const EdgeInsets.only(bottom: 6.0),
-                            child: SelectableText("${controller.products.value?.expiries?[index].qty?? "0"}", style: black_14_600()?.copyWith(color: black, fontSize: 15))),
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 2.0),
+                        margin: const EdgeInsets.only(bottom: 6.0),
+                        child: SelectableText("${controller.products.value?.expiries?[index].qty?? "0"}", style: black_14_600()?.copyWith(color: black, fontSize: 15))),
                   ),
                 ],
               ),
@@ -828,9 +828,9 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
                   ...List.generate(
                     controller.products.value?.expiries?.length ?? 0,
                         (index) => Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 2.0),
-                            margin: const EdgeInsets.only(bottom: 6.0),
-                            child: SelectableText("${controller.products.value?.expiries?[index].price?? Strings.nA}", style: black_14_600()?.copyWith(color: black, fontSize: 15))),
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 2.0),
+                        margin: const EdgeInsets.only(bottom: 6.0),
+                        child: SelectableText("${controller.products.value?.expiries?[index].price?? Strings.nA}", style: black_14_600()?.copyWith(color: black, fontSize: 15))),
                   ),
                 ],
               ),
@@ -847,7 +847,7 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
                           ?.copyWith(color: const Color(0xff707070)),
                     ),
                     vGap(4.0),
-                     SelectableText(controller.products.value?.manufacturer ?? Strings.nA, style: black_14_600()?.copyWith(color: black, fontSize: 15),textAlign: TextAlign.end,),
+                    SelectableText(controller.products.value?.manufacturer ?? Strings.nA, style: black_14_600()?.copyWith(color: black, fontSize: 15),textAlign: TextAlign.end,),
                   ],
                 ),
               ),
@@ -961,7 +961,7 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
               Expanded(child: SelectableText(
                 getBarCodeText(controller.products.value?.barcode, index),
                 style: black_14_600()?.copyWith(color: black),
-                ),
+              ),
               ),
               const SizedBox(
                 width: 20.0,
@@ -990,37 +990,36 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
   }
 
   int getBarCodeCount(List<BarcodeAPIModal>? barcode) {
-    if (barcode?.isEmpty ?? true) {
-      return 0;
-    }
-    if (barcode?[0].barcodes?.isEmpty ?? true) {
-      return 0;
-    }
-    return barcode?[0].barcodes?.length ?? 0;
+    return _visibleBarcodes(barcode).length;
   }
 
   List<String> getBarCodeList(List<BarcodeAPIModal>? barcode) {
-    if (barcode?.isEmpty ?? true) {
-      return [];
-    }
-    if (barcode?[0].barcodes?.isEmpty ?? true) {
-      return [];
-    }
-    List<String> codes = [];
-    for (var myCode in barcode?[0].barcodes ?? []) {
-      codes.add(myCode.barcode);
-    }
-    return codes;
+    return _visibleBarcodes(barcode)
+        .map((code) => code.barcode ?? "")
+        .where((code) => code.isNotEmpty)
+        .toList();
   }
 
   String getBarCodeText(List<BarcodeAPIModal>? barcode, int index) {
+    final barcodes = _visibleBarcodes(barcode);
+    if (index < 0 || index >= barcodes.length) {
+      return "N/A";
+    }
+    return barcodes[index].barcode ?? "N/A";
+  }
+
+  /// Show only non-Denven barcodes on the product detail UI.
+  List<Barcodes> _visibleBarcodes(List<BarcodeAPIModal>? barcode) {
     if (barcode?.isEmpty ?? true) {
-      return "";
+      return [];
     }
     if (barcode?[0].barcodes?.isEmpty ?? true) {
-      return "";
+      return [];
     }
-    return barcode?[0].barcodes?[index].barcode ?? "N/A";
+    return barcode![0]
+        .barcodes!
+        .where((code) => code.isDenvenBarcode != true)
+        .toList();
   }
 
 
@@ -1080,35 +1079,35 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
                                 hGap(10.0),
                                 Expanded(
                                   child: CustomTextField(
-                                      hintText: Strings.expiryDate,
-                                      onTap: () {
+                                    hintText: Strings.expiryDate,
+                                    onTap: () {
+                                      controller.getExpiryDate();
+                                    },
+                                    readOnly: true,
+                                    controller: controller.expiryDateController,
+                                    validator: (value) {
+                                      if(controller.products.value?.expiries?.isNotEmpty ?? false){
+                                        if(controller.products.value!.expiries?.any((element) => element.at == value) ?? false){
+                                          return "You cant add the same date again";
+                                        }
+                                        else {
+                                        }
+                                      }
+                                      return null;
+                                    },
+                                    suffix: IconButton(
+                                      onPressed: () {
                                         controller.getExpiryDate();
                                       },
-                                      readOnly: true,
-                                      controller: controller.expiryDateController,
-                                      validator: (value) {
-                                        if(controller.products.value?.expiries?.isNotEmpty ?? false){
-                                          if(controller.products.value!.expiries?.any((element) => element.at == value) ?? false){
-                                            return "You cant add the same date again";
-                                          }
-                                          else {
-                                          }
-                                        }
-                                        return null;
-                                      },
-                                      suffix: IconButton(
-                                        onPressed: () {
-                                          controller.getExpiryDate();
-                                        },
-                                        icon: Icon(
-                                          Icons.calendar_month,
-                                          color: greyIconColor,
-                                        ),
+                                      icon: Icon(
+                                        Icons.calendar_month,
+                                        color: greyIconColor,
                                       ),
-                                      focusNode: controller.expiryDateFocusNode,
-                                      onFieldSubmitted: (String? value) => FocusScope.of(Get.context!).requestFocus(controller.priceFocusNode),
                                     ),
-                                 )
+                                    focusNode: controller.expiryDateFocusNode,
+                                    onFieldSubmitted: (String? value) => FocusScope.of(Get.context!).requestFocus(controller.priceFocusNode),
+                                  ),
+                                )
                               ],
                             ),
                             vGap(10.0),
@@ -1126,7 +1125,7 @@ class InventoryProductDetailScreen extends GetView<InventoryProductController> {
                       ),
                       vGap(14.0),
                       Obx(
-                        () => AppButton(
+                            () => AppButton(
                             onTap: () {
                               if (formGlobalKey.currentState!.validate()) {
                                 controller.textEditingFocusNodeQuantity.unfocus();

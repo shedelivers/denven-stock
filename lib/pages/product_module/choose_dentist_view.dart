@@ -79,11 +79,30 @@ class ChooseDentistView extends GetView<ChooseDentistController> {
                   })
                 ],
               )) :  Expanded(
-                child: ListView.builder(
+                child: NotificationListener<Notification>(
+                  onNotification: (notification) {
+                    ScrollMetrics? metrics;
+                    if (notification is ScrollUpdateNotification) {
+                      metrics = notification.metrics;
+                    } else if (notification is ScrollMetricsNotification) {
+                      metrics = notification.metrics;
+                    }
+                    if (metrics != null && metrics.axis == Axis.vertical && metrics.extentAfter < 200) {
+                      controller.loadMoreDentists();
+                    }
+                    return false;
+                  },
+                  child: ListView.builder(
                     shrinkWrap: true,
                     padding: const EdgeInsets.symmetric(vertical: margin_0),
-                    itemCount: controller.consumerList.length,
+                    itemCount: controller.consumerList.length + (controller.isLoadingMore.value ? 1 : 0),
                     itemBuilder: (context, index) {
+                      if (index >= controller.consumerList.length) {
+                        return const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 16.0),
+                          child: Center(child: CircularProgressIndicator(strokeWidth: 2.5)),
+                        );
+                      }
                       ConsumerModal? item = controller.consumerList[index];
                       return Row(
                         children: [
@@ -103,6 +122,7 @@ class ChooseDentistView extends GetView<ChooseDentistController> {
                         ],
                       ).marginSymmetric(horizontal: 16);
                     }),
+                ),
               ),
               AppButton(
                   buttonText: "Select",

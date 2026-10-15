@@ -8,9 +8,7 @@ class ProductBinding extends Bindings {
   void dependencies() {
     Get.lazyPut<InventoryProductController>(() => InventoryProductController());
     Get.lazyPut<AddProductController>(() => AddProductController());
-    Get.lazyPut<ScannerController>(() => ScannerController());
     Get.lazyPut<ArrivedItemsDetailController>(() => ArrivedItemsDetailController());
-    Get.lazyPut<UpdateQuantityController>(() => UpdateQuantityController());
     Get.lazyPut<MoveStorageController>(() => MoveStorageController());
     Get.lazyPut<ConsumptionController>(() => ConsumptionController());
   }

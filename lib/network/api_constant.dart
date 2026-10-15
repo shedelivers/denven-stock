@@ -142,6 +142,7 @@ class ApiConstants {
   static String createdAt = "createdAt";
   static String updatedAt = "updatedAt";
   static String symbology = "symbology";
+  static String barcodeProductType = "barcodeProductType";
   // static String supplierName = "supplierName";
   static String hidden = "hidden";
   static String supplierCode = "supplierCode";

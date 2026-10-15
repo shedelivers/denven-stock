@@ -1,16 +1,35 @@
 # denvin_stock
 
-A new Flutter project.
+Flutter stock / inventory app (Android + iOS).
 
-## Getting Started
+## Run on this Mac
 
-This project is a starting point for a Flutter application.
+Flutter lives at `~/develop/flutter` (not always on your shell `PATH`). Use the helper script:
 
-A few resources to get you started if this is your first Flutter project:
+```bash
+./run_android.sh
+```
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Or set env once, then run:
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```bash
+export PATH="$HOME/develop/flutter/bin:/opt/homebrew/opt/openjdk@17/bin:$PATH"
+export JAVA_HOME="/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home"
+export ANDROID_HOME="$HOME/Library/Android/sdk"
+export GRADLE_USER_HOME="$HOME/.gradle"
+
+flutter pub get
+flutter run
+```
+
+Plug in an Android phone with USB debugging, or start an emulator from Android Studio.
+
+Debug APK (after a successful build):
+
+`build/app/outputs/flutter-apk/app-debug.apk`
+
+## Requirements
+
+- Flutter 3.44+ (tested with 3.44.8)
+- OpenJDK 17 (`brew install openjdk@17`)
+- Android SDK (`~/Library/Android/sdk`)

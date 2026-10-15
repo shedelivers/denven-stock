@@ -31,16 +31,16 @@ if (flutterVersionName == null) {
 
 android {
     namespace "com.denvin.stock.denvin_stock"
-    compileSdk 34
-//    ndkVersion flutter.ndkVersion
-    ndkVersion "27.0.12077973"
+    compileSdk 36
+    // Flutter 3.44 default; NDK r28+ builds/aligns native code for 16 KB pages.
+    ndkVersion "28.2.13676358"
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '17'
     }
 
     sourceSets {
@@ -52,24 +52,47 @@ android {
         applicationId "com.denvin.stock.denvin_stock"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdkVersion flutter.minSdkVersion
-        targetSdkVersion 34
+        minSdkVersion 24
+        targetSdkVersion 35
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        // Nokia 4.2 is arm64; skip x86/x86_64 native builds to save disk/time.
+        ndk {
+            abiFilters "arm64-v8a", "armeabi-v7a"
+        }
+    }
+
+    packaging {
+        jniLibs {
+            // Required with AGP 8.5.1+: ship uncompressed, 16 KB zip-aligned .so files.
+            useLegacyPackaging = false
+        }
     }
 
     signingConfigs {
-        release {
-            keyAlias keystoreProperties['keyAlias']
-            keyPassword keystoreProperties['keyPassword']
-            storeFile file(keystoreProperties['storeFile'])
-            storePassword keystoreProperties['storePassword']
+        def storeFilePath = keystoreProperties['storeFile']
+        def releaseKeystore = storeFilePath ? file(storeFilePath) : null
+        if (keystorePropertiesFile.exists() && releaseKeystore != null && releaseKeystore.exists()) {
+            release {
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+                storeFile releaseKeystore
+                storePassword keystoreProperties['storePassword']
+            }
         }
     }
 
     buildTypes {
         release {
-            signingConfig signingConfigs.release
+            if (signingConfigs.findByName('release') != null) {
+                signingConfig signingConfigs.release
+            } else {
+                // Allow local debug/release installs without a release keystore.
+                signingConfig signingConfigs.debug
+            }
+        }
+        debug {
+            signingConfig signingConfigs.debug
         }
     }
 

@@ -1,5 +1,6 @@
 allprojects {
     repositories {
+        mavenLocal()
         google()
         mavenCentral()
     }
@@ -9,8 +10,15 @@ rootProject.buildDir = '../build'
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
 }
-subprojects {
-    project.evaluationDependsOn(':app')
+subprojects { subproject ->
+    subproject.buildscript {
+        repositories {
+            mavenLocal()
+            google()
+            mavenCentral()
+        }
+    }
+    subproject.evaluationDependsOn(':app')
 }
 
 tasks.register("clean", Delete) {

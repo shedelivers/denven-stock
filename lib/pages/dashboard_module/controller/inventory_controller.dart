@@ -21,6 +21,7 @@ class InventoryController extends GetxController {
   RxBool isLoading = false.obs;
   RxBool isLoadingMore = false.obs;
   RxBool isScannerLoading = false.obs;
+  bool _isDeletingProduct = false;
 
   final FocusNode searchFocusNode  = FocusNode();
 
@@ -59,7 +60,7 @@ class InventoryController extends GetxController {
   }
 
   initializeVariables() {
-     _productApiProvider  = ProductApiProvider();
+    _productApiProvider  = ProductApiProvider();
   }
 
   showAndHideSearchBar() {
@@ -76,7 +77,7 @@ class InventoryController extends GetxController {
       filterPayload["showHidden"] = myFilterModal.value?.showHiddenProduct == "0"? false: true;
 
       if (searchController.text.isNotEmpty) {
-         filterPayload["search"] = searchController.text;
+        filterPayload["search"] = searchController.text;
       }
 
       if(myFilterModal.value?.barcodeStatus != null){
@@ -186,33 +187,82 @@ class InventoryController extends GetxController {
 
   String extractImagePath(String jsonString) {
     try{
-    List<dynamic> jsonData = jsonDecode(jsonString);
-    String imagePath = jsonData.isNotEmpty ? jsonData[0]['file'] : '';
-    int startIndex = imagePath.indexOf('product-images');
-    if (startIndex != -1) {
-      imagePath = imagePath.substring(startIndex);
-    } else {
-      imagePath = '';
-    }
-    return imagePath;}
-        catch(e){
+      List<dynamic> jsonData = jsonDecode(jsonString);
+      String imagePath = jsonData.isNotEmpty ? jsonData[0]['file'] : '';
+      int startIndex = imagePath.indexOf('product-images');
+      if (startIndex != -1) {
+        imagePath = imagePath.substring(startIndex);
+      } else {
+        imagePath = '';
+      }
+      return imagePath;}
+    catch(e){
       return "";
-        }
+    }
   }
-
-  addProductFormScan(bool isRestock){
-    Get.toNamed(AppRoutes.scannerScreen)?.then((value){
-      if(value != null){
-        getScanningDetails(value,isRestock);
+      addProductFormScan(bool isRestock) {
+    Get.toNamed(AppRoutes.scannerScreen)?.then((value) {
+      if (value is BarcodeModal) {
+        getScanningDetails(value, isRestock);
       }
     });
   }
+
+  void _closeBarcodeOverlays() {
+    var pops = 0;
+    while (pops < 4 && (Get.isDialogOpen == true || Get.isBottomSheetOpen == true)) {
+      Get.back();
+      pops++;
+    }
+  }
+
+  Future<void> openUpdateQuantity(ProductModal product) async {
+    _closeBarcodeOverlays();
+
+    var target = product;
+    final needsFullProduct = target.id != null &&
+        ((target.expiries?.isEmpty ?? true) ||
+            (target.expiriesWithPrice?.isEmpty ?? true));
+    if (needsFullProduct) {
+      Utils.showLoader(message: 'Loading...');
+      final response =
+      await _productApiProvider.getProductById(productId: target.id);
+      Utils.hideLoader();
+      if (response.successful == true && response.response != null) {
+        target = response.response!;
+      }
+    }
+
+    if (target.expiries?.isNotEmpty ?? false) {
+      Get.toNamed(
+        AppRoutes.updateQuantity,
+        arguments: {RoutesArgument.productDetails: target},
+      )?.then((value) {
+        if (value != null) {
+          currentPage.value = 1;
+          getInventoryData();
+        }
+      });
+    } else {
+      Utils.showSnackBar("This product don't have quantity and expiry");
+    }
+  }
+
+
+
+
+
+
+
+
+
 
   Future getScanningDetails(BarcodeModal code, bool isRestock) async {
     if (await Utils.hasNetwork()) {
       Map<String,dynamic> payload = HashMap();
       payload[ApiConstants.barcode] = code.barcode;
       payload[ApiConstants.symbology] = code.symbology;
+      payload[ApiConstants.barcodeProductType] = "1";
       Utils.showLoader(message: "Search...");
       print("BARCODESEARCH -----> ${code.barcode}");
       DataResponse<PaginationResponseModal<ProductModal>> response = await _productApiProvider.searchProductFromScanStock(barcode: code.barcode, type: code.symbology);
@@ -221,7 +271,7 @@ class InventoryController extends GetxController {
         Utils.showSnackBar(response.error ?? "Unable to get product");
         if(response.error == "No product found") {
           Get.toNamed(AppRoutes.chooseSupplierView, arguments: {RoutesArgument.barCode : code,})?.then((value) {
-              if (value != null) {
+            if (value != null) {
               currentPage.value = 1;
               getInventoryData();
               Get.find<DashboardController>().getSummary();
@@ -249,17 +299,36 @@ class InventoryController extends GetxController {
     }
   }
 
-  Future deleteProduct(String productId) async {
+
+
+  Future<void> deleteProduct(ProductModal product) async {
+    final productId = product.id;
+    final clinicKey = StorageHelper().getClinicId();
+    if (productId == null || clinicKey == null || clinicKey.isEmpty) {
+      Utils.showSnackBar("Unable to delete product");
+      return;
+    }
+    if (_isDeletingProduct) {
+      return;
+    }
     if (await Utils.hasNetwork()) {
-      isLoading.value = true;
-      DataResponse response = await _productApiProvider.deleteProduct(productId: productId);
-      isLoading.value = false;
-      if (response.successful == false) {
-        Utils.showSnackBar(response.error ?? "Unable to delete product");
-      } else {
-        Utils.showSnackBar("Product deleted successfully");
-        currentPage.value = 1;
-        getInventoryData();
+      _isDeletingProduct = true;
+      customLoader.show();
+      try {
+        DataResponse response = await _productApiProvider.deleteProductBySupport(
+          productId: productId.toString(),
+        );
+        if (response.successful == false) {
+          Utils.showSnackBar(response.error ?? "Unable to delete product");
+        } else {
+          Utils.showSnackBar("Product deleted successfully", isSuccess: true);
+          currentPage.value = 1;
+          getInventoryData();
+          Get.find<DashboardController>().getSummary();
+        }
+      } finally {
+        customLoader.hide();
+        _isDeletingProduct = false;
       }
     }
   }
@@ -290,17 +359,18 @@ class InventoryController extends GetxController {
               vGap(10.0),
               ProductCard(
                 imagePath: productModal?.productImage??[],
-                    isHidden: productModal?.hidden??false,
-                 // imagePath: productModal?.productImage != null && (productModal?.productImage??"").isNotEmpty ? "${ApiConstants.baseUrlForImage}/${extractImagePath(productModal?.productImage ?? "")}" : null,
-                  name: productModal?.name,
-                  dontShowBorderAndMenu: true,
-                  supplierCode: productModal?.supplierCode,
-                  orderAt: productModal?.orderedAt,
-                  price: productModal?.price,
-                  localMappingId: productModal?.localMappingId,
-                  type: productModal?.type??1,
-                  menuOnTap: () {},
-                  cardOnTap: () {},
+                isHidden: productModal?.hidden??false,
+                // imagePath: productModal?.productImage != null && (productModal?.productImage??"").isNotEmpty ? "${ApiConstants.baseUrlForImage}/${extractImagePath(productModal?.productImage ?? "")}" : null,
+                name: productModal?.name,
+                dontShowBorderAndMenu: true,
+                supplierCode: productModal?.supplierCode,
+                orderAt: productModal?.orderedAt,
+                price: productModal?.price,
+                localMappingId: productModal?.localMappingId,
+                hasOnlyDenvenBarcode: productModal?.hasOnlyDenvenBarcode,
+                type: productModal?.type??1,
+                menuOnTap: () {},
+                cardOnTap: () {},
               ).marginSymmetric(horizontal: 20.0),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -316,11 +386,9 @@ class InventoryController extends GetxController {
                       borderRadius: BorderRadius.circular(6.0),
                       onTap: (){
                         Get.back();
-                        deleteProduct(productModal?.id.toString() ?? "").then((value) {
-                          currentPage.value = 1;
-                          getInventoryData();
-                          Get.find<DashboardController>().getSummary();
-                        });
+                        if (productModal != null) {
+                          deleteProduct(productModal);
+                        }
                       },
                       child: Text("Delete", style: primaryColor_16_700()).paddingSymmetric(horizontal: 10.0,vertical: 6)),
                 ],
@@ -333,16 +401,17 @@ class InventoryController extends GetxController {
     );
   }
 
+
   void showScannedResultDialog(List<ProductModal>? productModalList, bool isRestock) {
-    showDialog(
+    showModalBottomSheet(
       context: Get.context!,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(10.0)),
+      ),
       builder: (BuildContext context) {
-        return Dialog(
-          surfaceTintColor: Colors.transparent,
-          backgroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.0),
-          ),
+        return SafeArea(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
@@ -356,31 +425,38 @@ class InventoryController extends GetxController {
                 ],
               ).marginSymmetric(horizontal: 20.0),
               vGap(10.0),
-              ...List.generate(
-                  productModalList?.length ?? 0, (index) {
-                ProductModal? productModal = productModalList?[index];
-                return ProductCard(
-                  imagePath: productModal?.productImage??[],
-                  isHidden: productModal?.hidden??false,
-                //  imagePath: productModal?.productImage != null && productModal!.productImage!.isNotEmpty ? "${ApiConstants.baseUrlForImage}/${extractImagePath(productModal.productImage ?? "")}" : null,
-                  name: productModal?.name,
-                  supplierCode: productModal?.supplierCode,
-                  orderAt: productModal?.orderedAt,
-                  storageName: productModal?.storage?.name,
-                  price: productModal?.price,
-                  type: productModal?.type??1,
-                  menuOnTap: (){
-                    editProductBottomSheet(productModal ?? ProductModal());
+              ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxHeight: MediaQuery.of(context).size.height * 0.6,
+                ),
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: productModalList?.length ?? 0,
+                  itemBuilder: (context, index) {
+                    ProductModal? productModal = productModalList?[index];
+                    return ProductCard(
+                      imagePath: productModal?.productImage??[],
+                      isHidden: productModal?.hidden??false,
+                      name: productModal?.name,
+                      supplierCode: productModal?.supplierCode,
+                      orderAt: productModal?.orderedAt,
+                      storageName: productModal?.storage?.name,
+                      price: productModal?.price,
+                      type: productModal?.type??1,
+                      menuOnTap: (){
+                        editProductBottomSheet(productModal ?? ProductModal());
+                      },
+                      cardOnTap: () {
+                        Get.back();
+                        Get.toNamed(AppRoutes.productDetailScreen, arguments: {
+                          RoutesArgument.productDetails : productModal,
+                          RoutesArgument.addRestock : productModal?.quantity == 0 || productModal?.quantity == null  ? true :   isRestock,
+                        })?.then((value) => showInit());
+                      },
+                    ).marginSymmetric(horizontal: 10.0);
                   },
-                  cardOnTap: () {
-                    Get.back();
-                    Get.toNamed(AppRoutes.productDetailScreen, arguments: {
-                      RoutesArgument.productDetails : productModal,
-                      RoutesArgument.addRestock : productModal?.quantity == 0 || productModal?.quantity == null  ? true :   isRestock,
-                    })?.then((value) => showInit());
-                  },
-                ).marginSymmetric(horizontal: 10.0);
-              }),
+                ),
+              ),
               vGap(20),
             ],
           ),
@@ -390,11 +466,19 @@ class InventoryController extends GetxController {
   }
 
 
+
+
+
+
+
+
+
   Future checkBarCodeAdded(BarcodeModal code, {required Function onNotGettingItemTap,required Function onGettingItemTap,}) async {
     if (await Utils.hasNetwork()) {
       Map<String,dynamic> payload = HashMap();
       payload[ApiConstants.barcode] = code.barcode;
       payload[ApiConstants.symbology] = code.symbology;
+      payload[ApiConstants.barcodeProductType] = "1";
       print("BARCODEDATA -----> ${code.barcode}");
 
       CustomScanResponseModal<ProductModal> response = await _productApiProvider.searchProductFromScan(data: payload);
@@ -430,7 +514,7 @@ class InventoryController extends GetxController {
         showInit();
         // Utils.showSnackBar("Product deleted successfully");
         // currentPage.value = 1;
-       // getInventoryData();
+        // getInventoryData();
       }
     }
   }
@@ -480,8 +564,8 @@ class InventoryController extends GetxController {
                                 ? ClipRRect(
                                 borderRadius: BorderRadius.circular(10.0),
                                 child: ShimmerImage(
-                                  url: product.productImage?.isNotEmpty??false? product.productImage![0]:"",
-                                   // url: extractImagePath(product.productImage ?? ""),
+                                    url: product.productImage?.isNotEmpty??false? product.productImage![0]:"",
+                                    // url: extractImagePath(product.productImage ?? ""),
                                     withBaseUrl: true,
                                     thumbnail: imageIcon,
                                     fit: BoxFit.cover)) : imageAsset(imageIcon),
@@ -520,20 +604,7 @@ class InventoryController extends GetxController {
                                         TextView("Update Quantity", style: primaryColor_16_700()?.copyWith(color: black, fontSize: 14)),
                                       ],
                                     ),
-                                  ).onTap(() {
-                                    Get.back();
-                                    if(product.expiries?.isNotEmpty ?? false) {
-                                      Get.toNamed(AppRoutes.updateQuantity, arguments: {RoutesArgument.productDetails: product})?.then((value) {
-                                        if (value != null) {
-                                          currentPage.value = 1;
-                                          getInventoryData();
-                                        }
-                                      });
-                                    } else {
-                                      Utils.showSnackBar("This product don't have quantity and expiry");
-                                    }
-
-                                  }),
+                                  ).onTap(() => openUpdateQuantity(product)),
                                 ),
                                 hGap(20.0),
                                 Expanded(
@@ -639,76 +710,89 @@ class InventoryController extends GetxController {
                       Visibility(
                           visible: product.hidden==false,
                           child: Column(
-                        children: [
-                          vGap(10.0),
-                          BottomSheetItem(
-                            title: "Add Barcode",
-                            iconUri: scanIcon,
-                            onItemTap: () {
+                            children: [
+                              vGap(10.0),
+                              BottomSheetItem(
+                                title: "Add Barcode",
+                                iconUri: scanIcon,
+                                onItemTap: () {
+                                  Get.back();
+                                  Get.toNamed(AppRoutes.scannerScreen)?.then((value) {
+                                    if (value != null) {
+                                      BarcodeModal? barcode = value;
+                                      addBarCode(
+                                          addBarcodeDto: AddBarcodeDto(
+                                              localMappingId: product.localMappingId,
+                                              supplierCode: product.supplierCode,
+                                              supplierId: product.supplier?.id,
+                                              ApiRequest: true,
+                                              commands: [
+                                                CommandsDto(
+                                                    symbology: barcode?.symbology ?? "",
+                                                    barcode: barcode?.barcode ?? "",
+                                                    command: 1)
+                                              ]
+                                          )
+                                      );
+                                      // controller.checkBarCodeAdded(value, onGettingItemTap: () {
+                                      //   Utils.showSnackBar("Bar Code Already Added");
+                                      // }, onNotGettingItemTap: () {
+                                      // });
+                                    }
+                                  });
+                                },
+                              ),
+                            ],
+                          )),
+
+                      vGap(10.0),
+                      BottomSheetItem(
+                        title: "Delete Product",
+                        iconUri: deleteIcon,
+                        onItemTap: () {
+                          confirmPopUp(
+                            title: 'Delete Product',
+                            subtitle: 'Are you sure you want to delete this product?',
+                            cancelText: 'Cancel',
+                            conFirmButtonText: 'Delete',
+                            onConfirm: () {
                               Get.back();
-                              Get.toNamed(AppRoutes.scannerScreen)?.then((value) {
-                                if (value != null) {
-                                  BarcodeModal? barcode = value;
-                                  addBarCode(
-                                      addBarcodeDto: AddBarcodeDto(
-                                          localMappingId: product.localMappingId,
-                                          supplierCode: product.supplierCode,
-                                          supplierId: product.supplier?.id,
-                                          ApiRequest: true,
-                                          commands: [
-                                            CommandsDto(
-                                                symbology: barcode?.symbology ?? "",
-                                                barcode: barcode?.barcode ?? "",
-                                                command: 1)
-                                          ]
-                                      )
-                                  );
-                                  // controller.checkBarCodeAdded(value, onGettingItemTap: () {
-                                  //   Utils.showSnackBar("Bar Code Already Added");
-                                  // }, onNotGettingItemTap: () {
-                                  // });
-                                }
-                              });
+                              deleteProduct(product);
                             },
-                          ),
-                        ],
-                      )),
-
-
+                          );
+                        },
+                      ),
                       Visibility(
-                        visible: product.type != 1,
+                          visible: product.type != 1,
                           child: Column(
-                           children: [
-                            vGap(10.0),
-                            BottomSheetItem(
-                            title: "Open Product",
-                            iconUri: closeBoxIcon,
-                            onItemTap: () {
-                              Get.back();
-                              String productQuantity = "12";
+                            children: [
+                              vGap(10.0),
+                              BottomSheetItem(
+                                title: "Open Product",
+                                iconUri: closeBoxIcon,
+                                onItemTap: () {
+                                  Get.back();
+                                  String productQuantity = "12";
 
-                              for(ProductModal prod in products){
-                                print('supplierCode Test 1: ${prod.supplierCode}');
-                                print('supplierCode Test 2: ${product.supplierCode}**');
-                                print('supplierCode Test prod.type: ${product.type}');
-                                if(prod.type == 1 && prod.supplierCode == "${product.supplierCode}**"){
-                                  if(prod.expiries?.isNotEmpty??false){
-                                    productQuantity = prod.expiries?[0].qty.toString()??"12";
+                                  for(ProductModal prod in products){
+                                      if(prod.type == 1 && prod.supplierCode == "${product.supplierCode}**"){
+                                      if(prod.expiries?.isNotEmpty??false){
+                                        productQuantity = prod.expiries?[0].qty.toString()??"12";
+                                      }
+                                    }
                                   }
-                                }
-                              }
 
-                              openProduct(
-                               productId: product.id??0,
-                                productName: product.name??"",
-                                productQuantity: productQuantity,
-                                expiryDate: product.expiries??[]
+                                  openProduct(
+                                      productId: product.id??0,
+                                      productName: product.name??"",
+                                      productQuantity: productQuantity,
+                                      expiryDate: product.expiries??[]
 
-                              );
-                              },
-                          ),
-                        ],
-                      )),
+                                  );
+                                },
+                              ),
+                            ],
+                          )),
 
                       vGap(10.0),
                       InkWell(
@@ -726,6 +810,7 @@ class InventoryController extends GetxController {
                               });
 
                         },
+
                         child: Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10.0),
@@ -877,7 +962,7 @@ class InventoryController extends GetxController {
     required String productName,
     required String productQuantity,
     required List<Expiries> expiryDate,
-}) async {
+  }) async {
 
     final TextEditingController numberOfProduct = TextEditingController(text: productQuantity);
     final TextEditingController packagesToOpen = TextEditingController(text: "1");
@@ -912,10 +997,10 @@ class InventoryController extends GetxController {
 
     return Get.dialog(
       GetBuilder<InventoryController>(
-        builder: (controller) {
-          return Container(
-            alignment: Alignment.center,
-            child: Container(
+          builder: (controller) {
+            return Container(
+              alignment: Alignment.center,
+              child: Container(
                 width: Get.width * 0.8,
                 padding: const EdgeInsets.symmetric(vertical: margin_10, horizontal: margin_20),
                 decoration: BoxDecoration(
@@ -966,29 +1051,29 @@ class InventoryController extends GetxController {
                         child: ButtonTheme(
                           alignedDropdown: true,
                           child: DropdownButton<ExpiryFilterDTO>(
-                            isExpanded: true,
-                            value: selectedExpiryDate,
-                            hint: TextView(
-                              "Package expiry",
-                              style: TextStyle(
-                                  color: hintTextColor,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w400
+                              isExpanded: true,
+                              value: selectedExpiryDate,
+                              hint: TextView(
+                                "Package expiry",
+                                style: TextStyle(
+                                    color: hintTextColor,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w400
+                                ),
                               ),
-                            ),
-                            padding: const EdgeInsets.symmetric( vertical: 4.0),
-                            icon: const Icon(Icons.keyboard_arrow_down_outlined, color: Colors.black, size: 22),
-                            iconSize: 24,
-                            style: const TextStyle(color: Colors.black,),
-                            underline: Container(height: 0, color: Colors.transparent,),
-                            onChanged: (value) async {
-                              selectedExpiryDate = value;
-                              update();
-                            },
-                            elevation: 1,
-                            items: expiryDateList.map((e) => DropdownMenuItem<ExpiryFilterDTO>(value: e, child: Text(e.title,),),).toList()),
-                          ),
+                              padding: const EdgeInsets.symmetric( vertical: 4.0),
+                              icon: const Icon(Icons.keyboard_arrow_down_outlined, color: Colors.black, size: 22),
+                              iconSize: 24,
+                              style: const TextStyle(color: Colors.black,),
+                              underline: Container(height: 0, color: Colors.transparent,),
+                              onChanged: (value) async {
+                                selectedExpiryDate = value;
+                                update();
+                              },
+                              elevation: 1,
+                              items: expiryDateList.map((e) => DropdownMenuItem<ExpiryFilterDTO>(value: e, child: Text(e.title,),),).toList()),
                         ),
+                      ),
 
                       vGap(10.0),
                       Utils.textFieldLabel(label: "How many Packages to open"),
@@ -1025,9 +1110,9 @@ class InventoryController extends GetxController {
                     ],
                   ),
                 ),
-            ),
-          );
-        }
+              ),
+            );
+          }
       ),
     );
   }

@@ -38,12 +38,11 @@ class DashboardController extends GetxController {
   void updateIndex(int index) {
     currentIndex.value = index;
     update();
+    _hideNativeIntercomLauncher();
+  }
 
-    if (index == 0) {
-      Intercom.instance.setLauncherVisibility(IntercomVisibility.visible);
-    } else {
-      Intercom.instance.setLauncherVisibility(IntercomVisibility.gone);
-    }
+  Future<void> _hideNativeIntercomLauncher() async {
+    await Intercom.instance.setLauncherVisibility(IntercomVisibility.gone);
   }
 
   // void updateIndex(int index) {
@@ -146,7 +145,8 @@ class DashboardController extends GetxController {
     } else if (GetPlatform.isIOS ) {
       await Intercom.instance.setBottomPadding(40);
     }
-    await Intercom.instance.setLauncherVisibility(IntercomVisibility.visible);
+    await Intercom.instance.setLauncherVisibility(IntercomVisibility.gone);
+    await Intercom.instance.setThemeMode(IntercomTheme.light);
   }
 
 

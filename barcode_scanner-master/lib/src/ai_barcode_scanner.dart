@@ -91,14 +91,13 @@ class AiBarcodeScanner extends StatefulWidget {
   ///
   /// If this is null, defaults to a black [ColoredBox]
   /// with a centered white [Icons.error] icon.
-  final Widget Function(BuildContext, MobileScannerException, Widget?)?
-      errorBuilder;
+  final Widget Function(BuildContext, MobileScannerException)? errorBuilder;
 
   /// The function that builds a placeholder widget when the scanner
   /// is not yet displaying its camera preview.
   ///
   /// If this is null, a black [ColoredBox] is used as placeholder.
-  final Widget Function(BuildContext, Widget?)? placeholderBuilder;
+  final WidgetBuilder? placeholderBuilder;
 
   /// The function that signals when the barcode scanner is started.
   // final void Function(MobileScannerArguments?)? onScannerStarted;
@@ -178,7 +177,9 @@ class _AiBarcodeScannerState extends State<AiBarcodeScanner> {
 
   @override
   void dispose() {
-    controller.dispose();
+    if (widget.controller == null) {
+      controller.dispose();
+    }
     super.dispose();
 
     /// calls onDispose function if it is not null
@@ -255,6 +256,11 @@ class _AiBarcodeScannerState extends State<AiBarcodeScanner> {
                 key: widget.key,
                 onDetect: (BarcodeCapture barcode) async {
                   widget.onDetect?.call(barcode);
+
+                  final hasFeedback = widget.showSuccess ||
+                      widget.showError ||
+                      widget.hapticFeedback;
+                  if (!hasFeedback) return;
 
                   if (barcode.barcodes.isEmpty) {
                     log('Scanned Code is Empty');

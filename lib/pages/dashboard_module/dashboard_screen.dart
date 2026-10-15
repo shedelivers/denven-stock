@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:denvin_stock/exports.dart';
 import 'package:denvin_stock/pages/dashboard_module/scan_arrived_items_screen.dart';
+import 'package:intercom_flutter/intercom_flutter.dart';
 import 'package:upgrader/upgrader.dart';
 
 
@@ -60,7 +61,12 @@ class DashboardScreen extends GetView<DashboardController> {
                 ],
               ),
             ),
-            body: _mainBody(),
+            body: Stack(
+              children: [
+                _mainBody(),
+                if (controller.currentIndex.value == 0) _intercomLauncher(context),
+              ],
+            ),
 
           ),
         ),
@@ -77,6 +83,31 @@ class DashboardScreen extends GetView<DashboardController> {
     //   onPageChanged: controller.pageChange,
     //   children: _pages,
     // );
+  }
+
+  Widget _intercomLauncher(BuildContext context) {
+    return Positioned(
+      right: 16,
+      bottom: 20,
+      child: Material(
+        elevation: 6,
+        shadowColor: Colors.black26,
+        shape: const CircleBorder(),
+        color: primaryColor,
+        child: InkWell(
+          customBorder: const CircleBorder(),
+          onTap: () => Intercom.instance.displayMessenger(),
+          child: const Padding(
+            padding: EdgeInsets.all(14),
+            child: Icon(
+              Icons.chat_bubble_rounded,
+              color: Colors.white,
+              size: 26,
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
 }

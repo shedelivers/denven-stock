@@ -59,7 +59,7 @@ class AppPages {
 
     GetPage(
       name: AppRoutes.productDetailScreen,
-      page: () => InventoryProductDetailScreen(),
+      page: () =>   InventoryProductDetailScreen(),
       transitionDuration: const Duration(milliseconds: 400),
       transition: Transition.cupertino,
       bindings: [ProductBinding()],
@@ -76,10 +76,10 @@ class AppPages {
 
     GetPage(
       name: AppRoutes.scannerScreen,
-      page: () => ScannerScreen(),
-      transitionDuration: const Duration(milliseconds: 400),
-      transition: Transition.cupertino,
-      bindings: [ProductBinding()],
+      page: () => const ScannerScreen(),
+      transitionDuration: const Duration(milliseconds: 250),
+      transition: Transition.fadeIn,
+      binding: ScannerBinding(),
     ),
 
     GetPage(
@@ -87,7 +87,7 @@ class AppPages {
       page: () => UpdateQuantityScreen(),
       transitionDuration: const Duration(milliseconds: 400),
       transition: Transition.cupertino,
-      bindings: [ProductBinding()],
+      binding: UpdateQuantityBinding(),
     ),
 
     GetPage(

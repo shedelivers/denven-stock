@@ -22,7 +22,7 @@ class Strings{
   static const String website = "Website";
   static const String productQuantity = "Product Quantity";
   static const String userProfile = "User Profile";
-  static const String qrBarCode = "QR / Barcode";
+  static const String  qrBarCode = "QR / Barcode";
   static const String chooseFiles = "Choose Files";
   static const String addQrBarcode = "Add QR / Barcode";
   static const String adjustQuantity = "Adjust Quantity";

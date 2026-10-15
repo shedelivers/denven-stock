@@ -2,7 +2,7 @@ name: denvin_stock
 description: "A new Flutter project."
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 5.3.0+46
+version: 1.1.0+13
 
 environment:
   sdk: '>=3.3.3 <4.0.0'
@@ -18,9 +18,9 @@ dependencies:
   upgrader: ^10.3.0
 #  webview_flutter: ^4.8.0
   url_launcher: ^6.3.1
-  intercom_flutter: ^9.0.9
+  intercom_flutter: ^9.6.7
   carousel_slider: ^5.0.0
-  webview_flutter: ^4.8.0
+  webview_flutter: ^4.13.1
   flutter_keyboard_visibility: ^6.0.0
   flutter_lints: ^3.0.0
   get: ^4.6.6
@@ -33,23 +33,21 @@ dependencies:
 #  flutter_keyboard_visibility: ^6.0.0
 #  pinput: ^3.0.1
   image_picker: ^1.0.5
-  file_picker: ^6.1.1
+  file_picker: ^8.1.7
 #  permission_handler: ^11.1.0
   get_storage: ^2.1.1
   dio: ^5.4.1
-  google_fonts: 6.1.0
+  google_fonts: ^6.2.1
   connectivity_plus: ^5.0.2
   animated_custom_dropdown: ^3.0.0
   barcode_widget: ^2.0.4
   barcode: ^2.2.6
   just_audio: ^0.9.37
   percent_indicator: ^4.2.3
-  # Temporarily disabled for iOS Simulator builds on Apple Silicon.
-  # ai_barcode_scanner pulls in mobile_scanner -> Google MLKit pods whose
-  # binaries don't ship an arm64-iossimulator slice.
-  # ai_barcode_scanner:
-  #   path: ./barcode_scanner-master
-  webview_flutter_wkwebview: ^3.14.0
+  mobile_scanner: ^7.1.3
+  ai_barcode_scanner:
+    path: ./barcode_scanner-master
+  webview_flutter_wkwebview: ^3.25.0
   permission_handler: ^11.3.1
 
 dev_dependencies:
@@ -60,6 +58,13 @@ dependency_overrides:
   # win32 5.5.0 (transitive via connectivity_plus_windows) uses
   # UnmodifiableUint8ListView which was removed in Dart 3.5+.
   win32: ^5.5.4
+  # Flutter 3.35.3 / Dart 3.9.2: use embedding-v2 plugins that still
+  # declare sdk ^3.9 (newer pub versions require Dart 3.12 / Flutter 3.44).
+  flutter_plugin_android_lifecycle: ^2.0.35
+  path_provider_android: 2.2.23
+  shared_preferences_android: 2.4.23
+  url_launcher_android: 6.3.29
+  image_picker_android: 0.8.13+15
 
 flutter:
 

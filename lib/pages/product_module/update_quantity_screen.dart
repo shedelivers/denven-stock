@@ -4,9 +4,7 @@ import 'package:denvin_stock/exports.dart';
 class UpdateQuantityScreen extends GetView<UpdateQuantityController> {
   final formGlobalKey = GlobalKey<FormState>();
 
-  UpdateQuantityScreen({super.key}){
-    controller.getArguments();
-  }
+  UpdateQuantityScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -47,10 +45,7 @@ class UpdateQuantityScreen extends GetView<UpdateQuantityController> {
                               Expanded(
                                 child: CustomProductBoxView(
                                   title: 'Unit Price',
-                                  subtitle:
-                                  controller.products.value!.expiriesWithPrice![index].price.toString() == "null"? Strings.nA:controller.products.value!.expiriesWithPrice![index].price.toString()??"",
-
-
+                                  subtitle: controller.displayPriceAt(index),
                                 ),
                               ),
 
@@ -58,7 +53,7 @@ class UpdateQuantityScreen extends GetView<UpdateQuantityController> {
                               Expanded(
                                 child: CustomProductBoxView(
                                   title: 'Quantity',
-                                  subtitle: controller.products.value?.expiriesWithPrice?[index].qty.toString() ??  Strings.nA,
+                                  subtitle: controller.expiryDisplayAt(index)?.qty?.toString() ?? Strings.nA,
                                 ),
                               ),
                               hGap(4),
@@ -74,23 +69,51 @@ class UpdateQuantityScreen extends GetView<UpdateQuantityController> {
                                   children: [
                                     TextView('Expiry Date', style: black_14_500(),),
 
-                                    controller.products.value?.expiriesWithPrice?[index].date  != null && controller.products.value!.expiriesWithPrice![index].date!.isNotEmpty ?? false?
-                                    Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 2.0,vertical: 2.0),
-                                        margin: const EdgeInsets.only(bottom: 6.0),
-                                        decoration: BoxDecoration(
-                                            color: controller.products.value?.expiriesWithPrice != null ? controller.getExpiryColor(index: index, list: controller.products.value!.expiriesWithPrice ?? []) : Colors.grey,
-                                            borderRadius: BorderRadius.circular(6.0)
-                                        ),
-                                        child: SelectableText(controller.products.value?.expiriesWithPrice?[index].date ?? Strings.nA, style: greyColor_16_600()?.copyWith(color: Colors.white, fontSize: 14))):
-                                    Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 2.0),
-                                        margin: const EdgeInsets.only(bottom: 6.0),
-                                        decoration: BoxDecoration(
-                                            color: Colors.grey,
-                                            borderRadius: BorderRadius.circular(6.0)
-                                        ),
-                                        child: SelectableText(Strings.nA, style: greyColor_16_600()?.copyWith(color: Colors.white, fontSize: 14)))
+                                    _hasExpiryDate(controller, index)
+                                        ? Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 2.0, vertical: 2.0),
+                                            margin: const EdgeInsets.only(bottom: 6.0),
+                                            decoration: BoxDecoration(
+                                              color: controller.getExpiryColor(
+                                                index: index,
+                                                list: controller
+                                                        .products
+                                                        .value
+                                                        ?.expiriesWithPrice ??
+                                                    [],
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(6.0),
+                                            ),
+                                            child: SelectableText(
+                                              controller
+                                                      .expiryDisplayAt(index)
+                                                      ?.date ??
+                                                  Strings.nA,
+                                              style: greyColor_16_600()
+                                                  ?.copyWith(
+                                                      color: Colors.white,
+                                                      fontSize: 14),
+                                            ),
+                                          )
+                                        : Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 8.0, vertical: 2.0),
+                                            margin: const EdgeInsets.only(bottom: 6.0),
+                                            decoration: BoxDecoration(
+                                              color: Colors.grey,
+                                              borderRadius:
+                                                  BorderRadius.circular(6.0),
+                                            ),
+                                            child: SelectableText(
+                                              Strings.nA,
+                                              style: greyColor_16_600()
+                                                  ?.copyWith(
+                                                      color: Colors.white,
+                                                      fontSize: 14),
+                                            ),
+                                          ),
                                   ],
                                 ),
                               ),
@@ -126,6 +149,11 @@ class UpdateQuantityScreen extends GetView<UpdateQuantityController> {
         ).paddingSymmetric(horizontal: 20.0),
       ],
     );
+  }
+
+  bool _hasExpiryDate(UpdateQuantityController controller, int index) {
+    final date = controller.expiryDisplayAt(index)?.date;
+    return date != null && date.isNotEmpty;
   }
 
   _counter(int index){

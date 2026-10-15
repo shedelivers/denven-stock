@@ -89,10 +89,12 @@ class ProductApiProvider {
     }
   }
 
-  Future<DataResponse<PaginationResponseModal<ConsumerModal>>> getConsumer({String? search}) async {
+  Future<DataResponse<PaginationResponseModal<ConsumerModal>>> getConsumer({String? search, int page = 1, int pageSize = 10}) async {
     try {
       Response response = await _dio.get("${ApiConstants.customers}/$clinicId", options: Injector.getHeaderToken(),
       queryParameters: {
+        "page": page,
+        "pageSize": pageSize,
         if((search??"").isNotEmpty)
           "Search":search
       }
@@ -461,6 +463,41 @@ class ProductApiProvider {
 
 
 
+  Future<DataResponse> deleteProductBySupport({required String productId}) async {
+    try {
+      setClientID();
+      if (clinicId == null || clinicId!.isEmpty) {
+        return DataResponse(error: "Clinic key not found", successful: false);
+      }
+      if (productId.isEmpty) {
+        return DataResponse(error: "Product id not found", successful: false);
+      }
+      Response response = await _dio.delete(
+        "${ApiConstants.productScan}/$clinicId/$productId/DeleteBySupport",
+        options: Injector.getHeaderToken(),
+      );
+      if (response.data is Map<String, dynamic>) {
+        return DataResponse.fromJson(response.data, (data) => null);
+      }
+      return DataResponse(successful: true);
+    } on DioException catch (error) {
+      if (error.type == DioExceptionType.connectionTimeout) {
+        return DataResponse(error: "Connection Timeout Exception", successful: false);
+      } else if (error.type == DioExceptionType.receiveTimeout) {
+        return DataResponse(error: "Receive Timeout Exception", successful: false);
+      } else {
+        final response = error.response?.data;
+        if (response != null && response is Map<String, dynamic>) {
+          return DataResponse.fromJson(response, (data) => null);
+        } else {
+          return DataResponse(error: error.toString(), successful: false);
+        }
+      }
+    } catch (e) {
+      return DataResponse(error: e.toString(), successful: false);
+    }
+  }
+
   Future<DataResponse> deleteProduct({String? productId}) async {
     try {
       Response response = await _dio.delete("${ApiConstants.implantStock}/$clinicId/$productId", options: Injector.getHeaderToken());
@@ -584,7 +621,7 @@ class ProductApiProvider {
   }
 
 
-  Future<DataResponse<PaginationResponseModal<ProductModal>>> searchProductFromScanStock({String? barcode, String? type }) async {
+  Future<DataResponse<PaginationResponseModal<ProductModal>>> searchProductFromScanStock({String? barcode, String? type , String? barcodeProductType }) async {
     try {
       Response response = await _dio.get("${ApiConstants.productScan}/$clinicId/barcode/$barcode/$type/list", options: Injector.getHeaderToken());
       return DataResponse.fromJson(response.data, (json) => PaginationResponseModal<ProductModal>.fromJson(json as Map<String, dynamic>,(data) => ProductModal.fromJson(data)));
